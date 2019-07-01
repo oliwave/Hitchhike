@@ -1,5 +1,6 @@
 var db = require('../db.js');
 var express = require('express');
+var crypto = require('crypto');
 var mailer = require('./mailer.js');
 const router = new express.Router()
 // use post
@@ -37,7 +38,9 @@ router.get('/verify/:uid', function (req, res) {
             //sent mail
             mailer.mail();
             // get sixNum
-            res.send(mailer.sixNum);
+            let hashedSixNum = crypto.createHash('sha256').update(mailer.sixNum)
+            .digest('base64');
+            res.send(hashedSixNum);
         }
     });
 });
