@@ -37,7 +37,7 @@ router.get('/verify/:uid', function (req, res) {
             mailer.mail(email);
             // hash sixNum
             let hashedSixNum = crypto.createHash('sha256').update(mailer.sixNum)
-            .digest('base64');
+            .digest('hex');
             res.send(hashedSixNum);
         }
     });
