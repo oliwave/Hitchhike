@@ -1,6 +1,5 @@
-function mail(){
-    var nodemailer = require('nodemailer');
-    var email = require('./signUp.js');
+var nodemailer = require('nodemailer');
+function mail(emailAddr){
     //server secure: true
     //port: 465(SSL) 587(TSL) 25
     //https://accounts.google.com/DisplayUnlockCaptcha
@@ -19,11 +18,10 @@ function mail(){
     
     let HelperOptions = {
         from: 'moviemovie@gmail.com',
-        to: email.email,
-        subject: 'dd',
+        to: emailAddr,
+        subject: 'hitchhike',
         text: exports.sixNum = createSixNum()
     };
-    console.log(email.email);
     transporter.sendMail(HelperOptions, (error, info) => {
         if (error) {
             return console.log(error);

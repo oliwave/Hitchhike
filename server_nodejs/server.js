@@ -5,7 +5,7 @@ var profile = require('./profile/profile.js');
 var app = express();
 
 app.use(login);
-app.use(signUp.router);
+app.use(signUp);
 app.use(profile);
 
 //server port :8080   local port :3000

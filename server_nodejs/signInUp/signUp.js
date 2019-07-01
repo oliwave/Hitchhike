@@ -24,8 +24,6 @@ router.get('/signUp/:uid/:pwd/:name', function (req, res) {
 router.get('/verify/:uid', function (req, res) {
     var uid = req.params.uid;
     email = "s" + uid +"@mail1.ncnu.edu.tw";
-    // exports email
-    exports.email = email;
     const sql = `select * from user where uid = '${uid}'`;
     db.query(sql, function (err, result) {
         if (err) {
@@ -36,8 +34,8 @@ router.get('/verify/:uid', function (req, res) {
         }
         else{
             //sent mail
-            mailer.mail();
-            // get sixNum
+            mailer.mail(email);
+            // hash sixNum
             let hashedSixNum = crypto.createHash('sha256').update(mailer.sixNum)
             .digest('base64');
             res.send(hashedSixNum);
@@ -45,4 +43,4 @@ router.get('/verify/:uid', function (req, res) {
     });
 });
 //exports router
-exports.router = router;
+module.exports = router;
