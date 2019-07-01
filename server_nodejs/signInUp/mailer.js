@@ -1,5 +1,4 @@
 function mail(){
-    console.log("xxx");
     var nodemailer = require('nodemailer');
     var email = require('./signUp.js');
     //server secure: true
@@ -41,4 +40,4 @@ function mail(){
         return Num;
     }
 }
-exports.mail = mail();
+exports.mail = mail;

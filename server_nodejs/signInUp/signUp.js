@@ -35,7 +35,7 @@ router.get('/verify/:uid', function (req, res) {
         else{
             var mailer = require('./mailer.js');
             //sent mail
-            mailer.mail;
+            mailer.mail();
             // get sixNum
             res.send(mailer.sixNum);
         }
