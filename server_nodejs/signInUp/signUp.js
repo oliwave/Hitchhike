@@ -1,5 +1,6 @@
 var db = require('../db.js');
 var express = require('express');
+var mailer = require('./mailer.js');
 const router = new express.Router()
 // use post
 router.get('/signUp/:uid/:pwd/:name', function (req, res) {
@@ -33,7 +34,6 @@ router.get('/verify/:uid', function (req, res) {
             res.send("fail");
         }
         else{
-            var mailer = require('./mailer.js');
             //sent mail
             mailer.mail();
             // get sixNum
