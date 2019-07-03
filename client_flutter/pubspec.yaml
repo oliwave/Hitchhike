@@ -27,12 +27,18 @@ dependencies:
   # For http request
   http: ^0.12.0+2
 
+  # For state management
+  provider: ^3.0.0+1
+
   # For google map stuff
   google_maps_flutter: ^0.5.13
-  geolocator: ^5.0.1
+  geolocator: ^5.0.1 
 
   # For storing current client status
   shared_preferences: ^0.5.3+1
+
+  # For service permission in both Android and iOS
+  permission_handler: ^3.1.0
 
 dev_dependencies:
   flutter_test:
