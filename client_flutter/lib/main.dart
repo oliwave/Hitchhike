@@ -2,7 +2,20 @@ import 'package:flutter/material.dart';
 
 import './src/screen/screen_route.dart';
 
-void main() => runApp(MyApp());
+import './test_api.dart';
+
+Future main() async {
+
+  // Testing the restful api
+  TestApi testApi = TestApi();
+  final futureList = [
+    testApi.testVerifyUid(),
+  ];
+  await Future.wait(futureList);
+
+  // Formal app
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
