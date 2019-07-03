@@ -5,8 +5,8 @@ import './cached/simple_storage.dart';
 class Repository {
   Repository._();
 
-  final api = Api.getInstance();
-  final prefs = sharedPrefences;
+  final _api = Api.getInstance();
+  final _prefs = sharedPrefences;
 
   static final _repository = Repository._();
 
@@ -16,31 +16,31 @@ class Repository {
 
   /// From Api
   Future<String> verifyUserId(String userId) async {
-    return await api.verifyUserId(userId);
+    return await _api.verifyUserId(userId);
   }
 
   Future<int> signUp(String userId, String password, String username) async {
-    return await api.signUp(userId, password, username);
+    return await _api.signUp(userId, password, username);
   }
 
   Future<int> login(String userId, String password) async {
-    return await api.login(userId, password);
+    return await _api.login(userId, password);
   }
 
   /// From Cached SimpleStorage
   bool getIsMatched() {
-    return prefs.getIsMatched();
+    return _prefs.getIsMatched();
   }
 
   bool getIsDriver() {
-    return prefs.getIsDriver();
+    return _prefs.getIsDriver();
   }
 
   Future<bool> setIsMatched(bool isMatched) {
-    return prefs.setIsMatched(isMatched);
+    return _prefs.setIsMatched(isMatched);
   }
 
   Future<bool> setIsDriver(bool isDriver) {
-    return prefs.setIsDriver(isDriver);
+    return _prefs.setIsDriver(isDriver);
   }
 }
