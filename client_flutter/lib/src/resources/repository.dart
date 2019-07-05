@@ -1,16 +1,29 @@
 import './restful/api.dart';
 import './cached/simple_storage.dart';
 
-/// Gather all of the request of resources to the [Repository]
+/// Gather all of the request of resources to the [Repository].
+///
+/// The repository contains resources from different sources,
+/// such as [_api] and [_prefs] created by the singleton pattern.
+///
+/// In dart, the singleton pattern can be implemented by prefixing the constructor 
+/// with the syntax sugar, "factory". It provides a mechanism for object caching, so 
+/// you won't get the different object when you instantiate it. Instead,
+/// you get the same object no matter whenever and wherever you access it. 
+/// [https://dart.dev/guides/language/language-tour#constructors]
 class Repository {
   Repository._();
 
-  final _api = Api.getInstance();
-  final _prefs = sharedPrefences;
+  /// Get access to the internet resource.
+  final _api = Api();
+
+  /// Get acces to the local storage.
+  final _prefs = SimpleStorage();
 
   static final _repository = Repository._();
 
-  static Repository getInstance() {
+  /// factory constructor
+  factory Repository() {
     return _repository;
   }
 

@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import '../resources/repository.dart';
 
 /// Recording the current client information
-/// 
+///
 /// The [isMatched] is used to judge whether the client is in the matched mode. And
-/// if the client is in the matched mode, the [isDriver] can determine what role the 
+/// if the client is in the matched mode, the [isDriver] can determine what role the
 /// client is.
-class RoleProvider extends ChangeNotifier {
-
-  static final _repo = Repository.getInstance();
+class RoleNotifier with ChangeNotifier {
+  static final _repo = Repository();
 
   bool _isMatched = _repo.getIsDriver();
   bool _isDriver = _repo.getIsMatched();
@@ -19,7 +18,6 @@ class RoleProvider extends ChangeNotifier {
 
   set isMatched(bool isMatched) {
     _isMatched = isMatched;
-    // notifyListeners();
   }
 
   set isDriver(bool isDriver) {
@@ -36,5 +34,4 @@ class RoleProvider extends ChangeNotifier {
     }
     super.dispose();
   }
-  
 }
