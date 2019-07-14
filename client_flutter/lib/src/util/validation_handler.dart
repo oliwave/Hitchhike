@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 
 class ValidationHandler {
-  ValidationHandler._();
+  const ValidationHandler._();
 
   factory ValidationHandler() {
     return _validationHandler;
