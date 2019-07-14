@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Create a simple key-value storage on client
+/// [SimpleSorage] is a simple key-value storage dedicating to save the unsensitive
+/// data on client.
 class SimpleStorage {
   SimpleStorage._() {
     init();

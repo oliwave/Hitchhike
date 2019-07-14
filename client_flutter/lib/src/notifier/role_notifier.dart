@@ -8,10 +8,10 @@ import '../resources/repository.dart';
 /// if the client is in the matched mode, the [isDriver] can determine what role the
 /// client is.
 class RoleNotifier with ChangeNotifier {
-  static final _repo = Repository();
+  static final _prefs = Repository.getPrefs;
 
-  bool _isMatched = _repo.getIsDriver();
-  bool _isDriver = _repo.getIsMatched();
+  bool _isMatched = _prefs.getIsDriver();
+  bool _isDriver = _prefs.getIsMatched();
 
   bool get isMatched => _isMatched;
   bool get isDriver => _isDriver;
@@ -29,8 +29,8 @@ class RoleNotifier with ChangeNotifier {
   void dispose() {
     // Save the state in case the client turns off the app
     if (_isMatched) {
-      _repo.setIsDriver(_isDriver);
-      _repo.setIsMatched(_isMatched);
+      _prefs.setIsDriver(_isDriver);
+      _prefs.setIsMatched(_isMatched);
     }
     super.dispose();
   }

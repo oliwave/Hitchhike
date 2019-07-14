@@ -1,39 +1,32 @@
-import 'package:http/http.dart' show Client;
+import 'dart:convert';
 
-final _rootUrl = 'https://api.hitchhike.ml';
+import './request_method.dart';
 
-/// The restful api on our server is triggered by the http request.
+/// This class manages every http request from our client to server.
 class Api {
   Api._();
-
-  final _client = Client();
-
-  static final _api = Api._();
 
   factory Api() {
     return _api;
   }
 
-  /// To verify whether the [userId] is the ncnu member.
+  static final Api _api = Api._();
+
+  /// Send a specific http request assigned by the client to our server.
   ///
-  /// Return the hash validation code in hex.
-  Future<String> verifyUserId(String userId) async {
-    final response = await _client.get('$_rootUrl/verify/$userId');
-    return response.body;
-  }
+  /// Assign an instance of the inherited [RequestMethod] to [action].
+  /// This technique utilized the concept of upcasting in OO to implement
+  /// the polymorphism.
+  ///
+  /// e.g., [VerifyUserId], [SignUp], etc. are all instances that is defined
+  /// in [request_method.dart] that actually call http api.
+  Future<Map<String, dynamic>> sendHttpRequest(RequestMethod action) async {
+    final response = await action.request();
 
-  /// Sign up an user
-  Future<int> signUp(String userId, String password, String username) async {
-    final response =
-        await _client.post('$_rootUrl/signUp/$userId/$password/$username');
-    return response.statusCode;
-  }
+    // TODO : check status code here!
 
-  /// Login
-  Future<int> login(String userId, String password) async {
-    final response = await _client.get('$_rootUrl/login/$userId/$password');
+    final Map<String, dynamic> parsedJson = json.decode(response.body);
 
-    // need to return jwt on http headers
-    return response.statusCode;
+    return parsedJson;
   }
 }
