@@ -1,4 +1,4 @@
 <full-backup-content>
-    <exclude domain=["sharedpref"]
+    <exclude domain="sharedpref"
     path="string" />
 </full-backup-content>

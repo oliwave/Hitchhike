@@ -38,6 +38,9 @@ dependencies:
   shared_preferences: ^0.5.3+1
   flutter_secure_storage: ^3.2.1+1 # For storing jwt token 
 
+  # For cheching six digits validation code 
+  crypto: ^2.0.6
+
   # For service permission in both Android and iOS
   permission_handler: ^3.1.0
 
