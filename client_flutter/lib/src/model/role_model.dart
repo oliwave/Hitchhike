@@ -1,3 +1,4 @@
+// import '../resources/cached/simple_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../resources/repository.dart';
@@ -7,11 +8,11 @@ import '../resources/repository.dart';
 /// The [isMatched] is used to judge whether the client is in the matched mode. And
 /// if the client is in the matched mode, the [isDriver] can determine what role the
 /// client is.
-class RoleNotifier with ChangeNotifier {
+class RoleModel with ChangeNotifier {
   static final _prefs = Repository.getPrefs;
 
-  bool _isMatched = _prefs.getIsDriver();
-  bool _isDriver = _prefs.getIsMatched();
+  bool _isMatched = _prefs.getBool(TargetSourceString.isMatched);
+  bool _isDriver = _prefs.getBool(TargetSourceString.isDriver);
 
   bool get isMatched => _isMatched;
   bool get isDriver => _isDriver;
@@ -29,8 +30,8 @@ class RoleNotifier with ChangeNotifier {
   void dispose() {
     // Save the state in case the client turns off the app
     if (_isMatched) {
-      _prefs.setIsDriver(_isDriver);
-      _prefs.setIsMatched(_isMatched);
+      _prefs.setBool(TargetSourceString.isDriver, _isDriver);
+      _prefs.setBool(TargetSourceString.isMatched, _isMatched);
     }
     super.dispose();
   }

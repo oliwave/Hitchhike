@@ -1,5 +1,5 @@
-class UserModel {
-  UserModel.fromJson(Map<String, dynamic> json)
+class UserItem {
+  UserItem.fromJson(Map<String, dynamic> json)
       : userId = json['userId'],
         password = json['password'],
         name = json['name'],
