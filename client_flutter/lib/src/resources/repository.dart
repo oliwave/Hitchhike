@@ -18,7 +18,7 @@ class Repository {
   static Api get getApi => Api();
 
   /// Get access to the local storage.
-  static SimpleStorage get getPrefs => SimpleStorage();
+  static SimpleStorage get getSimpleStorage => SimpleStorage();
 
   /// Get access to the jwt storage.
   static SecureStorage get getSecureStorage => SecureStorage();

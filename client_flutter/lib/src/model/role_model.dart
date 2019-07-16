@@ -9,7 +9,7 @@ import '../resources/repository.dart';
 /// if the client is in the matched mode, the [isDriver] can determine what role the
 /// client is.
 class RoleModel with ChangeNotifier {
-  static final _prefs = Repository.getPrefs;
+  static final _prefs = Repository.getSimpleStorage;
 
   bool _isMatched = _prefs.getBool(TargetSourceString.isMatched);
   bool _isDriver = _prefs.getBool(TargetSourceString.isDriver);
