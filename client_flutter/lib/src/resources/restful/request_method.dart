@@ -1,4 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' show Client, Response;
 
@@ -6,41 +8,67 @@ import 'package:http/http.dart' show Client, Response;
 /// behavior, and all subclasses that inherit from it must implement
 /// the particular content of the [request] method.
 abstract class RequestMethod {
+  RequestMethod({this.jwtToken});
+
   final Client _client = Client();
+
+  /// [_rooturl] is the target server that client wants to interact with.
   final _rootUrl = 'https://api.hitchhike.ml';
 
+  /// Except login and sign up requests, rest of the requests need to
+  /// contain [jwtToken]
+  String jwtToken;
+
   /// Implement your http request code down here!
+  Future<Response> request();
+
+  Map<String, String> getHeaders() {
+    if (jwtToken == null) {
+      return {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: jwtToken,
+      };
+    } else {
+      return {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      };
+    }
+  }
+}
+
+abstract class BasePost extends RequestMethod {
+  BasePost({
+    @required this.body,
+    String jwtToken,
+  }) : super(
+          jwtToken: jwtToken,
+        );
+
+  /// Using as request body.
+  Map<String, dynamic> body;
+
+  @override
   Future<Response> request();
 }
 
 /// To verify whether the [userId] is one of the ncnu members.
 ///
 /// Return the hash validation code in hex.
-class VerifyUserIdRequest extends RequestMethod {
-  VerifyUserIdRequest._(
-    this.userId,
-  );
-
+class VerifyUserIdRequest extends BasePost {
   /// Create an intance of a concrete http request behavior that
   /// inherits [RequestMethod].
-  factory VerifyUserIdRequest({
+  VerifyUserIdRequest({
     @required String userId,
-  }) {
-    if (_verifyUserId == null) {
-      _verifyUserId = VerifyUserIdRequest._(userId);
-    } else {
-      _verifyUserId.userId = userId;
-    }
-    return _verifyUserId;
-  }
-
-  static VerifyUserIdRequest _verifyUserId;
-  String userId;
+  }) : super(body: {
+          userId: userId,
+        });
 
   @override
   Future<Response> request() async {
-    final response = await _client.get(
-      '$_rootUrl/verify/$userId',
+    final response = await _client.post(
+      '$_rootUrl/verify',
+      body: body,
+      headers: getHeaders(),
     );
 
     return response;
@@ -48,75 +76,241 @@ class VerifyUserIdRequest extends RequestMethod {
 }
 
 /// Sign up an user
-class SignUpRequest extends RequestMethod {
-  SignUpRequest._(
-    this.userId,
-    this.password,
-    this.username,
-  );
-
+class SignUpRequest extends BasePost {
   /// Create an intance of a concrete http request behavior that
   /// inherits [RequestMethod].
-  factory SignUpRequest({
+  SignUpRequest({
     @required String userId,
     @required String password,
     @required String username,
-  }) {
-    if (_signUp == null) {
-      _signUp = SignUpRequest._(userId, password, username);
-    } else {
-      _signUp.userId = userId;
-      _signUp.password = password;
-      _signUp.username = username;
-    }
-    return _signUp;
-  }
-
-  static SignUpRequest _signUp;
-  String userId;
-  String password;
-  String username;
+  }) : super(body: {
+          userId: userId,
+          password: password,
+          username: username,
+        });
 
   @override
   Future<Response> request() async {
     final response = await _client.post(
-      '$_rootUrl/signUp/$userId/$password/$username',
+      '$_rootUrl/signUp',
+      body: body,
+      headers: getHeaders(),
     );
     return response;
   }
 }
 
 /// Login
-class LoginRequest extends RequestMethod {
-  LoginRequest._(
-    this.userId,
-    this.password,
-  );
-
+class LoginRequest extends BasePost {
   /// Create an intance of a concrete http request behavior that
   /// inherits [RequestMethod].
-  factory LoginRequest({
+  LoginRequest({
     @required String userId,
     @required String password,
-  }) {
-    if (_login == null) {
-      _login = LoginRequest._(userId, password);
-    } else {
-      _login.userId = userId;
-      _login.password = password;
-    }
-    return _login;
-  }
-
-  static LoginRequest _login;
-  String userId;
-  String password;
+  }) : super(body: {
+          userId: userId,
+          password: password,
+        });
 
   @override
   Future<Response> request() async {
-    final response = await _client.get('$_rootUrl/login/$userId/$password');
+    final response = await _client.post(
+      '$_rootUrl/login',
+      body: body,
+      headers: getHeaders(),
+    );
 
     // need to return jwt on http headers
+    return response;
+  }
+}
+
+class ProfilePwdRequest extends BasePost {
+  /// Create an intance of a concrete http request behavior that
+  /// inherits [RequestMethod].
+  ProfilePwdRequest({
+    @required String password,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            password: password,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/profilePwd',
+      body: body,
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+
+class ProfileNameRequest extends BasePost {
+  /// Create an intance of a concrete http request behavior that
+  /// inherits [RequestMethod].
+  ProfileNameRequest({
+    @required String name,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            name: name,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/profileName',
+      body: body,
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+
+class ProfilePhotoRequest extends BasePost {
+  /// Create an intance of a concrete http request behavior that
+  /// inherits [RequestMethod].
+  ProfilePhotoRequest({
+    @required String photo,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            photo: photo,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/profilePhoto',
+      body: body,
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+
+class ProfileDepartmentRequest extends BasePost {
+  /// Create an intance of a concrete http request behavior that
+  /// inherits [RequestMethod].
+  ProfileDepartmentRequest({
+    @required String department,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            department: department,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/profileDepartment',
+      body: body,
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+
+class ProfileCarNumRequest extends BasePost {
+  /// Create an intance of a concrete http request behavior that
+  /// inherits [RequestMethod].
+  ProfileCarNumRequest({
+    @required String carNum,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            carNum: carNum,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/profileCarNum',
+      body: body,
+      headers: getHeaders(),
+    );
+    return response;
+  }
+}
+
+class PassengerRouteRequest extends BasePost {
+  /// Create an intance of a concrete http request behavior that
+  /// inherits [RequestMethod].
+  PassengerRouteRequest({
+    @required String originX,
+    @required String originY,
+    @required String destinationX,
+    @required String destinationY,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            originX: originX,
+            originY: originY,
+            destinationX: destinationX,
+            destinationY: destinationY,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() async {
+    final parsedJson = json.encode(body);
+
+    final response = await _client.post(
+      '$_rootUrl/passengerRoute',
+      body: parsedJson,
+      headers: getHeaders()
+    );
+
+    return response;
+  }
+}
+
+class DriverRouteRequest extends BasePost {
+  /// Create an intance of a concrete http request behavior that
+  /// inherits [BasePost].
+  DriverRouteRequest._({
+    @required String originX,
+    @required String originY,
+    @required String destinationX,
+    @required String destinationY,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            originX: originX,
+            originY: originY,
+            destinationX: destinationX,
+            destinationY: destinationY,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() async {
+    final parsedJson = json.encode(body);
+
+    final response = await _client.post(
+      '$_rootUrl/driverRoute',
+      body: parsedJson,
+      headers: getHeaders()
+    );
+
     return response;
   }
 }
