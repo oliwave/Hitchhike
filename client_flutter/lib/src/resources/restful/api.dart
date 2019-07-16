@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:http/http.dart' show Response;
 
 import './request_method.dart';
 
@@ -20,13 +20,11 @@ class Api {
   ///
   /// e.g., [VerifyUserId], [SignUp], etc. are all instances that is defined
   /// in [request_method.dart] that actually call http api.
-  Future<Map<String, dynamic>> sendHttpRequest(RequestMethod action) async {
+  Future<Response> sendHttpRequest(RequestMethod action) async {
     final response = await action.request();
 
-    // TODO : check status code here!
+    print('Let me check : ${response.body}');
 
-    final Map<String, dynamic> parsedJson = json.decode(response.body);
-
-    return parsedJson;
+    return response;
   }
 }

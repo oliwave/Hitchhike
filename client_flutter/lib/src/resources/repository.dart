@@ -3,7 +3,7 @@ import './source_collection.dart';
 /// Gather all of the request of resources to the [Repository].
 ///
 /// The repository contains resources from different sources,
-/// such as [api], [prefs], [jwtStorage] and [] created by the singleton pattern.
+/// such as [api], [prefs], [SecureStorage] and [] created by the singleton pattern.
 /// That is, repository holds the reference from every source.
 ///
 /// In dart, the singleton pattern can be implemented by prefixing the constructor
@@ -12,7 +12,6 @@ import './source_collection.dart';
 /// you get the same object no matter whenever and wherever you access it.
 /// [https://dart.dev/guides/language/language-tour#constructors]
 class Repository {
-
   Repository._();
 
   /// Get access to the internet resource.
@@ -23,5 +22,12 @@ class Repository {
 
   /// Get access to the jwt storage.
   static SecureStorage get getSecureStorage => SecureStorage();
+}
 
+/// The target string is specified which local resource that client wants to access.
+class TargetSourceString {
+  static const String isMatched = 'isMatched';
+  static const String isDriver = 'isDriver';
+  static const String jwt = 'jwt';
+  static const String pwd = 'pwd';
 }

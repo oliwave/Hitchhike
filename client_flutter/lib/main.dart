@@ -2,9 +2,8 @@ import 'package:client_flutter/init_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import './src/screen/screen_route.dart';
-import './src/notifier/location_notifier.dart';
-import './src/notifier/role_notifier.dart';
+import './src/screen/page_collection.dart';
+import './src/model/model_collection.dart';
 
 import './test_api.dart';
 
@@ -24,16 +23,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(builder: (_) => RoleNotifier()),
-        ChangeNotifierProvider(builder: (_) => LocationNotifier()),
+        ChangeNotifierProvider(builder: (_) => RoleModel()),
+        ChangeNotifierProvider(builder: (_) => LocationModel()),
       ],
       child: MaterialApp(
         title: 'hitchhike',
-        initialRoute: '/',
+        home: LoginPage(),
         onGenerateRoute: (RouteSettings settings) {
           return MaterialPageRoute(
             builder: (BuildContext context) {
-              return navigateToTargetPage(settings);
+              return navigateToTargetPage(settings.name);
             },
           );
         },
@@ -41,17 +40,21 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Widget navigateToTargetPage(RouteSettings settings) {
-    if (settings.name == Homepage.routeName) {
-      return Homepage();
-    } else if (settings.name == LoginPage.routeName) {
-      return LoginPage();
-    } else if (settings.name == SignUpProfilePage.routeName) {
-      return SignUpProfilePage();
-    } else if (settings.name == ProfilePage.routeName) {
-      return ProfilePage();
+  Widget navigateToTargetPage(String routeName) {
+
+    print(routeName);
+    var page;
+    if (routeName == Homepage.routeName) {
+      page = Homepage();
+    } else if (routeName == LoginPage.routeName) {
+      page = LoginPage();
+    } else if (routeName == SignUpProfilePage.routeName) {
+      page = SignUpProfilePage();
+    } else if (routeName == ProfilePage.routeName) {
+      page = ProfilePage();
     } else {
-      throw 'bad route';
+      page = BadRoutePage();
     }
+    return page;
   }
 }
