@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Homepage extends StatelessWidget {
-  static const String routeName = '/';
+  static const String routeName = '/homepage';
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37, -122),

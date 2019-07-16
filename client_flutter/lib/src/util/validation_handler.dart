@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 
+/// [ValidationHandler] can help client to manipulate the existing
+/// hash validation code.
 class ValidationHandler {
   const ValidationHandler._();
 
@@ -12,6 +14,8 @@ class ValidationHandler {
 
   static final _validationHandler = ValidationHandler._();
 
+  /// For instance, client can use [verifySixDigitsCode] to check whether
+  /// the [hashedSixDigits] is the same value as [rawSixDigits] after hashing.
   bool verifySixDigitsCode({
     @required String rawSixDigits,
     @required String hashedSixDigits,
@@ -20,7 +24,7 @@ class ValidationHandler {
       return false;
     }
 
-    List<int> bytes = utf8.encode(rawSixDigits);
+    List<int> bytes = utf8.encode(rawSixDigits); 
     final digest = sha256.convert(bytes);
 
     print(bytes);
@@ -31,6 +35,10 @@ class ValidationHandler {
   }
 }
 
+/// The class that holds the hash validation code in run time only.
+/// 
+/// That is, when user closes the app at the stage of validating the membership of
+/// ncnu , user has .....
 class HashValidationCode {
   HashValidationCode._();
 
@@ -41,12 +49,18 @@ class HashValidationCode {
   static final _hashValidationCode = HashValidationCode._();
 
   String _hashedSixDigits;
+  DateTime _getHashCodeTime;
 
   void setCode(String data) {
+    _getHashCodeTime = DateTime.now();
     _hashedSixDigits = data;
   }
 
   String getCode() {
     return _hashedSixDigits;
+  }
+
+  String getHashCodeTime() {
+    return _getHashCodeTime.toString();
   }
 }
