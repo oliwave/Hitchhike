@@ -44,6 +44,9 @@ dependencies:
   # For service permission in both Android and iOS
   permission_handler: ^3.1.0
 
+  # For socket.io connection
+  adhara_socket_io: ^0.1.11
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
