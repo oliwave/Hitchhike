@@ -16,10 +16,14 @@ class SocketHandler {
   bool get isConnected => _isConnected;
 
   Future<SocketIO> connectSocketServer() async {
-    _socket = await _manager.createInstance('https://socket.hitchhike.ml');
-    _socket.connect();
-    _isConnected = true;
-    return _socket;
+    if (!_isConnected) {
+      _socket = await _manager.createInstance('https://socket.hitchhike.ml');
+      _socket.connect();
+      _isConnected = true;
+      return _socket;
+    } else {
+      return null;
+    }
   }
 
   Future<void> disconnetSocket() async {
