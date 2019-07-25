@@ -5,11 +5,11 @@ import 'package:provider/provider.dart';
 import './src/screen/page_collection.dart';
 import './src/provider/setup_provider.dart';
 
-import './test_api.dart';
+// import './test_api.dart'; // (ucomment this to test api)
 
 Future main() async {
-  // Testing the restful api.
-  await apiTest.runTest();
+  // Testing the restful api. // (ucomment this to test api)
+  // await apiTest.runTest(); // (ucomment this to test api)
 
   // Initializing the client app.
   await init.runInitSetting();
@@ -27,12 +27,16 @@ class MyApp extends StatelessWidget {
         ...globalProviders,
       ],
       child: MaterialApp(
+        theme: ThemeData(
+          canvasColor: Colors.transparent,
+        ),
         title: 'hitchhike',
-        home: LoginPage(),
+        // home: LoginPage(), // (profile)
+        home: Homepage(), // (debug)
         onGenerateRoute: (RouteSettings settings) {
           return MaterialPageRoute(
             builder: (BuildContext context) {
-              return navigateToTargetPage(settings);
+              return navigateToTargetPage(settings.name);
             },
           );
         },
@@ -41,7 +45,6 @@ class MyApp extends StatelessWidget {
   }
 
   Widget navigateToTargetPage(String routeName) {
-
     print(routeName);
     var page;
     if (routeName == Homepage.routeName) {
