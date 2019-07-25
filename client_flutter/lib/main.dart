@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import './src/screen/page_collection.dart';
-import './src/model/model_collection.dart';
+import './src/provider/setup_provider.dart';
 
 import './test_api.dart';
 
@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(builder: (_) => RoleModel()),
-        ChangeNotifierProvider(builder: (_) => LocationModel()),
+        ...localProviders,
+        ...globalProviders,
       ],
       child: MaterialApp(
         title: 'hitchhike',
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: (RouteSettings settings) {
           return MaterialPageRoute(
             builder: (BuildContext context) {
-              return navigateToTargetPage(settings.name);
+              return navigateToTargetPage(settings);
             },
           );
         },
