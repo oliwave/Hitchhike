@@ -1,30 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../util/platform_info.dart';
+import '../widgets/homepage/map_view.dart';
+import '../widgets/homepage/bottom_sheet.dart';
+import '../widgets/homepage/location_app_bar.dart';
 
 class Homepage extends StatelessWidget {
   static const String routeName = '/homepage';
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37, -122),
-    zoom: 14.4746,
-  );
-
   @override
   Widget build(BuildContext context) {
+    // Assign the context of Homepage to 'PlatformInfo' for getting 
+    // the size of scaffold.
+    PlatformInfo.context = context; 
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Homepage'),
+      body: Stack(
+        children: <Widget>[
+          MapView(),
+          LocationAppBar(),
+          GoogleLogo(),
+        ],
       ),
-      body: GoogleMap(
-        initialCameraPosition: _kGooglePlex,
-        mapType: MapType.normal,
-        onMapCreated: (GoogleMapController controller) {
-          // location.controller.complete(controller),
-        },
-        myLocationButtonEnabled: false,
-        myLocationEnabled: false,
-        // markers: Set<Marker>.of(location.markersValue),
-        // circles: Set<Circle>.of(location.circlesValue),
+      bottomSheet: HomepageBottomSheet(),
+    );
+  }
+}
+
+class GoogleLogo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment(-0.85, 0.8),
+      child: Text(
+        'Google',
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.black45,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
