@@ -1,36 +1,34 @@
-// import '../resources/cached/simple_storage.dart';
 import 'package:flutter/material.dart';
 
-import '../resources/repository.dart';
+import '../../resources/repository.dart';
 
 /// Recording the current client information
 ///
 /// The [isMatched] is used to judge whether the client is in the matched mode. And
 /// if the client is in the matched mode, the [isDriver] can determine what role the
 /// client is.
-class RoleModel with ChangeNotifier {
+class RoleProvider with ChangeNotifier {
   static final _prefs = Repository.getSimpleStorage;
 
   bool _isMatched = _prefs.getBool(TargetSourceString.isMatched);
-  bool _isDriver = _prefs.getBool(TargetSourceString.isDriver);
+  String _role = _prefs.getString(TargetSourceString.role);
 
   bool get isMatched => _isMatched;
-  bool get isDriver => _isDriver;
+  String get role => _role;
 
   set isMatched(bool isMatched) {
     _isMatched = isMatched;
   }
 
-  set isDriver(bool isDriver) {
-    _isDriver = isDriver;
-    notifyListeners();
+  set role(String role) {
+    _role = role;
   }
 
   @override
   void dispose() {
     // Save the state in case the client turns off the app
     if (_isMatched) {
-      _prefs.setBool(TargetSourceString.isDriver, _isDriver);
+      _prefs.setString(TargetSourceString.role, _role);
       _prefs.setBool(TargetSourceString.isMatched, _isMatched);
     }
     super.dispose();
