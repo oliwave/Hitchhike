@@ -22,6 +22,8 @@ abstract class RequestMethod {
   /// Implement your http request code down here!
   Future<Response> request();
 
+  /// [getHeaders] enables client to get different content of headers depends on
+  /// whether thers is value assigned to [jwtToken].
   Map<String, String> getHeaders() {
     if (jwtToken == null) {
       return {
@@ -36,6 +38,8 @@ abstract class RequestMethod {
   }
 }
 
+/// This abstract class defining the basic function for POST request, such as
+/// setting the content of a [body]. And it also inherit the [RequestMethod].
 abstract class BasePost extends RequestMethod {
   BasePost({
     @required this.body,
@@ -272,11 +276,8 @@ class PassengerRouteRequest extends BasePost {
   Future<Response> request() async {
     final parsedJson = json.encode(body);
 
-    final response = await _client.post(
-      '$_rootUrl/passengerRoute',
-      body: parsedJson,
-      headers: getHeaders()
-    );
+    final response = await _client.post('$_rootUrl/passengerRoute',
+        body: parsedJson, headers: getHeaders());
 
     return response;
   }
@@ -305,11 +306,23 @@ class DriverRouteRequest extends BasePost {
   Future<Response> request() async {
     final parsedJson = json.encode(body);
 
-    final response = await _client.post(
-      '$_rootUrl/driverRoute',
-      body: parsedJson,
-      headers: getHeaders()
-    );
+    final response = await _client.post('$_rootUrl/driverRoute',
+        body: parsedJson, headers: getHeaders());
+
+    return response;
+  }
+}
+
+class PlacesApiKeyRequest extends RequestMethod {
+  PlacesApiKeyRequest({
+    @required String jwtToken,
+  }) : super(
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() async {
+    final response = await _client.post('$_rootUrl/key', headers: getHeaders());
 
     return response;
   }
