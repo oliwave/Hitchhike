@@ -22,12 +22,15 @@ class Repository {
 
   /// Get access to the jwt storage.
   static SecureStorage get getSecureStorage => SecureStorage();
+
+  /// Get acces to the socket
+  static SocketHandler get getSocketHandler => SocketHandler();
 }
 
 /// The target string is specified which local resource that client wants to access.
 class TargetSourceString {
   static const String isMatched = 'isMatched';
-  static const String isDriver = 'isDriver';
+  static const String role = 'role';
   static const String jwt = 'jwt';
   static const String pwd = 'pwd';
 }

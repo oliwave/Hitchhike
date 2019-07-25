@@ -21,12 +21,12 @@ class SimpleStorage {
   }
 
   bool getBool(String target) {
-    if (!_isProperTarget(target)) {
+    if (!_boolProperTarget(target)) {
       return false;
     }
 
     bool value = false;
-    
+
     try {
       value = _prefs.getBool(target);
     } catch (e) {
@@ -38,13 +38,30 @@ class SimpleStorage {
   }
 
   Future<bool> setBool(String target, bool value) async {
-    if (!_isProperTarget(target)) {
+    if (!_boolProperTarget(target)) {
       return false;
     }
     return await _prefs.setBool(target, value);
   }
 
-  bool _isProperTarget(String target) {
+  String getString(String target) {
+    String value;
+
+    try {
+      value = _prefs.getString(target);
+    } catch (e) {
+      print('It\'s the first time to get $target : $e');
+    }
+
+    print(value);
+    return value;
+  }
+
+  Future<bool> setString(String target, String value) {
+    return _prefs.setString(target, value);
+  }
+
+  bool _boolProperTarget(String target) {
     if (target == TargetSourceString.jwt ||
         target == TargetSourceString.pwd ||
         target == 'password' ||
