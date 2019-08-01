@@ -14,7 +14,7 @@ class HomepageBottomSheet extends StatefulWidget {
 
 class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController _bottomSheetController;
   Animation<double> _sheetHeightAnimation;
   Animation<double> _opacityAnimation;
 
@@ -22,14 +22,14 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
   void initState() {
     print('AnimtionController is in initState!!!');
 
-    _controller = AnimationController(
+    _bottomSheetController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
     CurvedAnimation curvedAnimation = CurvedAnimation(
       curve: Curves.ease,
-      parent: _controller,
+      parent: _bottomSheetController,
       reverseCurve: Curves.ease,
     );
 
@@ -40,7 +40,7 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
 
     curvedAnimation = CurvedAnimation(
       curve: Curves.easeIn,
-      parent: _controller,
+      parent: _bottomSheetController,
       reverseCurve: Curves.easeOut,
     );
 
@@ -56,7 +56,7 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     // 'sheetHeightAnimation' and 'opacityAnimation' are triggered at
     // very deep widget tree. Therefore, we hold the reference of
     // 'AnimationController' in 'HomepageProvider'.
-    state.controller = _controller;
+    state.bottomSheetController = _bottomSheetController;
 
     super.initState();
   }
@@ -64,6 +64,9 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
   @override
   void dispose() {
     print('AnimationController has been disposed!!!');
+    // Controller should be dispose before the ticker was disposed,
+    // because it may cause memory leak.
+    _bottomSheetController.dispose();
     super.dispose();
   }
 
