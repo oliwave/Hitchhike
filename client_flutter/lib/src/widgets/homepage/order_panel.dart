@@ -59,7 +59,8 @@ class OrderPanel extends StatelessWidget {
 
 class _OrderButton extends StatelessWidget {
   _OrderButton({@required this.buttonName})
-      : buttonColor = buttonName == '送出訂單' ? Colors.green : Colors.red,
+      : buttonColor =
+            buttonName == '送出訂單' ? Colors.green[700] : Colors.redAccent[700],
         buttonIcon = buttonName == '送出訂單' ? Icons.send : Icons.cancel;
 
   final String buttonName;
@@ -116,7 +117,9 @@ class _OrderButton extends StatelessWidget {
       onPressed: () {
         print('The AnimationController is great in OrderPanel');
 
-        homepageProvider.controller.reverse();
+        homepageProvider.bottomSheetController.reverse();
+        homepageProvider.floatingButtonController.reverse();
+        homepageProvider.appBarController.reverse();
         homepageProvider.isOrderPanel = false;
 
         if (buttonName != '送出訂單') {

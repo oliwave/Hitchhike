@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../util/platform_info.dart';
@@ -59,7 +61,7 @@ class _RoleButton extends StatelessWidget {
 
     return RaisedButton(
       // The decoration of role button
-      textColor: Colors.green,
+      textColor: Colors.black87,
       // padding: const EdgeInsets.all(15),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -92,8 +94,11 @@ class _RoleButton extends StatelessWidget {
 
         roleProvider.role = role;
         homepageProvider.isOrderPanel = true;
-        
-        homepageProvider.controller.forward();
+
+        homepageProvider.bottomSheetController.forward();
+        homepageProvider.floatingButtonController.forward();
+        homepageProvider.appBarController.forward();
+
       },
     );
   }
