@@ -322,7 +322,7 @@ class PlacesApiKeyRequest extends RequestMethod {
 
   @override
   Future<Response> request() async {
-    final response = await _client.post('$_rootUrl/key', headers: getHeaders());
+    final response = await _client.get('$_rootUrl/key');
 
     return response;
   }
