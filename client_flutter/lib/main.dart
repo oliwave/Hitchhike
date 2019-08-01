@@ -23,10 +23,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ...localProviders,
         ...globalProviders,
+        ...localProviders,
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           canvasColor: Colors.transparent,
         ),
