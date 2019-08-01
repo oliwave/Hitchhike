@@ -29,11 +29,13 @@ class _MenuButtonState extends State<MenuButton>
 
   @override
   Widget build(BuildContext context) {
+    print('Refreshing MenuButton ...');
+    
     return Padding(
       padding: EdgeInsets.only(
         top: PlatformInfo.screenAwareSize(10.0),
-        left: PlatformInfo.screenAwareSize(12.0),
-        right: PlatformInfo.screenAwareSize(5.0),
+        // left: PlatformInfo.screenAwareSize(12.0),
+        // right: PlatformInfo.screenAwareSize(5.0),
       ),
       child: Align(
         alignment: Alignment.topCenter,
