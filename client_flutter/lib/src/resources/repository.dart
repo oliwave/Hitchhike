@@ -29,6 +29,8 @@ class Repository {
 
 /// The target string is specified which local resource that client wants to access.
 class TargetSourceString {
+  TargetSourceString._();
+
   static const String isMatched = 'isMatched';
   static const String role = 'role';
   static const String jwt = 'jwt';
