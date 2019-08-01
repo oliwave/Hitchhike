@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:flutter_google_places/flutter_google_places.dart';
-
+import '../../provider/provider_collection.dart';
 import '../../util/platform_info.dart';
+import '../../model/order_info.dart';
 
 class SearchBlock extends StatelessWidget {
   @override
@@ -21,6 +24,8 @@ class SearchBlock extends StatelessWidget {
 class _LocationIndicatorIcons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('Refreshing LocationIndicatorIcons ...');
+
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: PlatformInfo.screenAwareSize(5),
@@ -33,7 +38,7 @@ class _LocationIndicatorIcons extends StatelessWidget {
             flex: 3,
             child: Icon(
               Icons.location_searching,
-              // color: Colors.blueGrey,
+              color: Colors.blue[700],
               size: 19,
             ),
           ),
@@ -46,7 +51,7 @@ class _LocationIndicatorIcons extends StatelessWidget {
             flex: 3,
             child: Icon(
               Icons.location_on,
-              // color: Colors.blueGrey,
+              color: Colors.red[700],
               size: 19,
             ),
           ),
@@ -77,53 +82,71 @@ class _SearchField extends StatelessWidget {
   _SearchField({@required this.hintText});
 
   final String hintText;
-  final String placesApiKey = 'AIzaSyB9Ht6FmmPwYbY87YDtM-Krno95W3ozqmM';
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<HomepageProvider>(
+      context,
+      listen: false,
+    );
+
+    print('Refreshing SeachField ... $hintText 1');
+
     return Material(
       child: InkWell(
-        onTap: () {
-          // PlacesAutocomplete.show(
-          //   apiKey: placesApiKey, // get api key from auth_provider.dart
-          //   context: context,
-          //   mode: Mode.overlay,
-          //   location: null,
-          // );
-
-          // Navigator.pushNamed(
-          //   context,
-          //   SearchAddressPage.routeName,
-          //   arguments: hintText,
-          // );
-          // state.selectedRole = null;
-        },
+        onTap: () async => await state.startAutocomplete(context, hintText),
         child: Container(
           padding: EdgeInsets.all(
             PlatformInfo.screenAwareSize(4),
           ),
-          width: PlatformInfo.screenAwareSize(200),
+          width: PlatformInfo.screenAwareSize(Platform.isIOS ? 175 : 200),
           height: PlatformInfo.screenAwareSize(30),
           decoration: BoxDecoration(
             border: Border.all(width: 1),
-            borderRadius: BorderRadius.all(
+            borderRadius: const BorderRadius.all(
               Radius.circular(12),
             ),
           ),
           child: Align(
             alignment: Alignment.centerLeft,
-            child: Text(
-              hintText,
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: PlatformInfo.screenAwareSize(12),
-                fontWeight: FontWeight.bold,
-                letterSpacing: 3,
-              ),
+            child: Consumer<HomepageProvider>(
+              builder: (context, HomepageProvider value, Widget child) {
+                print('Refreshing SeachField ... $hintText 2');
+                final target = _endOrStart(value.orderInfo);
+
+                return Text(
+                  target,
+                  style: TextStyle(
+                    color: target == hintText ? Colors.grey : Colors.black87,
+                    fontSize: PlatformInfo.screenAwareSize(12),
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 3,
+                  ),
+                );
+              },
             ),
           ),
         ),
       ),
     );
+  }
+
+  String _endOrStart(OrderInfo info) {
+    String targetText;
+
+    if (hintText != '終點') {
+      if (info.nameStart != null) {
+        targetText = info.nameStart;
+      } else {
+        targetText = hintText;
+      }
+    } else {
+      if (info.nameEnd != null) {
+        targetText = info.nameEnd;
+      } else {
+        targetText = hintText;
+      }
+    }
+    return targetText;
   }
 }
