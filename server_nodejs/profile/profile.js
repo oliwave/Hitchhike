@@ -1,89 +1,94 @@
 var db = require('../db.js');
 var express = require('express');
 const auth = require('../auth.js');
+var bodyParser = require('body-parser')
+
+var app = express();
+var jsonParser = bodyParser.json();
+
 const router = new express.Router()
 
 //pwd
-router.get('/profilePwd/:pwd', auth.auth, function (req, res) {
+router.post('/profilePwd', auth.auth, jsonParser,function (req, res) {
     var uid = auth.uid;
-    var pwd = req.params.pwd;
+    var pwd = req.body.pwd;
     const sql = `UPDATE user SET pwd = '${pwd}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send("fail");
+            res.send({"status": fail});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send("success");
+            res.send({"status": success});
         }
     });
 });
 
 //name
-router.get('/profileName/:name', auth.auth, function (req, res) {
+router.post('/profileName', auth.auth, jsonParser,function (req, res) {
     var uid = auth.uid;
-    var name = req.params.name;
+    var name = req.body.name;
     const sql = `UPDATE user SET name = '${name}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send("fail");
+            res.send({"status": fail});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send("success");
+            res.send({"status": success});
         }
     });
 });
 
 //photo
-router.get('/profilePhoto/:photo', auth.auth, function (req, res) {
+router.post('/profilePhoto', auth.auth, jsonParser,function (req, res) {
     var uid = auth.uid;
-    var photo = req.params.photo;
+    var photo = req.body.photo;
     const sql = `UPDATE user SET photo = '${photo}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send("fail");
+            res.send({"status": fail});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send("success");
+            res.send({"status": success});
         }
     });
 });
 
 //department
-router.get('/profileDepartment/:department', auth.auth, function (req, res) {
+router.post('/profileDepartment', auth.auth, jsonParser,function (req, res) {
     var uid = auth.uid;
-    var department = req.params.department;
+    var department = req.body.department;
     const sql = `UPDATE user SET department = '${department}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send("fail");
+            res.send({"status": fail});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send("success");
+            res.send({"status": success});
         }
     });
 });
 
 //carNum
-router.get('/profileCarNum/:carNum', auth.auth, function (req, res) {
+router.post('/profileCarNum', auth.auth, jsonParser,function (req, res) {
     var uid = auth.uid;
-    var carNum = req.params.carNum;
+    var carNum = req.body.carNum;
     const sql = `UPDATE user SET car_num = '${carNum}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send("fail");
+            res.send({"status": fail});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send("success");
+            res.send({"status": success});
         }
     });
 });

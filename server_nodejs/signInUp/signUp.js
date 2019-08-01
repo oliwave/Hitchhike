@@ -2,27 +2,32 @@ var db = require('../db.js');
 var express = require('express');
 var crypto = require('crypto');
 var mailer = require('./mailer.js');
+var bodyParser = require('body-parser')
+
+var app = express();
+var jsonParser = bodyParser.json();
+
 const router = new express.Router()
 // use post
-router.get('/signUp/:uid/:pwd/:name', function (req, res) {
-    var uid = req.params.uid;
-    var pwd = req.params.pwd;
-    var name = req.params.name;
+router.post('/signUp', jsonParser,function (req, res) {
+    var uid = req.body.uid;
+    var pwd = req.body.pwd;
+    var name = req.body.name;
     const sql = `INSERT INTO user (uid, pwd, name) VALUES ('${uid}', '${pwd}', '${name}')`;
     db.query(sql, function (err, result) {
         if (err) {
-            res.send("fail");
+            res.send({"status": fail});
             console.log(err);
         }
         else {
-            res.send("success");
+            res.send({"status": success});
         }
     });
 });
 
 //verify ncnu and send emails
-router.get('/verify/:uid', function (req, res) {
-    var uid = req.params.uid;
+router.post('/verify', jsonParser,function (req, res) {
+    var uid = req.body.uid;
     email = "s" + uid +"@mail1.ncnu.edu.tw";
     const sql = `select * from user where uid = '${uid}'`;
     db.query(sql, function (err, result) {
@@ -30,7 +35,7 @@ router.get('/verify/:uid', function (req, res) {
             console.log(err);
         }
         if (result.length > 0) {
-            res.send("fail");
+            res.send({"status": fail});
         }
         else{
             //sent mail
@@ -38,7 +43,7 @@ router.get('/verify/:uid', function (req, res) {
             // hash sixNum
             let hashedSixNum = crypto.createHash('sha256').update(mailer.sixNum)
             .digest('hex');
-            res.send(hashedSixNum);
+            res.send({"hash": hashedSixNum});
         }
     });
 });
