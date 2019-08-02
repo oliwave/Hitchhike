@@ -257,17 +257,17 @@ class PassengerRouteRequest extends BasePost {
   /// Create an intance of a concrete http request behavior that
   /// inherits [RequestMethod].
   PassengerRouteRequest({
-    @required String originX,
-    @required String originY,
-    @required String destinationX,
-    @required String destinationY,
+    @required double originX,
+    @required double originY,
+    @required double destinationX,
+    @required double destinationY,
     @required String jwtToken,
   }) : super(
           body: {
-            originX: originX,
-            originY: originY,
-            destinationX: destinationX,
-            destinationY: destinationY,
+            'originX': originX,
+            'originY': originY,
+            'destinationX': destinationX,
+            'destinationY': destinationY,
           },
           jwtToken: jwtToken,
         );
@@ -286,18 +286,18 @@ class PassengerRouteRequest extends BasePost {
 class DriverRouteRequest extends BasePost {
   /// Create an intance of a concrete http request behavior that
   /// inherits [BasePost].
-  DriverRouteRequest._({
-    @required String originX,
-    @required String originY,
-    @required String destinationX,
-    @required String destinationY,
+  DriverRouteRequest({
+    @required double originX,
+    @required double originY,
+    @required double destinationX,
+    @required double destinationY,
     @required String jwtToken,
   }) : super(
           body: {
-            originX: originX,
-            originY: originY,
-            destinationX: destinationX,
-            destinationY: destinationY,
+            'originX': originX,
+            'originY': originY,
+            'destinationX': destinationX,
+            'destinationY': destinationY,
           },
           jwtToken: jwtToken,
         );
