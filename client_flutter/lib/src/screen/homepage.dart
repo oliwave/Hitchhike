@@ -6,6 +6,7 @@ import '../widgets/homepage/map_view.dart';
 import '../widgets/homepage/position_floating_action_button.dart';
 import '../widgets/homepage/bottom_sheet.dart';
 import '../widgets/homepage/google_map_widget/marker_bitmap.dart';
+import '../widgets/bulletin.dart';
 
 import '../test/info_button.dart';
 import '../test/geo_info.dart';
@@ -32,7 +33,8 @@ class Homepage extends StatelessWidget {
           TestingInfoButton(), // WARNING : Only for testing
           TestingGeoInfo(), // WARNING : Only for testing
           GoogleLogo(),
-          PositionFloatingActionButton()
+          PositionFloatingActionButton(),
+          Bulletin(),
         ],
       ),
       bottomSheet: HomepageBottomSheet(),

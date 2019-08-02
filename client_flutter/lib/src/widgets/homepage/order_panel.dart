@@ -74,11 +74,6 @@ class _OrderButton extends StatelessWidget {
       listen: false,
     );
 
-    final roleProvider = Provider.of<RoleProvider>(
-      context,
-      listen: false,
-    );
-
     print('Refreshing OrderButton .... $buttonName');
 
     return OutlineButton(
@@ -117,16 +112,9 @@ class _OrderButton extends StatelessWidget {
       onPressed: () {
         print('The AnimationController is great in OrderPanel');
 
-        homepageProvider.bottomSheetController.reverse();
-        homepageProvider.floatingButtonController.reverse();
-        homepageProvider.appBarController.reverse();
-        homepageProvider.isOrderPanel = false;
+        homepageProvider.showBarHidePanel();
 
-        if (buttonName != '送出訂單') {
-          roleProvider.role = null;
-        } else {
-          roleProvider.isMatched = true;
-        }
+        homepageProvider.sendOrder(context, buttonName);
       },
     );
   }

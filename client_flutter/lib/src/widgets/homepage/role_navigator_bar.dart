@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 
@@ -29,10 +28,16 @@ class RoleNavigatorBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           Expanded(
-            child: _RoleButton(role: '乘客'),
+            child: _RoleButton(
+              roleName: '乘客',
+              roleIcon: Icons.person,
+            ),
           ),
           Expanded(
-            child: _RoleButton(role: '司機'),
+            child: _RoleButton(
+              roleName: '司機',
+              roleIcon: Icons.drive_eta,
+            ),
           ),
         ],
       ),
@@ -41,9 +46,10 @@ class RoleNavigatorBar extends StatelessWidget {
 }
 
 class _RoleButton extends StatelessWidget {
-  _RoleButton({@required this.role});
+  _RoleButton({@required this.roleName, @required this.roleIcon});
 
-  final String role;
+  final String roleName;
+  final IconData roleIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -57,19 +63,18 @@ class _RoleButton extends StatelessWidget {
       listen: false,
     );
 
-    print('Refreshing RoleButton .... $role');
+    print('Refreshing RoleButton .... $roleName');
 
     return RaisedButton(
       // The decoration of role button
       textColor: Colors.black87,
-      // padding: const EdgeInsets.all(15),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(
-            role == '司機' ? 0 : PlatformInfo.screenAwareSize(35),
+            roleName == '司機' ? 0 : PlatformInfo.screenAwareSize(35),
           ),
           topRight: Radius.circular(
-            role == '司機' ? PlatformInfo.screenAwareSize(35) : 0,
+            roleName == '司機' ? PlatformInfo.screenAwareSize(35) : 0,
           ),
         ),
       ),
@@ -79,9 +84,9 @@ class _RoleButton extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(role == '司機' ? Icons.drive_eta : Icons.person),
+          Icon(roleIcon),
           Text(
-            role,
+            roleName,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               letterSpacing: 3,
@@ -92,13 +97,9 @@ class _RoleButton extends StatelessWidget {
       onPressed: () {
         print('The AnimationController is great in RoleNavigatorBar');
 
-        roleProvider.role = role;
-        homepageProvider.isOrderPanel = true;
+        roleProvider.role = roleName;
 
-        homepageProvider.bottomSheetController.forward();
-        homepageProvider.floatingButtonController.forward();
-        homepageProvider.appBarController.forward();
-
+        homepageProvider.showPanelHideBar();
       },
     );
   }

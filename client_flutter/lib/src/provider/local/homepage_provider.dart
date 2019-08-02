@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:provider/provider.dart';
 
+import '../provider_collection.dart';
 import '../../model/order_info.dart';
 import '../../resources/repository.dart';
 import '../../resources/restful/request_method.dart';
@@ -80,8 +82,8 @@ class HomepageProvider with ChangeNotifier {
   OrderInfo get orderInfo => _orderInfo;
 
   /// Trigger places autocomplete.
-  /// 
-  /// [target]
+  ///
+  /// [target] is used to judge which kind of [SearchField] it is.
   Future<void> startAutocomplete(BuildContext context, String target) async {
     final token = Uuid().generateV4();
     // final key = await _getPlacesApiKey(); // uncomment this when api key development is done.
@@ -130,8 +132,65 @@ class HomepageProvider with ChangeNotifier {
         'name: ${detail.result.name}'
         'lng: ${detail.result.geometry.location.lng},'
         'lat: ${detail.result.geometry.location.lat}',
+        // 'lat: ${detail.result.geometry.}',
       );
     }
+  }
+
+  void sendOrder(BuildContext context, String buttonName) {
+    final roleProvider = Provider.of<RoleProvider>(context, listen: false);
+
+    if (buttonName != '送出訂單') {
+      roleProvider.role = null;
+    } else {
+      roleProvider.isMatched = true;
+      if (_hasCompleteOrderInfo()) {
+        _orderRequest(roleProvider.role);
+      } else {
+        Provider.of<BulletinProvider>(
+          context,
+          listen: false,
+        ).showBulletin('還沒設定路線喔！');
+      }
+    }
+  }
+
+  void showPanelHideBar() {
+    isOrderPanel = true;
+    bottomSheetController.forward();
+    floatingButtonController.forward();
+    appBarController.forward();
+  }
+
+  void showBarHidePanel() {
+    bottomSheetController.reverse();
+    floatingButtonController.reverse();
+    appBarController.reverse();
+    isOrderPanel = false;
+  }
+
+  void _orderRequest(String role) {
+    if (role == '司機') {
+      _api.sendHttpRequest(DriverRouteRequest(
+        originX: orderInfo.geoStart.lng,
+        originY: orderInfo.geoStart.lat,
+        destinationX: orderInfo.geoEnd.lng,
+        destinationY: orderInfo.geoEnd.lat,
+        jwtToken: '',
+      ));
+    } else {
+      _api.sendHttpRequest(PassengerRouteRequest(
+        originX: orderInfo.geoStart.lng,
+        originY: orderInfo.geoStart.lat,
+        destinationX: orderInfo.geoEnd.lng,
+        destinationY: orderInfo.geoEnd.lat,
+        jwtToken: '',
+      ));
+    }
+  }
+
+  bool _hasCompleteOrderInfo() {
+    return orderInfo.geoEnd != null && orderInfo.geoStart != null;
   }
 
   /// Always retrieve the key by calling this method.
