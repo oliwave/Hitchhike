@@ -28,6 +28,7 @@ class LocationProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
       );
 
+  /// Initialize [Marker] and [Cicrle] to indicate the current location of user.
   Future<Position> get initialPosition async {
     final position = await currentPosition;
 

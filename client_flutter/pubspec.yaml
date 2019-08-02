@@ -73,6 +73,8 @@ flutter:
    - assets/icons/motor/2.0x/
    - assets/icons/compass/
    - assets/icons/compass/2.0x/
+   - assets/icons/bullhorn/
+   - assets/icons/bullhorn/2.0x/
   
 
   # An image asset can refer to one or more resolution-specific "variants", see

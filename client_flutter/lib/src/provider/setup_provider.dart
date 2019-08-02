@@ -18,4 +18,7 @@ final globalProviders = <SingleChildCloneableWidget>[
   ChangeNotifierProvider.value(
     value: LocationProvider(),
   ),
+  ChangeNotifierProvider.value(
+    value: BulletinProvider(),
+  ),
 ];
