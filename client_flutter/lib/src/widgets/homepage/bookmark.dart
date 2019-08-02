@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/provider_collection.dart';
-import '../../model/order_info.dart';
 
 class Bookmark extends StatefulWidget {
   @override
@@ -12,15 +11,9 @@ class Bookmark extends StatefulWidget {
 
 class _BookmarkState extends State<Bookmark> {
   IconData star = Icons.star_border;
-  // Color color = Colors.yellow[900];
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<HomepageProvider>(
-      context,
-      listen: false,
-    );
-
     return Container(
       child: GestureDetector(
         child: Tooltip(
@@ -32,29 +25,25 @@ class _BookmarkState extends State<Bookmark> {
           showDuration: Duration(milliseconds: 500),
         ),
         onTap: () {
-          _changeIcon();
+          _changeIcon(context);
         },
       ),
     );
   }
 
-  void _changeIcon() {
-    final orderInfo = OrderInfo();
+  void _changeIcon(BuildContext context) {
+    final orderInfo =
+        Provider.of<HomepageProvider>(context, listen: false).orderInfo;
 
     setState(() {
-      // if (orderInfo.geoEnd != null && orderInfo.geoStart != null) {
-      star = star == Icons.star ? Icons.star_border : Icons.star;
-      // color = color == Colors.black ? Colors.yellow : Colors.black;
-      // } else {
-      // star =
-      // }
+      if (orderInfo.geoEnd != null && orderInfo.geoStart != null) {
+        star = star == Icons.star ? Icons.star_border : Icons.star;
+      } else {
+        Provider.of<BulletinProvider>(
+          context,
+          listen: false,
+        ).showBulletin('請先設定好路線！');
+      }
     });
-    // else {
-    //   scaffold.showSnackBar(
-    //     SnackBar(
-    //       content: Text('請先設定好起訖點！'),
-    //     ),
-    //   );
-    // }
   }
 }
