@@ -99,7 +99,7 @@ class _RoleButton extends StatelessWidget {
 
         roleProvider.role = roleName;
 
-        homepageProvider.showPanelHideBar();
+        homepageProvider.animationManager.showPanelHideBar();
       },
     );
   }

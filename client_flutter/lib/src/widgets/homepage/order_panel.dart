@@ -112,9 +112,9 @@ class _OrderButton extends StatelessWidget {
       onPressed: () {
         print('The AnimationController is great in OrderPanel');
 
-        homepageProvider.showBarHidePanel();
+        homepageProvider.animationManager.showBarHidePanel();
 
-        homepageProvider.sendOrder(context, buttonName);
+        homepageProvider.orderManager.sendOrder(context, buttonName);
       },
     );
   }

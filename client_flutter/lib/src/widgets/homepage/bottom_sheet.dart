@@ -51,12 +51,15 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
       ),
     );
 
-    final state = Provider.of<HomepageProvider>(context, listen: false);
+    final manager = Provider.of<HomepageProvider>(
+      context,
+      listen: false,
+    ).animationManager;
 
     // 'sheetHeightAnimation' and 'opacityAnimation' are triggered at
     // very deep widget tree. Therefore, we hold the reference of
     // 'AnimationController' in 'HomepageProvider'.
-    state.bottomSheetController = _bottomSheetController;
+    manager.bottomSheetController = _bottomSheetController;
 
     super.initState();
   }
@@ -101,7 +104,8 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
       child: Consumer<HomepageProvider>(
         builder: (_, HomepageProvider value, Widget panel) {
           // To determine which view should show on the screen.
-          return value.isOrderPanel
+          // return value.isOrderPanel
+          return value.animationManager.isOrderPanel
               ? panel
               : RoleNavigatorBar(
                   opacityAnimation: _opacityAnimation,

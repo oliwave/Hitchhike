@@ -40,12 +40,12 @@ class _LocationAppBarState extends State<LocationAppBar>
       ),
     );
 
-    final provider = Provider.of<HomepageProvider>(
+    final manager = Provider.of<HomepageProvider>(
       context,
       listen: false,
-    );
+    ).animationManager;
 
-    provider.appBarController = _appBarController;
+    manager.appBarController = _appBarController;
 
     super.initState();
   }

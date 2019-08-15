@@ -32,8 +32,10 @@ class _BookmarkState extends State<Bookmark> {
   }
 
   void _changeIcon(BuildContext context) {
-    final orderInfo =
-        Provider.of<HomepageProvider>(context, listen: false).orderInfo;
+    final orderInfo = Provider.of<HomepageProvider>(
+      context,
+      listen: false,
+    ).orderManager.orderInfo;
 
     setState(() {
       if (orderInfo.geoEnd != null && orderInfo.geoStart != null) {

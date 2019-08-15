@@ -27,17 +27,17 @@ class _PositionFloatingActionButtonState
 
     _alignmentAnimation = _floatingButtonController.drive(
       AlignmentTween(
-        begin: Alignment(0.875, 0.75),
-        end: Alignment(0.875, 0.15),
+        begin: Alignment(0.875, 0.7),
+        end: Alignment(0.875, -0.15),
       ),
     );
 
-    final homepageProvider = Provider.of<HomepageProvider>(
+    final manager = Provider.of<HomepageProvider>(
       context,
       listen: false,
-    );
+    ).animationManager;
 
-    homepageProvider.floatingButtonController = _floatingButtonController;
+    manager.floatingButtonController = _floatingButtonController;
 
     super.initState();
   }
