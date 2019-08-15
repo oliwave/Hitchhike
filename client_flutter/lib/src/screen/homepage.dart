@@ -1,3 +1,4 @@
+import 'package:client_flutter/src/util/util_collection.dart';
 import 'package:flutter/material.dart';
 
 import '../util/platform_info.dart';
@@ -16,6 +17,10 @@ class Homepage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    print('Device width : ${MediaQuery.of(context).size.width}');
+    print('Device heigth : ${MediaQuery.of(context).size.height}');
+
     // Assign the context of Homepage to 'PlatformInfo' for getting
     // the size of scaffold.
     PlatformInfo.context = context;

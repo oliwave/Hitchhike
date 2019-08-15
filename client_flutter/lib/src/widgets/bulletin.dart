@@ -32,6 +32,7 @@ class _BulletinState extends State<Bulletin>
     _bulletinWidth = _bulletinSizeController.drive(
       Tween<double>(
         begin: 0,
+        // end: PlatformInfo.screenAwareSize(210),
         end: 150,
       ),
     );
@@ -79,7 +80,10 @@ class _BulletinState extends State<Bulletin>
             child: Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 4.0,
+                  ),
                   child: Image.asset(
                     'assets/icons/bullhorn/bullhorn.png',
                     height: PlatformInfo.screenAwareSize(20),

@@ -9,6 +9,9 @@ class PlatformInfo {
   static BuildContext context;
 
   static double screenAwareSize(double size) {
-    return size * MediaQuery.of(context).size.height / _baseHeight;
+    // final height = size * MediaQuery.of(context).size.height / _baseHeight;
+    final height = size * 1.19;
+    // print(height);
+    return height;
   }
 }

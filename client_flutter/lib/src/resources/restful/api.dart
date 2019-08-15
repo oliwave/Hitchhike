@@ -23,7 +23,7 @@ class Api {
   Future<Response> sendHttpRequest(RequestMethod action) async {
     final response = await action.request();
 
-    print('Let me check : ${response.body}');
+    // print('Let me check : ${response.body}');
 
     return response;
   }
