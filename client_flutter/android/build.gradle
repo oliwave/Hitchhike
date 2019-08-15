@@ -11,6 +11,9 @@ buildscript {
         // 因為 AndroidX 和 com.support 不相容，所以 downgrade
         classpath 'com.android.tools.build:gradle:3.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // For FCM
+        classpath 'com.google.gms:google-services:4.3.0'
     }
 }
 

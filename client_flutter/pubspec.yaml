@@ -49,6 +49,11 @@ dependencies:
   # For socket.io connection
   adhara_socket_io: ^0.1.11
 
+  # For Firebase Cloud Messaging
+  firebase_messaging: ^5.1.2
+
+  intl: ^0.15.8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
