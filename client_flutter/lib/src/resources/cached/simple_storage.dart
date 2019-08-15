@@ -4,11 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// [SimpleSorage] is a simple key-value storage dedicating to save the unsensitive
 /// data on client.
 class SimpleStorage {
-  SimpleStorage._() {
-    init();
-  }
+  SimpleStorage._();
 
-  SharedPreferences _prefs;
+  static SharedPreferences _prefs;
 
   static final _simpleStoage = SimpleStorage._();
 
@@ -17,7 +15,11 @@ class SimpleStorage {
   }
 
   Future<void> init() async {
+    if (_prefs != null) {
+      print('SimpleStorage had been initialized since the app was launched!');
+    }
     _prefs = await SharedPreferences.getInstance();
+    print('SharedPreferences has been resolved !!!');
   }
 
   bool getBool(String target) {
@@ -25,15 +27,11 @@ class SimpleStorage {
       return false;
     }
 
-    bool value = false;
+    bool value = _prefs.getBool(target);
 
-    try {
-      value = _prefs.getBool(target);
-    } catch (e) {
-      print('It\'s the first time to get $target : $e');
-    }
+    if (value == null) value = false;
 
-    print(value);
+    // print('The value of getBool is $value');
     return value;
   }
 
@@ -45,15 +43,9 @@ class SimpleStorage {
   }
 
   String getString(String target) {
-    String value;
+    String value = _prefs.getString(target);
 
-    try {
-      value = _prefs.getString(target);
-    } catch (e) {
-      print('It\'s the first time to get $target : $e');
-    }
-
-    print(value);
+    // print('The value of getString is $value');
     return value;
   }
 
