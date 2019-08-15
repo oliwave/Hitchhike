@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../provider/provider_collection.dart';
@@ -85,54 +84,79 @@ class _SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<HomepageProvider>(
+    final manager = Provider.of<HomepageProvider>(
+      context,
+      listen: false,
+    ).autocompleteManager;
+
+    final locationProvider = Provider.of<LocationProvider>(
       context,
       listen: false,
     );
 
     print('Refreshing SeachField ... $hintText 1');
 
-    return Material(
-      child: InkWell(
-        onTap: () async => await state.startAutocomplete(context, hintText),
-        child: Container(
-          padding: EdgeInsets.all(
-            PlatformInfo.screenAwareSize(4),
-          ),
-          width: PlatformInfo.screenAwareSize(Platform.isIOS ? 175 : 200),
-          height: PlatformInfo.screenAwareSize(30),
-          decoration: BoxDecoration(
-            border: Border.all(width: 1),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(12),
-            ),
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Consumer<HomepageProvider>(
-              builder: (context, HomepageProvider value, Widget child) {
-                print('Refreshing SeachField ... $hintText 2');
-                final target = _endOrStart(value.orderInfo);
-
-                return Text(
-                  target,
-                  style: TextStyle(
-                    color: target == hintText ? Colors.grey : Colors.black87,
-                    fontSize: PlatformInfo.screenAwareSize(12),
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 3,
-                  ),
-                );
-              },
-            ),
-          ),
+    return Container(
+      width: PlatformInfo.screenAwareSize(175),
+      height: PlatformInfo.screenAwareSize(30),
+      decoration: BoxDecoration(
+        border: Border.all(width: 1),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(12),
         ),
+      ),
+      child: Flex(
+        direction: Axis.horizontal,
+        children: <Widget>[
+          Expanded(
+            flex: 5,
+            child: Material(
+              child: InkWell(
+                onTap: () async {
+                  await manager.startAutocomplete(
+                    context: context,
+                    target: hintText,
+                    futurePosition: locationProvider.currentPosition,
+                  );
+                },
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: _addressText(),
+                ),
+              ),
+            ),
+          ),
+          if (hintText == '你的位置') _CurrentLocationButton()
+        ],
       ),
     );
   }
 
-  String _endOrStart(OrderInfo info) {
+  Widget _addressText() {
+    return Consumer<HomepageProvider>(
+      builder: (context, HomepageProvider value, Widget child) {
+        print('Refreshing SeachField ... $hintText 2');
+        final target = _endOrStart(value.orderManager.orderInfo);
+
+        return Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            target['text'],
+            style: TextStyle(
+              color: target['color'],
+              fontSize: PlatformInfo.screenAwareSize(12),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 3,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Map<String, dynamic> _endOrStart(OrderInfo info) {
     String targetText;
+    Color targetColor;
 
     if (hintText != '終點') {
       if (info.nameStart != null) {
@@ -140,13 +164,59 @@ class _SearchField extends StatelessWidget {
       } else {
         targetText = hintText;
       }
+      targetColor = Colors.black87;
     } else {
       if (info.nameEnd != null) {
         targetText = info.nameEnd;
+        targetColor = Colors.black87;
       } else {
         targetText = hintText;
+        targetColor = Colors.grey;
       }
     }
-    return targetText;
+    return {'text': targetText, 'color': targetColor};
+  }
+}
+
+class _CurrentLocationButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final manager = Provider.of<HomepageProvider>(
+      context,
+      listen: false,
+    ).autocompleteManager;
+
+    final locationProvider = Provider.of<LocationProvider>(
+      context,
+      listen: false,
+    );
+
+    return Expanded(
+      flex: 1,
+      child: Material(
+        child: InkWell(
+          onTap: () async {
+            manager.useCurrentLocation(
+              futurePosition: locationProvider.currentPosition,
+            );
+          },
+          child: Align(
+            child: Container(
+              child: Consumer<HomepageProvider>(
+                builder: (_, HomepageProvider value, Widget child) {
+                  return Icon(
+                    Icons.my_location,
+                    color: manager.usingCurrentLocation
+                        ? Colors.blue
+                        : Colors.black,
+                    size: 15,
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
