@@ -9,12 +9,20 @@ import '../../widgets/homepage/google_map_widget/map_component.dart';
 import '../../widgets/homepage/google_map_widget/marker_bitmap.dart';
 
 class LocationProvider extends ChangeNotifier {
+  LocationProvider._();
+
+  factory LocationProvider() {
+    return _locationProvider;
+  }
+
+  static final _locationProvider = LocationProvider._();
+
   final Completer<GoogleMapController> mapController = Completer();
   final MapComponent mapComponent = MapComponent();
   final _geolocator = Geolocator();
   final _locationOptions = LocationOptions(
     accuracy: LocationAccuracy.high,
-    // distanceFilter: 1,
+    distanceFilter: 1,
   );
   StreamSubscription<Position> _positionStream;
 
@@ -37,12 +45,12 @@ class LocationProvider extends ChangeNotifier {
       position: position,
       color: Colors.blue[100].withOpacity(0.5),
       strokeWidth: 1,
-      strokeColor: Colors.blue[500].withOpacity(0.7),
+      strokeColor: Colors.blue[500],
     );
 
     mapComponent.createMarker(
       id: 'me',
-      icon: MarkerBitmap.compassText,
+      iconName: MarkerBitmap.compass,
       position: position,
     );
 
@@ -62,9 +70,7 @@ class LocationProvider extends ChangeNotifier {
   /// emits, we have to update the google map with the latest position.
   void activatePositionStream() {
     _positionStream = _geolocator
-        .getPositionStream(
-      _locationOptions,
-    )
+        .getPositionStream(_locationOptions)
         .listen((position) async {
       positionInfo = position; // WARNING : Only for testing
 
@@ -117,7 +123,7 @@ class LocationProvider extends ChangeNotifier {
     controller.animateCamera(
       CameraUpdate.newLatLngZoom(
         LatLng(position.latitude, position.longitude),
-        16,
+        15,
         // 14.4746,
       ),
     );
