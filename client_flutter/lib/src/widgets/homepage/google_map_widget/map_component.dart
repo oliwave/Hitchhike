@@ -1,3 +1,4 @@
+import 'package:client_flutter/src/util/platform_info.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -42,7 +43,7 @@ class MapComponent {
     final Circle circle = Circle(
       circleId: circleId,
       center: LatLng(position.latitude, position.longitude),
-      radius: 80,
+      radius: PlatformInfo.screenAwareSize(70),
       fillColor: color,
       strokeWidth: strokeWidth,
       strokeColor: strokeColor,
@@ -53,29 +54,20 @@ class MapComponent {
 
   void createMarker({
     @required String id,
-    @required String icon,
+    @required String iconName,
     @required Position position,
   }) {
     final MarkerId markerId = MarkerId(id);
 
     markersId[id] = markerId;
 
-    print('icon is String : $icon');
-
-    BitmapDescriptor bitmap;
-    if (icon == MarkerBitmap.motorText) {
-      bitmap = MarkerBitmap().motor;
-    } else if (icon == MarkerBitmap.carText) {
-      bitmap = MarkerBitmap().car;
-    } else if (icon == MarkerBitmap.compassText) {
-      bitmap = MarkerBitmap().compass;
-    }
+    print('icon is String : $iconName');
 
     final Marker marker = Marker(
       markerId: markerId,
       position: LatLng(position.latitude, position.longitude),
       anchor: Offset(0.5, 0.5),
-      icon: bitmap,
+      icon: MarkerBitmap().bitmaps[iconName],
       rotation: position.heading - 45,
     );
 
