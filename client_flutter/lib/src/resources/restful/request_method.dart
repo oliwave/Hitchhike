@@ -25,12 +25,14 @@ abstract class RequestMethod {
   /// [getHeaders] enables client to get different content of headers depends on
   /// whether thers is value assigned to [jwtToken].
   Map<String, String> getHeaders() {
-    if (jwtToken == null) {
+    if (jwtToken != null) {
+      print('verify with jwtToken');
       return {
         HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: jwtToken,
       };
     } else {
+      print('verify without jwtToken');
       return {
         HttpHeaders.contentTypeHeader: 'application/json',
       };
@@ -64,14 +66,14 @@ class VerifyUserIdRequest extends BasePost {
   VerifyUserIdRequest({
     @required String userId,
   }) : super(body: {
-          userId: userId,
+          'uid': userId,
         });
 
   @override
   Future<Response> request() async {
     final response = await _client.post(
       '$_rootUrl/verify',
-      body: body,
+      body: json.encode(body),
       headers: getHeaders(),
     );
 
@@ -88,16 +90,16 @@ class SignUpRequest extends BasePost {
     @required String password,
     @required String username,
   }) : super(body: {
-          userId: userId,
-          password: password,
-          username: username,
+          'userId': userId,
+          'password': password,
+          'username': username,
         });
 
   @override
   Future<Response> request() async {
     final response = await _client.post(
       '$_rootUrl/signUp',
-      body: body,
+      body: json.encode(body),
       headers: getHeaders(),
     );
     return response;
@@ -112,15 +114,15 @@ class LoginRequest extends BasePost {
     @required String userId,
     @required String password,
   }) : super(body: {
-          userId: userId,
-          password: password,
+          'userId': userId,
+          'password': password,
         });
 
   @override
   Future<Response> request() async {
     final response = await _client.post(
       '$_rootUrl/login',
-      body: body,
+      body: json.encode(body),
       headers: getHeaders(),
     );
 
@@ -137,7 +139,7 @@ class ProfilePwdRequest extends BasePost {
     @required String jwtToken,
   }) : super(
           body: {
-            password: password,
+            'password': password,
           },
           jwtToken: jwtToken,
         );
@@ -146,7 +148,7 @@ class ProfilePwdRequest extends BasePost {
   Future<Response> request() {
     final response = _client.post(
       '$_rootUrl/profilePwd',
-      body: body,
+      body: json.encode(body),
       headers: getHeaders(),
     );
 
@@ -162,7 +164,7 @@ class ProfileNameRequest extends BasePost {
     @required String jwtToken,
   }) : super(
           body: {
-            name: name,
+            'name': name,
           },
           jwtToken: jwtToken,
         );
@@ -171,7 +173,7 @@ class ProfileNameRequest extends BasePost {
   Future<Response> request() {
     final response = _client.post(
       '$_rootUrl/profileName',
-      body: body,
+      body: json.encode(body),
       headers: getHeaders(),
     );
 
@@ -187,7 +189,7 @@ class ProfilePhotoRequest extends BasePost {
     @required String jwtToken,
   }) : super(
           body: {
-            photo: photo,
+            'photo': photo,
           },
           jwtToken: jwtToken,
         );
@@ -196,7 +198,7 @@ class ProfilePhotoRequest extends BasePost {
   Future<Response> request() {
     final response = _client.post(
       '$_rootUrl/profilePhoto',
-      body: body,
+      body: json.encode(body),
       headers: getHeaders(),
     );
 
@@ -212,7 +214,7 @@ class ProfileDepartmentRequest extends BasePost {
     @required String jwtToken,
   }) : super(
           body: {
-            department: department,
+            'department': department,
           },
           jwtToken: jwtToken,
         );
@@ -221,7 +223,7 @@ class ProfileDepartmentRequest extends BasePost {
   Future<Response> request() {
     final response = _client.post(
       '$_rootUrl/profileDepartment',
-      body: body,
+      body: json.encode(body),
       headers: getHeaders(),
     );
 
@@ -237,7 +239,7 @@ class ProfileCarNumRequest extends BasePost {
     @required String jwtToken,
   }) : super(
           body: {
-            carNum: carNum,
+            'carNum': carNum,
           },
           jwtToken: jwtToken,
         );
@@ -246,7 +248,7 @@ class ProfileCarNumRequest extends BasePost {
   Future<Response> request() {
     final response = _client.post(
       '$_rootUrl/profileCarNum',
-      body: body,
+      body: json.encode(body),
       headers: getHeaders(),
     );
     return response;
@@ -274,10 +276,11 @@ class PassengerRouteRequest extends BasePost {
 
   @override
   Future<Response> request() async {
-    final parsedJson = json.encode(body);
-
-    final response = await _client.post('$_rootUrl/passengerRoute',
-        body: parsedJson, headers: getHeaders());
+    final response = await _client.post(
+      '$_rootUrl/passengerRoute',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
 
     return response;
   }
@@ -304,10 +307,11 @@ class DriverRouteRequest extends BasePost {
 
   @override
   Future<Response> request() async {
-    final parsedJson = json.encode(body);
-
-    final response = await _client.post('$_rootUrl/driverRoute',
-        body: parsedJson, headers: getHeaders());
+    final response = await _client.post(
+      '$_rootUrl/driverRoute',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
 
     return response;
   }
@@ -322,7 +326,30 @@ class PlacesApiKeyRequest extends RequestMethod {
 
   @override
   Future<Response> request() async {
-    final response = await _client.get('$_rootUrl/key');
+    final response = await _client.get('$_rootUrl/places');
+
+    return response;
+  }
+}
+
+class FcmTokenRequest extends BasePost {
+  FcmTokenRequest({
+    @required String jwtToken,
+    @required String fcmToken,
+  }) : super(
+          body: {
+            'fcmToken': fcmToken,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/fcm',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
 
     return response;
   }
