@@ -13,19 +13,19 @@ class PositionFloatingActionButton extends StatefulWidget {
 class _PositionFloatingActionButtonState
     extends State<PositionFloatingActionButton>
     with SingleTickerProviderStateMixin {
-  AnimationController _floatingButtonController;
+  AnimationController _positionButtonController;
   Animation<Alignment> _alignmentAnimation;
 
   @override
   void initState() {
-    _floatingButtonController = AnimationController(
+    _positionButtonController = AnimationController(
       vsync: this,
       duration: Duration(
         milliseconds: 300,
       ),
     );
 
-    _alignmentAnimation = _floatingButtonController.drive(
+    _alignmentAnimation = _positionButtonController.drive(
       AlignmentTween(
         begin: Alignment(0.875, 0.7),
         end: Alignment(0.875, -0.15),
@@ -37,14 +37,14 @@ class _PositionFloatingActionButtonState
       listen: false,
     ).animationManager;
 
-    manager.floatingButtonController = _floatingButtonController;
+    manager.positionButtonController = _positionButtonController;
 
     super.initState();
   }
 
   @override
   void dispose() {
-    _floatingButtonController.dispose();
+    _positionButtonController.dispose();
     super.dispose();
   }
 
