@@ -1,5 +1,3 @@
-import 'package:client_flutter/src/resources/fcm/cloud_message_handler.dart';
-
 import './source_collection.dart';
 
 /// Gather all of the request of resources to the [Repository].
@@ -12,7 +10,7 @@ import './source_collection.dart';
 /// with the syntax sugar, "factory". It provides a mechanism for object caching, so
 /// you won't get the different object when you instantiate it. Instead,
 /// you get the same object no matter whenever and wherever you access it.
-/// 
+///
 /// See https://dart.dev/guides/language/language-tour#constructors
 class Repository {
   Repository._();
@@ -32,6 +30,8 @@ class Repository {
   /// Get access to the Firebase Cloud Messaging
   static CloudMessageHandler get getCloudMessageHandler =>
       CloudMessageHandler();
+
+  static DatabaseHandler get getDatabaseHandler => DatabaseHandler();
 }
 
 /// The target string is specified which local resource that client wants to access.
@@ -43,4 +43,6 @@ class TargetSourceString {
   static const String role = 'role';
   static const String jwt = 'jwt';
   static const String pwd = 'pwd';
+  static const String routeLatitude = 'routeLatitude';
+  static const String routeLongitude = 'routeLongitude';
 }
