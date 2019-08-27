@@ -7,3 +7,4 @@ export './global/cloud_message_provider.dart';
 
 /// Local provider
 export './local/homepage_provider.dart';
+export './local/favorite_routes_provider.dart';
