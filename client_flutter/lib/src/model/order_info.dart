@@ -13,4 +13,6 @@ class OrderInfo {
   Location geoEnd;
   String nameStart;
   String nameEnd;
+  String addressStart;
+  String addressEnd;
 }
