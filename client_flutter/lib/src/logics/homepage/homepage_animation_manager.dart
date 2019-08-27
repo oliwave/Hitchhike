@@ -13,7 +13,9 @@ class HomepageAnimationManager extends NotifyManager {
 
   /// Enable the customized [PositionFloatingActionButton] to animate its height
   /// when the [bottomSheetController] call the method of foreword or reverse.
-  AnimationController floatingButtonController;
+  AnimationController positionButtonController;
+
+  AnimationController favoriteButtonController;
 
   /// Enable the [LocationAppBar] to animate its height when the
   /// [bottomSheetController] call the method of foreword or reverse.
@@ -35,13 +37,15 @@ class HomepageAnimationManager extends NotifyManager {
   void showPanelHideBar() {
     isOrderPanel = true;
     bottomSheetController.forward();
-    floatingButtonController.forward();
+    positionButtonController.forward();
+    favoriteButtonController.forward();
     appBarController.forward();
   }
 
   void showBarHidePanel() {
     bottomSheetController.reverse();
-    floatingButtonController.reverse();
+    positionButtonController.reverse();
+    favoriteButtonController.reverse();
     appBarController.reverse();
     isOrderPanel = false;
   }
