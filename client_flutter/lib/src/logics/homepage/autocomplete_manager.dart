@@ -27,16 +27,16 @@ class AutocompleteManager extends NotifyManager {
 
   /// It's the status of the [currentPositionButton] and determines
   /// if client is using the current location for ordering.
-  bool _usingCurrentLocation = true;
+  // bool _usingCurrentLocation = true;
 
   /// To judge if client is using current location for ordering.
-  bool get usingCurrentLocation => _usingCurrentLocation;
+  // bool get usingCurrentLocation => _usingCurrentLocation;
 
   /// To judge if client is using current location for ordering.
-  set usingCurrentLocation(bool using) {
-    _usingCurrentLocation = using;
-    notifyListeners();
-  }
+  // set usingCurrentLocation(bool using) {
+  //   _usingCurrentLocation = using;
+  //   notifyListeners();
+  // }
 
   /// Trigger places autocomplete.
   ///
@@ -80,47 +80,44 @@ class AutocompleteManager extends NotifyManager {
         prediction.placeId,
         sessionToken: token,
         language: 'zh-TW',
-        fields: ['geometry', 'name'],
+        fields: ['geometry', 'name', 'formatted_address']
       );
 
       if (target != '終點') {
         _orderInfo.nameStart = detail.result.name;
         _orderInfo.geoStart = detail.result.geometry.location;
+        _orderInfo.addressStart = detail.result.formattedAddress;
 
         // Notify currentLocationButton in _SearchField not to use
         // current location for ordering.
-        usingCurrentLocation = false;
+        // usingCurrentLocation = false;
       } else {
         _orderInfo.nameEnd = detail.result.name;
         _orderInfo.geoEnd = detail.result.geometry.location;
+        _orderInfo.addressEnd = detail.result.formattedAddress;
       }
 
       notifyListeners();
 
-      print(
-        'name: ${detail.result.name}'
-        'lng: ${detail.result.geometry.location.lng},'
-        'lat: ${detail.result.geometry.location.lat}',
-      );
     }
   }
 
-  /// [useCurrentLocation] method triggered in the onTap callback of 
-  /// [_CurrentLocationButton] is responsible for handling the status of 
-  /// button. 
-  Future<void> useCurrentLocation({
-    @required Future<Position> futurePosition,
-  }) async {
-    if (!usingCurrentLocation) {
-      usingCurrentLocation = true;
-      _orderInfo.nameStart = null;
+  /// [useCurrentLocation] method triggered in the onTap callback of
+  /// [_CurrentLocationButton] is responsible for handling the status of
+  /// button.
+  // Future<void> useCurrentLocation({
+  //   @required Future<Position> futurePosition,
+  // }) async {
+  //   if (!usingCurrentLocation) {
+  //     usingCurrentLocation = true;
+  //     _orderInfo.nameStart = null;
 
-      print('Use current location for address order!');
+  //     print('Use current location for address order!');
 
-      final position = await futurePosition;
+  //     final position = await futurePosition;
 
-      _orderInfo.geoStart = Location(position.latitude, position.longitude);
-    }
-    print('onTap');
-  }
+  //     _orderInfo.geoStart = Location(position.latitude, position.longitude);
+  //   }
+  //   print('onTap');
+  // }
 }

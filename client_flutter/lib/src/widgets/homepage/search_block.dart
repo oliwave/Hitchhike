@@ -68,7 +68,7 @@ class _LocationSearchList extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          _SearchField(hintText: '你的位置'),
+          _SearchField(hintText: '起點'),
           SizedBox(height: PlatformInfo.screenAwareSize(10)),
           _SearchField(hintText: '終點'),
         ],
@@ -126,7 +126,7 @@ class _SearchField extends StatelessWidget {
               ),
             ),
           ),
-          if (hintText == '你的位置') _CurrentLocationButton()
+          // if (hintText == '你的位置') _CurrentLocationButton()
         ],
       ),
     );
@@ -161,10 +161,11 @@ class _SearchField extends StatelessWidget {
     if (hintText != '終點') {
       if (info.nameStart != null) {
         targetText = info.nameStart;
+        targetColor = Colors.black87;
       } else {
         targetText = hintText;
+        targetColor = Colors.grey;
       }
-      targetColor = Colors.black87;
     } else {
       if (info.nameEnd != null) {
         targetText = info.nameEnd;
@@ -178,45 +179,45 @@ class _SearchField extends StatelessWidget {
   }
 }
 
-class _CurrentLocationButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final manager = Provider.of<HomepageProvider>(
-      context,
-      listen: false,
-    ).autocompleteManager;
+// class _CurrentLocationButton extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     final manager = Provider.of<HomepageProvider>(
+//       context,
+//       listen: false,
+//     ).autocompleteManager;
 
-    final locationProvider = Provider.of<LocationProvider>(
-      context,
-      listen: false,
-    );
+//     final locationProvider = Provider.of<LocationProvider>(
+//       context,
+//       listen: false,
+//     );
 
-    return Expanded(
-      flex: 1,
-      child: Material(
-        child: InkWell(
-          onTap: () async {
-            manager.useCurrentLocation(
-              futurePosition: locationProvider.currentPosition,
-            );
-          },
-          child: Align(
-            child: Container(
-              child: Consumer<HomepageProvider>(
-                builder: (_, HomepageProvider value, Widget child) {
-                  return Icon(
-                    Icons.my_location,
-                    color: manager.usingCurrentLocation
-                        ? Colors.blue
-                        : Colors.black,
-                    size: 15,
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+//     return Expanded(
+//       flex: 1,
+//       child: Material(
+//         child: InkWell(
+//           onTap: () async {
+//             manager.useCurrentLocation(
+//               futurePosition: locationProvider.currentPosition,
+//             );
+//           },
+//           child: Align(
+//             child: Container(
+//               child: Consumer<HomepageProvider>(
+//                 builder: (_, HomepageProvider value, Widget child) {
+//                   return Icon(
+//                     Icons.my_location,
+//                     color: manager.usingCurrentLocation
+//                         ? Colors.blue
+//                         : Colors.black,
+//                     size: 15,
+//                   );
+//                 },
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
