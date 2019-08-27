@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:geolocator/geolocator.dart';
 
-import '../../provider/provider_collection.dart';
+import '../../provider/provider_collection.dart'
+    show LocationProvider, HomepageProvider;
 
 class MapView extends StatelessWidget {
   @override
@@ -20,49 +20,31 @@ class MapView extends StatelessWidget {
       listen: false,
     );
 
-    return FutureBuilder(
-      future: locationProvider.initialPosition,
-      builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
-        if (!snapshot.hasData) {
-          print('Waiting!!!');
-          return Center(child: Text('Waiting'));
-        }
-        final position = snapshot.data;
+    final position = locationProvider.initialPosition;
 
-        print('Resolved!!!');
+    // acitvatePositionStream method to keep the latest position on the map.
+    locationProvider.activatePositionStream();
 
-        // After 'initialPosition' has been resolved, clients need to call
-        // acitvatePositionStream method to keep the latest position on the map.
-        locationProvider.activatePositionStream();
-
-        return Consumer<LocationProvider>(
-          builder: (context, locationProvider, _) {
-            return GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
-                  position.latitude,
-                  position.longitude,
-                ),
-                zoom: 14.4746,
-              ),
-              mapType: MapType.normal,
-              onMapCreated: (GoogleMapController controller) {
-                locationProvider.mapController.complete(controller);
-              },
-              myLocationButtonEnabled: false,
-              myLocationEnabled: false,
-              markers:
-                  Set<Marker>.of(locationProvider.mapComponent.markersValue),
-              circles:
-                  Set<Circle>.of(locationProvider.mapComponent.circlesValue),
-              // TODO: This is an alternative solution for updating the google map
-              // by implementing 'onTap' callback when users drag it.
-              // Instead, we should implement 'onDrag' callback to update.
-              onTap: (_) => _onTapMap(locationProvider, homepageProvider),
-            );
-          },
-        );
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: LatLng(
+          position.latitude,
+          position.longitude,
+        ),
+        zoom: 14.4746,
+      ),
+      mapType: MapType.normal,
+      onMapCreated: (GoogleMapController controller) {
+        locationProvider.mapController.complete(controller);
       },
+      myLocationButtonEnabled: false,
+      myLocationEnabled: false,
+      markers: Set<Marker>.of(locationProvider.mapComponent.markersValue),
+      circles: Set<Circle>.of(locationProvider.mapComponent.circlesValue),
+      // TODO: This is an alternative solution for updating the google map
+      // by implementing 'onTap' callback when users drag it.
+      // Instead, we should implement 'onDrag' callback to update.
+      onTap: (_) => _onTapMap(locationProvider, homepageProvider),
     );
   }
 
