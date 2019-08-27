@@ -1,4 +1,3 @@
-import 'package:client_flutter/init_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,9 +9,6 @@ import './src/provider/setup_provider.dart';
 Future main() async {
   // Testing the restful api. // (ucomment this to test api)
   // await apiTest.runTest(); // (ucomment this to test api)
-
-  // Initializing the client app.
-  await init.runInitSetting();
 
   // Formal app
   runApp(MyApp());
@@ -33,7 +29,7 @@ class MyApp extends StatelessWidget {
         ),
         title: 'hitchhike',
         // home: LoginPage(), // (profile)
-        home: Homepage(), // (debug)
+        home: WellcomePage(), // (debug)
         onGenerateRoute: (RouteSettings settings) {
           return MaterialPageRoute(
             builder: (BuildContext context) {
@@ -56,6 +52,10 @@ class MyApp extends StatelessWidget {
       page = SignUpProfilePage();
     } else if (routeName == ProfilePage.routeName) {
       page = ProfilePage();
+    } else if (routeName == WellcomePage.routeName) {
+      page = WellcomePage();
+    } else if (routeName == FavoriteRoutesPage.routeName) {
+      page = FavoriteRoutesPage();
     } else {
       page = BadRoutePage();
     }
