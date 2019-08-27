@@ -6,7 +6,7 @@ import '../../logics/homepage/autocomplete_manager.dart';
 
 class HomepageProvider with ChangeNotifier {
   HomepageProvider._() {
-    _init();
+    _managerInit();
   }
 
   factory HomepageProvider() => _homepageprovider;
@@ -50,7 +50,7 @@ class HomepageProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void _init() {
+  void _managerInit() {
     _homepageAnimationManager =
         HomepageAnimationManager(_registerNotifyListeners);
 
