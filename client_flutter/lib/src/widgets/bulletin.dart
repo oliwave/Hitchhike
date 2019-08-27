@@ -13,7 +13,6 @@ class _BulletinState extends State<Bulletin>
     with SingleTickerProviderStateMixin {
   AnimationController _bulletinSizeController;
   Animation<double> _bulletinHeight;
-  Animation<double> _bulletinWidth;
 
   @override
   void initState() {
@@ -26,14 +25,6 @@ class _BulletinState extends State<Bulletin>
       Tween<double>(
         begin: 0,
         end: 30,
-      ),
-    );
-
-    _bulletinWidth = _bulletinSizeController.drive(
-      Tween<double>(
-        begin: 0,
-        // end: PlatformInfo.screenAwareSize(210),
-        end: 150,
       ),
     );
 
@@ -56,47 +47,34 @@ class _BulletinState extends State<Bulletin>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _bulletinWidth,
-      builder: (context, child) {
-        return AnimatedBuilder(
-          animation: _bulletinHeight,
-          builder: (context, bulletin) {
-            return Align(
-              alignment: Alignment(0, -0.4),
-              child: Container(
-                width: PlatformInfo.screenAwareSize(_bulletinWidth.value),
-                height: PlatformInfo.screenAwareSize(_bulletinHeight.value),
-                decoration: BoxDecoration(
-                  color: Colors.grey[400].withOpacity(0.54),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: bulletin,
-              ),
-            );
-          },
-          child: Visibility(
-            // Don't take up space when animate the bulletin.
-            visible: !_bulletinSizeController.isAnimating,
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                    horizontal: 4.0,
-                  ),
-                  child: Image.asset(
-                    'assets/icons/bullhorn/bullhorn.png',
-                    height: PlatformInfo.screenAwareSize(20),
-                    width: PlatformInfo.screenAwareSize(20),
-                    color: Colors.orange.withOpacity(0.65),
-                  ),
-                ),
-                bulletinContent(),
-              ],
-            ),
+      animation: _bulletinHeight,
+      builder: (context, bulletin) {
+        return Align(
+          alignment: Alignment(0, -0.4),
+          child: Container(
+            height: PlatformInfo.screenAwareSize(_bulletinHeight.value),
+            child: bulletin,
           ),
         );
       },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 4.0,
+            ),
+            child: Image.asset(
+              'assets/icons/bullhorn/bullhorn.png',
+              height: PlatformInfo.screenAwareSize(20),
+              width: PlatformInfo.screenAwareSize(20),
+              color: Colors.orange.withOpacity(0.65),
+            ),
+          ),
+          bulletinContent(),
+        ],
+      ),
     );
   }
 
