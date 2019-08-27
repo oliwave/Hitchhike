@@ -1,13 +1,15 @@
-import 'package:client_flutter/src/util/util_collection.dart';
+import 'package:client_flutter/src/widgets/homepage/favorite_floating_action_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../util/platform_info.dart';
+import '../provider/provider_collection.dart' show CloudMessageProvider;
 import '../widgets/homepage/location_app_bar.dart';
 import '../widgets/homepage/map_view.dart';
 import '../widgets/homepage/position_floating_action_button.dart';
 import '../widgets/homepage/bottom_sheet.dart';
-import '../widgets/homepage/google_map_widget/marker_bitmap.dart';
 import '../widgets/bulletin.dart';
+
+import '../../src/util/util_collection.dart' show PlatformInfo;
 
 import '../test/info_button.dart';
 import '../test/geo_info.dart';
@@ -17,20 +19,17 @@ class Homepage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    print('Device width : ${MediaQuery.of(context).size.width}');
-    print('Device heigth : ${MediaQuery.of(context).size.height}');
-
-    // Assign the context of Homepage to 'PlatformInfo' for getting
-    // the size of scaffold.
     PlatformInfo.context = context;
 
-    MarkerBitmap(context);
-    print('Initialize the MarkerBitmap!');
+    Provider.of<CloudMessageProvider>(
+      context,
+      listen: false,
+    ).context = context;
 
     print('Refreshing Homepage ...');
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: <Widget>[
           MapView(),
@@ -39,6 +38,7 @@ class Homepage extends StatelessWidget {
           TestingGeoInfo(), // WARNING : Only for testing
           GoogleLogo(),
           PositionFloatingActionButton(),
+          FavoriteFloatingActionButton(),
           Bulletin(),
         ],
       ),

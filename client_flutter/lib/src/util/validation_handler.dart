@@ -15,7 +15,7 @@ class ValidationHandler {
   static final _validationHandler = ValidationHandler._();
 
   /// For instance, client can use [verifySixDigitsCode] to check whether
-  /// the [hashedSixDigits] is the same value as [rawSixDigits] after hashing.
+  /// the [hashedSixDigits] has the same value as [rawSixDigits] after hashing.
   bool verifySixDigitsCode({
     @required String rawSixDigits,
     @required String hashedSixDigits,
@@ -31,7 +31,7 @@ class ValidationHandler {
     print(digest);
 
     // print(base64.encode(digest.bytes));
-    return digest.toString() == hashedSixDigits ? true : false;
+    return digest.toString() == hashedSixDigits;
   }
 }
 
