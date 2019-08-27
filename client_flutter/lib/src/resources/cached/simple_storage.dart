@@ -1,5 +1,7 @@
-import 'package:client_flutter/src/resources/repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../resources/repository.dart';
+import '../../provider/provider_collection.dart' show RoleProvider;
 
 /// [SimpleSorage] is a simple key-value storage dedicating to save the unsensitive
 /// data on client.
@@ -20,6 +22,9 @@ class SimpleStorage {
     }
     _prefs = await SharedPreferences.getInstance();
     print('SharedPreferences has been resolved !!!');
+
+    // After '_prefs' has been initialized, we call init() method in RoleProvider.
+    RoleProvider().init(); 
   }
 
   bool getBool(String target) {
@@ -49,8 +54,24 @@ class SimpleStorage {
     return value;
   }
 
-  Future<bool> setString(String target, String value) {
-    return _prefs.setString(target, value);
+  Future<bool> setString(String target, String value) async {
+    if (!_boolProperTarget(target)) {
+      return false;
+    }
+    return await _prefs.setString(target, value);
+  }
+
+  List<String> getStringList(String target) {
+    List<String> value = _prefs.getStringList(target);
+
+    return value;
+  }
+
+  Future<bool> setStringList(String target, List<String> value) async {
+    if (!_boolProperTarget(target)) {
+      return false;
+    }
+    return await _prefs.setStringList(target, value);
   }
 
   bool _boolProperTarget(String target) {
