@@ -29,6 +29,8 @@ class LocationProvider extends ChangeNotifier {
   /// WARNING : Only for testing
   Position _positionInfo;
 
+  Position _initPosition;
+
   /// A very basis method called whenever clients need to get
   /// a up-to-date position.
   Future<Position> get currentPosition async =>
@@ -36,26 +38,7 @@ class LocationProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-  /// Initialize [Marker] and [Cicrle] to indicate the current location of user.
-  Future<Position> get initialPosition async {
-    final position = await currentPosition;
-
-    mapComponent.createCircle(
-      id: 'me',
-      position: position,
-      color: Colors.blue[100].withOpacity(0.5),
-      strokeWidth: 1,
-      strokeColor: Colors.blue[500],
-    );
-
-    mapComponent.createMarker(
-      id: 'me',
-      iconName: MarkerBitmap.compass,
-      position: position,
-    );
-
-    return position;
-  }
+  Position get initialPosition => _initPosition;
 
   /// WARNING : Only for testing
   Position get positionInfo => _positionInfo;
@@ -64,6 +47,19 @@ class LocationProvider extends ChangeNotifier {
   set positionInfo(Position position) {
     _positionInfo = position;
     notifyListeners();
+  }
+
+  Future<void> initializePosition() async {
+    if (_initPosition != null) {
+      print('initPosition has been called!');
+      return;
+    }
+
+    _initPosition = await currentPosition;
+
+    _initializeMapGadget();
+
+    print('Initial position has benn resolved!');
   }
 
   /// This method will subscribe the position Stream, so every time when an event
@@ -128,5 +124,22 @@ class LocationProvider extends ChangeNotifier {
       ),
     );
     print('Animate camera ... ');
+  }
+
+  /// Initialize [Marker] and [Cicrle] to indicate the current location of user.
+  _initializeMapGadget() {
+    mapComponent.createCircle(
+      id: 'me',
+      position: _initPosition,
+      color: Colors.blue[100].withOpacity(0.5),
+      strokeWidth: 1,
+      strokeColor: Colors.blue[500],
+    );
+
+    mapComponent.createMarker(
+      id: 'me',
+      iconName: MarkerBitmap.compass,
+      position: _initPosition,
+    );
   }
 }
