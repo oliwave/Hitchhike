@@ -4,3 +4,4 @@ export './restful/api.dart';
 export './socket/socket_handler.dart';
 export './fcm/cloud_message_handler.dart';
 export './db/database_handler.dart';
+export './file/json_file_handler.dart';

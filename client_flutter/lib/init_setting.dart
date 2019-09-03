@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import './src/resources/file/directory_access.dart';
 import './src/widgets/homepage/google_map_widget/marker_bitmap.dart';
 import './src/resources/repository.dart';
 import './src/resources/restful/request_method.dart' show FcmTokenRequest;
@@ -27,6 +28,7 @@ class InitSetting {
     await _fcm.init();
     await _bitmap.initializeBitmap(context);
     await _locationProvider.initializePosition();
+    await DirectoryAccess.initDirectory();
     await _db.init();
     await _favoriteRoutesProvider.initRoutesList();
 
