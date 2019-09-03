@@ -10,7 +10,7 @@ import '../notify_manager.dart';
 
 /// [OrderManager] handle the major process of sending order and relative tasks.
 class OrderManager extends NotifyManager {
-  OrderManager(notifyListeners) : super(notifyListeners);
+  OrderManager(VoidCallback notifyListeners) : super(notifyListeners);
 
   static final _api = Repository.getApi;
 
@@ -25,40 +25,41 @@ class OrderManager extends NotifyManager {
       context,
       listen: false,
     );
+    final bulletinProvider = Provider.of<BulletinProvider>(
+      context,
+      listen: false,
+    );
 
     if (buttonName != '送出訂單') {
       roleProvider.role = null;
     } else {
-      roleProvider.isMatched = true;
+      // roleProvider.isMatched = true;
+
+      if (roleProvider.isMatched) {
+        bulletinProvider.showBulletin('行程中無法新增訂單！');
+        return;
+      }
+
       if (_hasCompleteOrderInfo()) {
         _orderRequest(roleProvider.role);
       } else {
-        Provider.of<BulletinProvider>(
-          context,
-          listen: false,
-        ).showBulletin('還沒設定路線喔！');
+        bulletinProvider.showBulletin('還沒設定路線喔！');
       }
     }
   }
 
   void _orderRequest(String role) {
-    if (role == '司機') {
-      _api.sendHttpRequest(DriverRouteRequest(
-        originX: orderInfo.geoStart.lng,
-        originY: orderInfo.geoStart.lat,
-        destinationX: orderInfo.geoEnd.lng,
-        destinationY: orderInfo.geoEnd.lat,
-        jwtToken: '',
-      ));
-    } else {
-      _api.sendHttpRequest(PassengerRouteRequest(
-        originX: orderInfo.geoStart.lng,
-        originY: orderInfo.geoStart.lat,
-        destinationX: orderInfo.geoEnd.lng,
-        destinationY: orderInfo.geoEnd.lat,
-        jwtToken: '',
-      ));
-    }
+    _api.sendHttpRequest(
+      role == '司機'
+          ? DriverRouteRequest(
+              orderInfo: orderInfo,
+              jwtToken: '',
+            )
+          : PassengerRouteRequest(
+              orderInfo: orderInfo,
+              jwtToken: '',
+            ),
+    );
   }
 
   bool _hasCompleteOrderInfo() {

@@ -18,7 +18,7 @@ import '../notify_manager.dart';
 /// [AutocompleteManager] is responsible for processing the logic of
 /// Google Places Autocomplete API.
 class AutocompleteManager extends NotifyManager {
-  AutocompleteManager(notifyListeners) : super(notifyListeners);
+  AutocompleteManager(VoidCallback notifyListeners) : super(notifyListeners);
 
   final OrderInfo _orderInfo = OrderInfo();
 
