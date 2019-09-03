@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:client_flutter/src/model/order_info.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' show Client, Response;
 
@@ -259,17 +260,16 @@ class PassengerRouteRequest extends BasePost {
   /// Create an intance of a concrete http request behavior that
   /// inherits [RequestMethod].
   PassengerRouteRequest({
-    @required double originX,
-    @required double originY,
-    @required double destinationX,
-    @required double destinationY,
+    @required OrderInfo orderInfo,
     @required String jwtToken,
   }) : super(
           body: {
-            'originX': originX,
-            'originY': originY,
-            'destinationX': destinationX,
-            'destinationY': destinationY,
+            'originY': orderInfo.geoStart.lat,
+            'originX': orderInfo.geoStart.lng,
+            'destinationY': orderInfo.geoEnd.lat,
+            'destinationX': orderInfo.geoEnd.lng,
+            'originName': orderInfo.nameStart,
+            'destinationName': orderInfo.nameEnd,
           },
           jwtToken: jwtToken,
         );
@@ -286,21 +286,37 @@ class PassengerRouteRequest extends BasePost {
   }
 }
 
+class OrderConfirmationRequest extends RequestMethod {
+  OrderConfirmationRequest({
+    @required this.status,
+    @required String jwtToken,
+  }) : super(
+          jwtToken: jwtToken,
+        );
+
+  final String status;
+
+  @override
+  Future<Response> request() async {
+    final response = await _client.get('$_rootUrl/orderConfirmation/$status');
+    return response;
+  }
+}
+
 class DriverRouteRequest extends BasePost {
   /// Create an intance of a concrete http request behavior that
   /// inherits [BasePost].
   DriverRouteRequest({
-    @required double originX,
-    @required double originY,
-    @required double destinationX,
-    @required double destinationY,
+    @required OrderInfo orderInfo,
     @required String jwtToken,
   }) : super(
           body: {
-            'originX': originX,
-            'originY': originY,
-            'destinationX': destinationX,
-            'destinationY': destinationY,
+            'originY': orderInfo.geoStart.lat,
+            'originX': orderInfo.geoStart.lng,
+            'destinationY': orderInfo.geoEnd.lat,
+            'destinationX': orderInfo.geoEnd.lng,
+            'originName': orderInfo.nameStart,
+            'destinationName': orderInfo.nameEnd,
           },
           jwtToken: jwtToken,
         );
