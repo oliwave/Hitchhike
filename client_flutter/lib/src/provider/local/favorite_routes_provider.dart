@@ -1,3 +1,4 @@
+import 'package:client_flutter/src/model/order_info.dart';
 import 'package:flutter/Material.dart';
 
 import 'package:sqflite/sql.dart';
@@ -25,6 +26,8 @@ class FavoriteRoutesProvider with ChangeNotifier {
 
   bool get isEmptyRoutesList => _routesMaps.isEmpty;
 
+  int get routesListLength => _routesMaps.length;
+
   FavoriteRouteItem get defaultFavoriteRouteItem =>
       _routesMaps.values.firstWhere((routeItem) => routeItem.isDefaultRoute);
 
@@ -32,6 +35,12 @@ class FavoriteRoutesProvider with ChangeNotifier {
     @required FavoriteRouteItem targetRoute,
   }) {
     if (_routesMaps[targetRoute.id] != null) return false;
+
+    final machingList = _routesMaps.keys.where((routeItem) =>
+        routeItem.contains(targetRoute.nameStart) &&
+        routeItem.contains(targetRoute.nameEnd));
+
+    if (machingList.isNotEmpty) return false;
 
     _handler.db.insert(
       DatabaseHandler.favoriteRoutes,
@@ -72,6 +81,7 @@ class FavoriteRoutesProvider with ChangeNotifier {
         )
         ?.id;
 
+    /// [originDefaultRouteId] is not the parameter, nor a null value.
     if (originDefaultRouteId != routeId && originDefaultRouteId != null) {
       originRoute = _routesMaps[originDefaultRouteId];
       originRoute.isDefaultRoute = !originRoute.isDefaultRoute;
@@ -98,6 +108,20 @@ class FavoriteRoutesProvider with ChangeNotifier {
     _routesMaps[routeId].isDefaultRoute = targetRoute.isDefaultRoute;
     _routesMaps[routeId].isExpanded = false;
 
+    FavoriteRouteItem currentDefaultRoute;
+
+    if (targetRoute.isDefaultRoute) {
+      currentDefaultRoute = targetRoute;
+    } else if (originRoute != null) {
+      if (originRoute.isDefaultRoute) {
+        currentDefaultRoute = originRoute;
+      }
+    }
+
+    if (currentDefaultRoute != null) {
+      _createOrderInfo(currentDefaultRoute);
+    }
+
     notifyListeners();
 
     return true;
@@ -112,7 +136,7 @@ class FavoriteRoutesProvider with ChangeNotifier {
 
     _routesMaps[routeId].isExpanded = false;
     notifyListeners();
-    
+
     _handler.db.delete(
       DatabaseHandler.favoriteRoutes,
       where: 'id = ?',
@@ -174,12 +198,33 @@ class FavoriteRoutesProvider with ChangeNotifier {
         print(e);
       }
 
+      FavoriteRouteItem defaultRoute;
+
       for (final rawItem in maps) {
         final route = FavoriteRouteItem.fromDB(rawItem);
+
+        /// Initialize [_routesMap] and record [defaultRoute] 
+        /// at the same time.
+        if (route.isDefaultRoute) {
+          defaultRoute = route;
+        }
+        
         _routesMaps[route.id] = route;
       }
 
+      _createOrderInfo(defaultRoute);
+
       _isFirst = false;
     }
+  }
+
+  void _createOrderInfo(FavoriteRouteItem defaultRoute) {
+    OrderInfo()
+      ..addressEnd = defaultRoute.addressEnd
+      ..addressStart = defaultRoute.addressStart
+      ..nameEnd = defaultRoute.nameEnd
+      ..nameStart = defaultRoute.nameStart
+      ..geoEnd = defaultRoute.geoEnd
+      ..geoStart = defaultRoute.geoStart;
   }
 }
