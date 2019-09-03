@@ -1,6 +1,5 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart';
+import '../file/directory_access.dart';
 
 class DatabaseHandler {
   DatabaseHandler._();
@@ -31,15 +30,10 @@ class DatabaseHandler {
   Database get db => _db;
 
   Database _db;
-  String _dirPath;
 
   Future<void> init() async {
-    // provide by path_provider package to get a path of folder on our mobile device
-    // where we can save our data.
-    _dirPath = (await getApplicationDocumentsDirectory()).path;
-
     // documentsDirectory.path/items.db
-    final dbPath = join(_dirPath, "hitchhike.db");
+    final dbPath = DirectoryAccess.getFilePath('hitchhike.db');
 
     _db = await openDatabase(
       dbPath,
