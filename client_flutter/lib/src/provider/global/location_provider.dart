@@ -1,35 +1,37 @@
 import 'dart:async';
 
+import 'package:client_flutter/src/resources/repository.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../resources/repository.dart' show Character;
+import '../../logics/location/location_stream_manager.dart';
+import '../../logics/location/location_update_manager.dart';
 import '../../widgets/homepage/google_map_widget/map_component.dart';
 import '../../widgets/homepage/google_map_widget/marker_bitmap.dart';
 
 class LocationProvider extends ChangeNotifier {
-  LocationProvider._();
-
-  factory LocationProvider() {
-    return _locationProvider;
+  LocationProvider._() {
+    _managerInit();
   }
+
+  factory LocationProvider() => _locationProvider;
 
   static final _locationProvider = LocationProvider._();
 
-  final Completer<GoogleMapController> mapController = Completer();
-  final MapComponent mapComponent = MapComponent();
   final _geolocator = Geolocator();
-  final _locationOptions = LocationOptions(
-    accuracy: LocationAccuracy.high,
-    distanceFilter: 1,
-  );
-  StreamSubscription<Position> _positionStream;
 
-  /// WARNING : Only for testing
-  Position _positionInfo;
+  final mapComponent = MapComponent();
+
+  LocationUpdateManager _locationUpdateManager;
+  LocationStreamManager _locationStreamManager;
 
   Position _initPosition;
+
+  LocationUpdateManager get locationUpdateManager => _locationUpdateManager;
+  LocationStreamManager get locationStreamManager => _locationStreamManager;
 
   /// A very basis method called whenever clients need to get
   /// a up-to-date position.
@@ -38,17 +40,13 @@ class LocationProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
       );
 
+  /// When launching the application, the client can use [_initPosition]
+  /// as the starting point for the map.
   Position get initialPosition => _initPosition;
 
-  /// WARNING : Only for testing
-  Position get positionInfo => _positionInfo;
-
-  /// WARNING : Only for testing
-  set positionInfo(Position position) {
-    _positionInfo = position;
-    notifyListeners();
-  }
-
+  /// This method only needs to be called once at the launching stage,
+  /// in order to get current initialization location and instantiate
+  /// map gadgets.
   Future<void> initializePosition() async {
     if (_initPosition != null) {
       print('initPosition has been called!');
@@ -59,77 +57,13 @@ class LocationProvider extends ChangeNotifier {
 
     _initializeMapGadget();
 
-    print('Initial position has benn resolved!');
-  }
-
-  /// This method will subscribe the position Stream, so every time when an event
-  /// emits, we have to update the google map with the latest position.
-  void activatePositionStream() {
-    _positionStream = _geolocator
-        .getPositionStream(_locationOptions)
-        .listen((position) async {
-      positionInfo = position; // WARNING : Only for testing
-
-      print(
-        'activatePositionStream has been triggered!!!\n'
-        'The latitude of position stream is ${position.latitude}\n'
-        'The heading of position stream is ${position.heading}',
-      );
-      await _updateMapPosition(position);
-    });
-  }
-
-  /// This method enable client to unsubscrible the position Stream at any time.
-  void cancelPositionStream() {
-    print('Just triggered cancelPositionStream!!! on tap');
-    _positionStream.cancel();
-  }
-
-  Future<void> _updateMapPosition(Position position) async {
-    _updateMarkerPosition(position, 'me');
-    _updateCirclePosition(position, 'me');
-    await _updateCameraLatLng(position);
-    print('Finish update map position !!!');
-  }
-
-  void _updateMarkerPosition(Position position, String markerId) {
-    final updateMarker =
-        mapComponent.markers[mapComponent.markersId[markerId]].copyWith(
-      positionParam: LatLng(position.latitude, position.longitude),
-      rotationParam: position.heading - 45,
-    );
-
-    mapComponent.markers[mapComponent.markersId[markerId]] = updateMarker;
-    print('Update marker position ... ');
-  }
-
-  void _updateCirclePosition(Position position, String circleId) {
-    final updateCircle =
-        mapComponent.circles[mapComponent.circlesId[circleId]].copyWith(
-      centerParam: LatLng(position.latitude, position.longitude),
-    );
-
-    mapComponent.circles[mapComponent.circlesId[circleId]] = updateCircle;
-    print('Update circle position ... ');
-  }
-
-  Future<void> _updateCameraLatLng(Position position) async {
-    final controller = await mapController.future;
-
-    controller.animateCamera(
-      CameraUpdate.newLatLngZoom(
-        LatLng(position.latitude, position.longitude),
-        15,
-        // 14.4746,
-      ),
-    );
-    print('Animate camera ... ');
+    print('Initial position has been resolved!');
   }
 
   /// Initialize [Marker] and [Cicrle] to indicate the current location of user.
-  _initializeMapGadget() {
+  void _initializeMapGadget() {
     mapComponent.createCircle(
-      id: 'me',
+      id: Character.me,
       position: _initPosition,
       color: Colors.blue[100].withOpacity(0.5),
       strokeWidth: 1,
@@ -137,9 +71,20 @@ class LocationProvider extends ChangeNotifier {
     );
 
     mapComponent.createMarker(
-      id: 'me',
+      id: Character.me,
       iconName: MarkerBitmap.compass,
       position: _initPosition,
     );
+  }
+
+  void _managerInit() {
+    _locationUpdateManager = LocationUpdateManager(
+      notifyListeners: _registerNotifyListeners,
+    );
+    _locationStreamManager = LocationStreamManager(_registerNotifyListeners);
+  }
+
+  void _registerNotifyListeners() {
+    notifyListeners();
   }
 }
