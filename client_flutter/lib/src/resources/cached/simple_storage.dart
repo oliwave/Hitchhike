@@ -24,7 +24,7 @@ class SimpleStorage {
     print('SharedPreferences has been resolved !!!');
 
     // After '_prefs' has been initialized, we call init() method in RoleProvider.
-    RoleProvider().init(); 
+    RoleProvider().init();
   }
 
   bool getBool(String target) {
@@ -45,6 +45,19 @@ class SimpleStorage {
       return false;
     }
     return await _prefs.setBool(target, value);
+  }
+
+  double getDouble(String target) {
+    double value = _prefs.getDouble(target);
+
+    return value;
+  }
+
+  Future<bool> setDouble(String target, double value) async {
+    if (!_boolProperTarget(target)) {
+      return false;
+    }
+    return await _prefs.setDouble(target, value);
   }
 
   String getString(String target) {

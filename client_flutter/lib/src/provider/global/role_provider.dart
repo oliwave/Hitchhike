@@ -18,48 +18,51 @@ class RoleProvider with ChangeNotifier {
   static final _roleProvider = RoleProvider._();
 
   SimpleStorage _prefs;
-  bool _isMatched;
-  String _role;
-  List<String> _routeLatitude;
-  List<String> _routeLongitude;
+  bool isMatched;
+  bool hasRevokedDriverPosition;
+  String role;
+  double driverLat;
+  double driverLng;
+  List<String> routeLatitude;
+  List<String> routeLongitude;
 
   bool _isFirst = true;
-
-  bool get isMatched => _isMatched;
-  String get role => _role;
 
   /// This method should only be triggered one time.
   void init() {
     if (_isFirst) {
       _prefs = Repository.getSimpleStorage;
-      _isMatched = _prefs.getBool(TargetSourceString.isMatched);
-      _role = _prefs.getString(TargetSourceString.role);
-      _routeLatitude = _prefs.getStringList(TargetSourceString.routeLatitude);
-      _routeLongitude = _prefs.getStringList(TargetSourceString.routeLongitude);
+      isMatched = _prefs.getBool(TargetSourceString.isMatched);
+      hasRevokedDriverPosition =
+          _prefs.getBool(TargetSourceString.hasRevokedDriverPosition);
+      role = _prefs.getString(TargetSourceString.role);
+      driverLat = _prefs.getDouble(TargetSourceString.driverLat);
+      driverLng = _prefs.getDouble(TargetSourceString.driverLng);
+      routeLatitude = _prefs.getStringList(TargetSourceString.routeLatitude);
+      routeLongitude = _prefs.getStringList(TargetSourceString.routeLongitude);
       _isFirst = false;
       return;
     }
   }
 
-  set isMatched(bool isMatched) {
-    _isMatched = isMatched;
-  }
-
-  set role(String role) {
-    _role = role;
-  }
-
   @override
   void dispose() {
     // Save the state in case the client turns off the app
-    if (_isMatched) {
-      _prefs.setString(TargetSourceString.role, _role);
-      _prefs.setBool(TargetSourceString.isMatched, _isMatched);
-      _prefs.setStringList(TargetSourceString.routeLatitude, _routeLatitude);
-      _prefs.setStringList(TargetSourceString.routeLongitude, _routeLongitude);
+    if (isMatched) {
+      _prefs.setString(TargetSourceString.role, role);
+      _prefs.setBool(TargetSourceString.isMatched, isMatched);
+      _prefs.setBool(TargetSourceString.hasRevokedDriverPosition,
+          hasRevokedDriverPosition);
+      _prefs.setDouble(TargetSourceString.driverLat, driverLat);
+      _prefs.setDouble(TargetSourceString.driverLng, driverLng);
+      _prefs.setStringList(TargetSourceString.routeLatitude, routeLatitude);
+      _prefs.setStringList(TargetSourceString.routeLongitude, routeLongitude);
     } else {
       _prefs.setString(TargetSourceString.role, null);
       _prefs.setBool(TargetSourceString.isMatched, false);
+      _prefs.setBool(TargetSourceString.hasRevokedDriverPosition, false);
+      _prefs.setDouble(TargetSourceString.driverLat, null);
+      _prefs.setDouble(TargetSourceString.driverLng, null);
       _prefs.setStringList(TargetSourceString.routeLatitude, null);
       _prefs.setStringList(TargetSourceString.routeLongitude, null);
     }

@@ -11,7 +11,7 @@ import './source_collection.dart';
 /// you won't get the different object when you instantiate it. Instead,
 /// you get the same object no matter whenever and wherever you access it.
 ///
-/// See https://dart.dev/guides/language/language-tour#constructors
+/// * See https://dart.dev/guides/language/language-tour#constructors
 class Repository {
   Repository._();
 
@@ -32,6 +32,8 @@ class Repository {
       CloudMessageHandler();
 
   static DatabaseHandler get getDatabaseHandler => DatabaseHandler();
+
+  static JsonFileHandler get getJsonFileHandler => JsonFileHandler();
 }
 
 /// The target string is specified which local resource that client wants to access.
@@ -39,10 +41,43 @@ class TargetSourceString {
   TargetSourceString._();
 
   static const String isMatched = 'isMatched';
+  static const String hasRevokedDriverPosition = 'hasRevokedDriverPosition';
   static const String hasMultipleLaunched = 'hasMultipleLaunched';
   static const String role = 'role';
   static const String jwt = 'jwt';
   static const String pwd = 'pwd';
+  static const String driverLat = 'driverLat';
+  static const String driverLng = 'driverLng';
   static const String routeLatitude = 'routeLatitude';
   static const String routeLongitude = 'routeLongitude';
+}
+
+class Character {
+  Character._();
+
+  static const String me = 'me';
+  static const String otherSide = 'otherSide';
+  static const String passengerStart = 'passengerStart';
+  static const String passengerEnd = 'passengerEnd';
+}
+
+class SocketEventName {
+  SocketEventName._();
+
+  static const String revokeDriverPosition = 'revokeDriverPosition';
+  static const String driverPosition = 'driverPosition';
+  static const String chat = 'chat';
+}
+
+class FcmEventType {
+  FcmEventType._();
+
+  static const String orderConfirmation = 'order_confirmation';
+  static const String paired = 'paired';
+}
+
+class FileName {
+  FileName._();
+
+  static const String pairedData = 'pairedData.json';
 }
