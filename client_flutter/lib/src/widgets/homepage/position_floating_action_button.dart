@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../provider/provider_collection.dart';
+import '../../provider/provider_collection.dart'
+    show HomepageProvider, LocationProvider;
 
 class PositionFloatingActionButton extends StatefulWidget {
   @override
@@ -84,7 +85,8 @@ class _PositionFloatingActionButtonState
               onPressed: homepageProvider.hasMoved
                   ? () {
                       homepageProvider.hasMoved = false;
-                      locationProvider.activatePositionStream();
+                      locationProvider.locationStreamManager
+                          .listenMyPositionStream();
                     }
                   : null,
             );

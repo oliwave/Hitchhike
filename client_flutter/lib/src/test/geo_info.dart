@@ -28,7 +28,8 @@ class TestingGeoInfo extends StatelessWidget {
               height: PlatformInfo.screenAwareSize(90),
               child: Consumer<LocationProvider>(
                 builder: (context, locationProvider, _) {
-                  final info = locationProvider.positionInfo;
+                  final info =
+                      locationProvider.locationStreamManager.positionInfo;
 
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,

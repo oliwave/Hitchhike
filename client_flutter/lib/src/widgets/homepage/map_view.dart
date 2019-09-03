@@ -23,7 +23,7 @@ class MapView extends StatelessWidget {
     final position = locationProvider.initialPosition;
 
     // acitvatePositionStream method to keep the latest position on the map.
-    locationProvider.activatePositionStream();
+    locationProvider.locationStreamManager.listenMyPositionStream();
 
     return GoogleMap(
       initialCameraPosition: CameraPosition(
@@ -35,12 +35,14 @@ class MapView extends StatelessWidget {
       ),
       mapType: MapType.normal,
       onMapCreated: (GoogleMapController controller) {
-        locationProvider.mapController.complete(controller);
+        locationProvider.locationUpdateManager.mapController
+            .complete(controller);
       },
       myLocationButtonEnabled: false,
       myLocationEnabled: false,
       markers: Set<Marker>.of(locationProvider.mapComponent.markersValue),
       circles: Set<Circle>.of(locationProvider.mapComponent.circlesValue),
+      polylines: Set<Polyline>.of(locationProvider.mapComponent.polylinesValue),
       // TODO: This is an alternative solution for updating the google map
       // by implementing 'onTap' callback when users drag it.
       // Instead, we should implement 'onDrag' callback to update.
@@ -49,7 +51,7 @@ class MapView extends StatelessWidget {
   }
 
   void _onTapMap(LocationProvider location, HomepageProvider homepage) {
-    location.cancelPositionStream();
+    location.locationStreamManager.cancelMyPositionStream();
     homepage.hasMoved = true;
   }
 }
