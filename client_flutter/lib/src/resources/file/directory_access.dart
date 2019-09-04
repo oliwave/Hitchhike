@@ -7,7 +7,7 @@ class DirectoryAccess {
   DirectoryAccess._();
 
   static Directory _directory;
-  static bool _isFirst;
+  static bool _isFirst = true;
 
   static Future<void> initDirectory() async {
     if (_isFirst) {
