@@ -22,32 +22,48 @@ class FavoriteRoutesProvider with ChangeNotifier {
 
   Map<String, FavoriteRouteItem> _routesMaps = {};
 
+  /// Get a list of your [FavoriteRouteItem] that stores in the database.
   List<FavoriteRouteItem> get favoriteRoutesList => [..._routesMaps.values];
 
+  /// Get a boolean value to determine if the [favoriteRoutesList] is empty.
   bool get isEmptyRoutesList => _routesMaps.isEmpty;
 
+  /// Get the length of [favoriteRoutesList].
   int get routesListLength => _routesMaps.length;
 
+  /// Get the user default selected [FavoriteRouteItem].
+  ///
+  /// Return `null` if no element satisfy this condition which
+  /// [FavoriteRouteItem.isDefaultRoute] is `false`.
   FavoriteRouteItem get defaultFavoriteRouteItem =>
-      _routesMaps.values.firstWhere((routeItem) => routeItem.isDefaultRoute);
+      _routesMaps.values.firstWhere(
+        (routeItem) => routeItem.isDefaultRoute,
+        orElse: null,
+      );
 
+  /// This method provider user to add their favorite route with specified
+  /// [FavoriteRouteItem] object.
   bool addRoute({
     @required FavoriteRouteItem targetRoute,
   }) {
     if (_routesMaps[targetRoute.id] != null) return false;
 
+    // To inspect if there is the same route.
     final machingList = _routesMaps.keys.where((routeItem) =>
         routeItem.contains(targetRoute.nameStart) &&
         routeItem.contains(targetRoute.nameEnd));
 
+    // Return `false` if no element is in matchingList.
     if (machingList.isNotEmpty) return false;
 
+    // 1. Insert the given route into database.
     _handler.db.insert(
       DatabaseHandler.favoriteRoutes,
       targetRoute.toMapForDb(),
       conflictAlgorithm: ConflictAlgorithm.ignore,
     );
 
+    // 2. Insert the given route into runtime list.
     _routesMaps[targetRoute.id] = targetRoute;
 
     notifyListeners();
@@ -55,6 +71,11 @@ class FavoriteRoutesProvider with ChangeNotifier {
     return true;
   }
 
+  /// The feature of this method is to expand the tapped panel and
+  /// close the rest.
+  ///
+  /// * [index] enable this method to find the target panel in the list,
+  /// and assign the [isExpanded] value to panel's field.
   void setExpasionPanelState(int index, bool isExpanded) {
     for (int i = 0; i < favoriteRoutesList.length; i++) {
       if (i == index) {
@@ -66,6 +87,8 @@ class FavoriteRoutesProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// With the given [routeId], [changeDefaultRoute] method can help user
+  /// to change the default [FavoriteRouteItem] to the specified one.
   bool changeDefaultRoute({
     @required String routeId,
   }) {
@@ -74,12 +97,7 @@ class FavoriteRoutesProvider with ChangeNotifier {
 
     if (targetRoute == null) return false;
 
-    final originDefaultRouteId = _routesMaps.values
-        .firstWhere(
-          (routeItem) => routeItem.isDefaultRoute,
-          orElse: () => null,
-        )
-        ?.id;
+    final originDefaultRouteId = defaultFavoriteRouteItem?.id;
 
     /// [originDefaultRouteId] is not the parameter, nor a null value.
     if (originDefaultRouteId != routeId && originDefaultRouteId != null) {
@@ -127,6 +145,7 @@ class FavoriteRoutesProvider with ChangeNotifier {
     return true;
   }
 
+  /// Delete the [FavoriteRouteItem] with given [routeId].
   bool deleteRoute({
     @required String routeId,
   }) {
@@ -149,6 +168,7 @@ class FavoriteRoutesProvider with ChangeNotifier {
     return true;
   }
 
+  /// Swap the start and the end location in a route.
   bool swapRouteUpdate({
     @required String routeId,
   }) {
@@ -160,12 +180,13 @@ class FavoriteRoutesProvider with ChangeNotifier {
     final tempGeoStart = targetRoute.geoStart;
     final tempNameStart = targetRoute.nameStart;
 
-    targetRoute.geoStart = _routesMaps[routeId].geoEnd;
-    targetRoute.geoEnd = tempGeoStart;
-    targetRoute.nameStart = _routesMaps[routeId].nameEnd;
-    targetRoute.nameEnd = tempNameStart;
-    targetRoute.addressStart = _routesMaps[routeId].addressEnd;
-    targetRoute.addressEnd = tempAdStart;
+    targetRoute
+      ..geoStart = _routesMaps[routeId].geoEnd
+      ..geoEnd = tempGeoStart
+      ..nameStart = _routesMaps[routeId].nameEnd
+      ..nameEnd = tempNameStart
+      ..addressStart = _routesMaps[routeId].addressEnd
+      ..addressEnd = tempAdStart;
 
     _handler.db.update(
       DatabaseHandler.favoriteRoutes,
@@ -203,12 +224,12 @@ class FavoriteRoutesProvider with ChangeNotifier {
       for (final rawItem in maps) {
         final route = FavoriteRouteItem.fromDB(rawItem);
 
-        /// Initialize [_routesMap] and record [defaultRoute] 
+        /// Initialize [_routesMap] and record [defaultRoute]
         /// at the same time.
         if (route.isDefaultRoute) {
           defaultRoute = route;
         }
-        
+
         _routesMaps[route.id] = route;
       }
 
