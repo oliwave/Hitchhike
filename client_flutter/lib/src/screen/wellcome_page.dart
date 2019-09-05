@@ -12,7 +12,7 @@ class WellcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initializing the client app.
     PlatformInfo.context = context;
-    
+
     print('Device width : ${MediaQuery.of(context).size.width}');
     print('Device heigth : ${MediaQuery.of(context).size.height}');
 
@@ -26,7 +26,6 @@ class WellcomePage extends StatelessWidget {
         (Route<dynamic> route) => false,
       );
     });
-
 
     return Scaffold(
       backgroundColor: Colors.white,

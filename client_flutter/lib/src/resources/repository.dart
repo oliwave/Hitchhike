@@ -59,6 +59,7 @@ class Character {
   static const String otherSide = 'otherSide';
   static const String passengerStart = 'passengerStart';
   static const String passengerEnd = 'passengerEnd';
+  static const String route = 'route';
 }
 
 class SocketEventName {
