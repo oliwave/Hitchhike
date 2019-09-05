@@ -34,7 +34,7 @@ class JsonFileHandler {
     print("File exists");
 
     // Write the modified map object to json file.
-    // (By default, it will ovverride the file content)
+    // (By default, it will override the file content)
     await jsonFile.writeAsString(json.encode(data));
   }
 
@@ -47,7 +47,7 @@ class JsonFileHandler {
     final jsonFile = File(DirectoryAccess.getFilePath(fileName));
 
     if (!_checkFileExisted(jsonFile)) return null;
-
+    
     return json.decode(await jsonFile.readAsString());
   }
 

@@ -16,11 +16,10 @@ class BulletinProvider extends ChangeNotifier {
     _bulletinSizeController = controller;
   }
 
-  void showBulletin(String text) {
+  Future<void> showBulletin(String text) async {
     showText = text;
-    _bulletinSizeController
-        .forward()
-        .then((_) => Future.delayed(Duration(milliseconds: 1200)))
-        .then((_) => _bulletinSizeController.reverse());
+    await _bulletinSizeController.forward();
+    await Future.delayed(Duration(milliseconds: 1200));
+    await _bulletinSizeController.reverse();
   }
 }
