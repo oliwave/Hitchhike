@@ -27,8 +27,8 @@ class InitSetting {
     await _prefs.init();
     await _fcm.init();
     await _bitmap.initializeBitmap(context);
-    await _locationProvider.initializePosition();
     await DirectoryAccess.initDirectory();
+    await _locationProvider.initializePosition();
     await _db.init();
     await _favoriteRoutesProvider.initRoutesList();
 
