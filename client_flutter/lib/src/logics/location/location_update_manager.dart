@@ -1,25 +1,20 @@
 import 'dart:async';
 
-import 'package:client_flutter/src/logics/notify_manager.dart';
 import 'package:flutter/Material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../notify_manager.dart';
 import '../../widgets/homepage/google_map_widget/map_component.dart';
+import '../../provider/provider_collection.dart' show LocationProvider;
 
 class LocationUpdateManager extends NotifyManager {
-  LocationUpdateManager._(VoidCallback notifyListeners)
-      : super(notifyListeners);
+  LocationUpdateManager({
+    @required VoidCallback notifyListeners,
+    @required LocationProvider locationProvider,
+  }) : super(notifyListeners);
 
-  factory LocationUpdateManager({VoidCallback notifyListeners}) {
-    if (_locationUpdateManager != null) {
-      return _locationUpdateManager;
-    }
-    return _locationUpdateManager = LocationUpdateManager._(notifyListeners);
-  }
-
-  static LocationUpdateManager _locationUpdateManager;
   final MapComponent _mapComponent = MapComponent();
   final Completer<GoogleMapController> mapController = Completer();
 

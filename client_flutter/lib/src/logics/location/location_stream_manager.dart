@@ -6,12 +6,17 @@ import 'package:geolocator/geolocator.dart';
 
 import '../../logics/notify_manager.dart';
 import '../../resources/repository.dart';
-import '../../logics/location/location_update_manager.dart';
-import '../../provider/provider_collection.dart' show RoleProvider;
+import '../../provider/provider_collection.dart'
+    show RoleProvider, LocationProvider;
 
 class LocationStreamManager extends NotifyManager {
-  LocationStreamManager(VoidCallback notifyListeners) : super(notifyListeners);
+  LocationStreamManager({
+    @required VoidCallback notifyListeners,
+    @required LocationProvider locationProvider,
+  })  : _locationProvider = locationProvider,
+        super(notifyListeners);
 
+  final LocationProvider _locationProvider;
   final _socketHandler = Repository.getSocketHandler;
 
   final _roleProvider = RoleProvider();
@@ -27,7 +32,7 @@ class LocationStreamManager extends NotifyManager {
 
   /// WARNING : Only for testing
   Position _positionInfo;
-  LocationUpdateManager _locationUpdateManager = LocationUpdateManager();
+  // LocationUpdateManager _locationUpdateManager = LocationUpdateManager();
 
   StreamSubscription<Position> _myPositionStream;
   StreamSubscription<Map<String, String>> _driverPositionStream;
@@ -51,7 +56,7 @@ class LocationStreamManager extends NotifyManager {
 
         print('activatePositionStream has been triggered!!!\n');
 
-        _locationUpdateManager.updateCharacterPosition(
+        _locationProvider.locationUpdateManager.updateCharacterPosition(
           character: Character.me,
           position: position,
         );
@@ -114,7 +119,7 @@ class LocationStreamManager extends NotifyManager {
         _roleProvider.driverLat = lat;
         _roleProvider.driverLng = lng;
 
-        _locationUpdateManager.updateCharacterPosition(
+        _locationProvider.locationUpdateManager.updateCharacterPosition(
           character: Character.otherSide,
           position: _driverCurrentPosition,
         );

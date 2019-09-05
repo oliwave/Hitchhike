@@ -1,16 +1,17 @@
 import 'dart:async';
 
-import 'package:client_flutter/src/resources/repository.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
-import '../../resources/repository.dart' show Character;
+import '../../resources/repository.dart';
 import '../../logics/location/location_stream_manager.dart';
 import '../../logics/location/location_update_manager.dart';
+import '../../logics/location/paired_data_manager.dart';
 import '../../widgets/homepage/google_map_widget/map_component.dart';
 import '../../widgets/homepage/google_map_widget/marker_bitmap.dart';
+import '../provider_collection.dart' show RoleProvider;
 
 class LocationProvider extends ChangeNotifier {
   LocationProvider._() {
@@ -22,16 +23,19 @@ class LocationProvider extends ChangeNotifier {
   static final _locationProvider = LocationProvider._();
 
   final _geolocator = Geolocator();
-
+  final _roleProvider = RoleProvider();
+  final _fs = Repository.getJsonFileHandler;
   final mapComponent = MapComponent();
 
   LocationUpdateManager _locationUpdateManager;
   LocationStreamManager _locationStreamManager;
+  PairedDataManager _pairedDataManager;
 
   Position _initPosition;
 
   LocationUpdateManager get locationUpdateManager => _locationUpdateManager;
   LocationStreamManager get locationStreamManager => _locationStreamManager;
+  PairedDataManager get pairedDataManager => _pairedDataManager;
 
   /// A very basis method called whenever clients need to get
   /// a up-to-date position.
@@ -55,13 +59,22 @@ class LocationProvider extends ChangeNotifier {
 
     _initPosition = await currentPosition;
 
-    _initializeMapGadget();
+    await _initializeMapGadget();
 
     print('Initial position has been resolved!');
   }
 
   /// Initialize [Marker] and [Cicrle] to indicate the current location of user.
-  void _initializeMapGadget() {
+  Future<void> _initializeMapGadget() async {
+    if (_roleProvider.isMatched) {
+      // Read data from json file.
+      final pairedData = await _fs.readFile(
+        fileName: FileName.pairedData,
+      );
+
+      _pairedDataManager?.initPairingRoute(pairedData);
+    }
+
     mapComponent.createCircle(
       id: Character.me,
       position: _initPosition,
@@ -80,8 +93,16 @@ class LocationProvider extends ChangeNotifier {
   void _managerInit() {
     _locationUpdateManager = LocationUpdateManager(
       notifyListeners: _registerNotifyListeners,
+      locationProvider: this,
     );
-    _locationStreamManager = LocationStreamManager(_registerNotifyListeners);
+    _locationStreamManager = LocationStreamManager(
+      notifyListeners: _registerNotifyListeners,
+      locationProvider: this,
+    );
+    _pairedDataManager = PairedDataManager(
+      notifyListeners: _registerNotifyListeners,
+      locationProvider: this,
+    );
   }
 
   void _registerNotifyListeners() {
