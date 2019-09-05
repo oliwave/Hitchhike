@@ -15,6 +15,8 @@ class FcmActionManager extends NotifyManager {
   final RoleProvider _roleProvider = RoleProvider();
   final LocationProvider _locationProvider = LocationProvider();
   final _api = Repository.getApi;
+  final _fs = Repository.getJsonFileHandler;
+  Map<String, dynamic> pairedData;
 
   /// It's a primary method of consuming fcm event.
   void messageConsumer(Map<String, dynamic> message, BuildContext context) {
@@ -37,6 +39,9 @@ class FcmActionManager extends NotifyManager {
           cancelButtonName: '掰掰',
         );
       } else if (type == FcmEventType.paired) {
+        // Assign fcm pairedData to field.
+        pairedData = message['pairedData'];
+
         _fcmAlertDialog(
           title: const Text('暨大搭便車'),
           content: Text('已經完成配對囉～'),
@@ -44,27 +49,15 @@ class FcmActionManager extends NotifyManager {
           barrierDismissible: true,
         );
 
-        if (_roleProvider.role == '司機') {
-          _locationProvider.locationStreamManager
-              .listenRevokeDriverPositionStream();
+        // Assign the reference of pairedData to pairedDataManager in
+        // LocationProvider.
+        _locationProvider.pairedDataManager.initPairingRoute(pairedData);
 
-          _locationProvider.mapComponent.createMarker(
-            id: Character.passengerStart,
-            position: null,
-          );
-
-          _locationProvider.mapComponent.createMarker(
-            id: Character.passengerEnd,
-            position: null,
-          );
-        } else {
-          _locationProvider.locationStreamManager.listenDriverPositionStream();
-
-          _locationProvider.mapComponent.createCircle(
-            id: Character.otherSide,
-            // position: ,
-          );
-        }
+        // Write pairedData to json file without waiting it.
+        _fs.writeToFile(
+          fileName: FileName.pairedData,
+          data: pairedData,
+        );
       }
     }
 
