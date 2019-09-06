@@ -32,7 +32,6 @@ class LocationStreamManager extends NotifyManager {
 
   /// WARNING : Only for testing
   Position _positionInfo;
-  // LocationUpdateManager _locationUpdateManager = LocationUpdateManager();
 
   StreamSubscription<Position> _myPositionStream;
   StreamSubscription<Map<String, String>> _driverPositionStream;
@@ -72,6 +71,7 @@ class LocationStreamManager extends NotifyManager {
                 'lat': '${position.latitude}',
                 'lng': '${position.longitude}',
                 'heading': '${position.heading}',
+                'speed': '${position.speed}',
               },
             );
           } else {
@@ -84,6 +84,10 @@ class LocationStreamManager extends NotifyManager {
               _driverCurrentPosition.latitude,
               _driverCurrentPosition.longitude,
             );
+
+            /// TODO : This value should output to homepage screen to inform
+            /// passenger.
+            final timeToArrive = _distance / _driverCurrentPosition.speed;
 
             // If the distance is smaller than 5 meters, then we
             // assume that driver has meet passenger.
@@ -109,16 +113,21 @@ class LocationStreamManager extends NotifyManager {
       (Map<String, String> data) {
         final lat = double.parse(data['lat']);
         final lng = double.parse(data['lng']);
-        _driverCurrentPosition = Position(
-          latitude: lat,
-          longitude: lng,
-        );
 
         // Record the latest coordinates of driver to ensure that they can be
         // the initial position of driver when you launch the app next time.
         _roleProvider.driverLat = lat;
         _roleProvider.driverLng = lng;
 
+        // Record runtime driver location for passenger.
+        _driverCurrentPosition = Position(
+          latitude: lat,
+          longitude: lng,
+          heading: double.parse(data['heading']),
+          speed: double.parse(data['speed']),
+        );
+
+        // Update `otherside` position.
         _locationProvider.locationUpdateManager.updateCharacterPosition(
           character: Character.otherSide,
           position: _driverCurrentPosition,
