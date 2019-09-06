@@ -38,7 +38,7 @@ class FavoriteRoutesProvider with ChangeNotifier {
   FavoriteRouteItem get defaultFavoriteRouteItem =>
       _routesMaps.values.firstWhere(
         (routeItem) => routeItem.isDefaultRoute,
-        orElse: null,
+        orElse: () => null,
       );
 
   /// This method provider user to add their favorite route with specified
@@ -136,9 +136,9 @@ class FavoriteRoutesProvider with ChangeNotifier {
       }
     }
 
-    if (currentDefaultRoute != null) {
-      _createOrderInfo(currentDefaultRoute);
-    }
+    _updateOrderInfo(
+      currentDefaultRoute,
+    );
 
     notifyListeners();
 
@@ -199,6 +199,8 @@ class FavoriteRoutesProvider with ChangeNotifier {
 
     notifyListeners();
 
+    _updateOrderInfo(targetRoute);
+
     return true;
   }
 
@@ -233,19 +235,19 @@ class FavoriteRoutesProvider with ChangeNotifier {
         _routesMaps[route.id] = route;
       }
 
-      _createOrderInfo(defaultRoute);
+      _updateOrderInfo(defaultRoute);
 
       _isFirst = false;
     }
   }
 
-  void _createOrderInfo(FavoriteRouteItem defaultRoute) {
+  void _updateOrderInfo(FavoriteRouteItem defaultRoute) {
     OrderInfo()
-      ..addressEnd = defaultRoute.addressEnd
-      ..addressStart = defaultRoute.addressStart
-      ..nameEnd = defaultRoute.nameEnd
-      ..nameStart = defaultRoute.nameStart
-      ..geoEnd = defaultRoute.geoEnd
-      ..geoStart = defaultRoute.geoStart;
+      ..addressEnd = defaultRoute?.addressEnd
+      ..addressStart = defaultRoute?.addressStart
+      ..nameEnd = defaultRoute?.nameEnd
+      ..nameStart = defaultRoute?.nameStart
+      ..geoEnd = defaultRoute?.geoEnd
+      ..geoStart = defaultRoute?.geoStart;
   }
 }
