@@ -72,16 +72,13 @@ class LocationProvider extends ChangeNotifier {
         fileName: FileName.pairedData,
       );
 
-      _pairedDataManager?.initPairingRoute(pairedData);
+      _pairedDataManager.initPairingRoute(
+        pairedData,
+        // Specify initial position for driver marker.
+        _roleProvider.driverLat,
+        _roleProvider.driverLng,
+      );
     }
-
-    mapComponent.createCircle(
-      id: Character.me,
-      position: _initPosition,
-      color: Colors.blue[100].withOpacity(0.5),
-      strokeWidth: 1,
-      strokeColor: Colors.blue[500],
-    );
 
     mapComponent.createMarker(
       id: Character.me,

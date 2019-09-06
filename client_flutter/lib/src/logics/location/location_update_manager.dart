@@ -48,11 +48,16 @@ class LocationUpdateManager extends NotifyManager {
       markerId: character,
       position: position,
     );
-    _updateCirclePosition(
-      position: position,
-      circleId: character,
-    );
-    await _updateCameraLatLng(position);
+
+    if (_roleProvier.isMatched) {
+      await _updateCameraBounds(
+        northeast: _locationProvider.pairedDataManager.northeast,
+        southwest: _locationProvider.pairedDataManager.southwest,
+      );
+    } else {
+      await _updateCameraLatLng(position);
+    }
+
     print('Finish update map position !!!');
   }
 
@@ -68,19 +73,6 @@ class LocationUpdateManager extends NotifyManager {
 
     _mapComponent.markers[_mapComponent.markersId[markerId]] = updateMarker;
     print('Update marker position ... ');
-  }
-
-  void _updateCirclePosition({
-    @required Position position,
-    @required String circleId,
-  }) {
-    final updateCircle =
-        _mapComponent.circles[_mapComponent.circlesId[circleId]].copyWith(
-      centerParam: LatLng(position.latitude, position.longitude),
-    );
-
-    _mapComponent.circles[_mapComponent.circlesId[circleId]] = updateCircle;
-    print('Update circle position ... ');
   }
 
   Future<void> _updateCameraLatLng(Position position) async {

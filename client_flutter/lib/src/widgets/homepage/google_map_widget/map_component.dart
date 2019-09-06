@@ -1,4 +1,3 @@
-import 'package:client_flutter/src/util/platform_info.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,45 +15,15 @@ class MapComponent {
   static final mapComponent = MapComponent._();
 
   final Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-  final Map<CircleId, Circle> circles = <CircleId, Circle>{};
   final Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
 
   /// Record a key-value data, which client can get the instance of [MarkerId]
   /// by specified a specific String
   final Map<String, MarkerId> markersId = <String, MarkerId>{};
-
-  /// Record a key-value data, which client can get the instance of [CircleId]
-  /// by specified a specific String
-  final Map<String, CircleId> circlesId = <String, CircleId>{};
-
   final Map<String, PolylineId> polylinesId = <String, PolylineId>{};
 
   Iterable<Marker> get markersValue => markers.values;
-  Iterable<Circle> get circlesValue => circles.values;
   Iterable<Polyline> get polylinesValue => polylines.values;
-
-  void createCircle({
-    @required String id,
-    @required Position position,
-    Color color = Colors.black,
-    int strokeWidth = 0,
-    Color strokeColor = Colors.transparent,
-  }) {
-    final CircleId circleId = CircleId(id);
-
-    circlesId[id] = circleId;
-
-    final Circle circle = Circle(
-      circleId: circleId,
-      center: LatLng(position.latitude, position.longitude),
-      radius: PlatformInfo.screenAwareSize(70),
-      fillColor: color,
-      strokeWidth: strokeWidth,
-      strokeColor: strokeColor,
-    );
-
-    circles[circleId] = circle;
-  }
 
   void createMarker({
     @required String id,
@@ -100,5 +69,25 @@ class MapComponent {
     );
 
     polylines[polylineId] = polyline;
+  }
+
+  bool deleteMarker(String character) {
+    final MarkerId markerId = markersId[character];
+
+    if (markerId == null) return false;
+
+    markers.remove(markerId);
+
+    return true;
+  }
+
+  bool deletePolyline(String character) {
+    final PolylineId polylineId = polylinesId[character];
+
+    if (polylineId == null) return false;
+
+    polylines.remove(polylineId);
+
+    return true;
   }
 }

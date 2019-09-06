@@ -41,7 +41,6 @@ class MapView extends StatelessWidget {
       myLocationButtonEnabled: false,
       myLocationEnabled: false,
       markers: Set<Marker>.of(locationProvider.mapComponent.markersValue),
-      circles: Set<Circle>.of(locationProvider.mapComponent.circlesValue),
       polylines: Set<Polyline>.of(locationProvider.mapComponent.polylinesValue),
       // TODO: This is an alternative solution for updating the google map
       // by implementing 'onTap' callback when users drag it.
