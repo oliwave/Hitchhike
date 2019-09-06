@@ -33,8 +33,6 @@ class OrderManager extends NotifyManager {
     if (buttonName != '送出訂單') {
       roleProvider.role = null;
     } else {
-      // roleProvider.isMatched = true;
-
       if (roleProvider.isMatched) {
         bulletinProvider.showBulletin('行程中無法新增訂單！');
         return;
