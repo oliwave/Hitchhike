@@ -90,14 +90,22 @@ class LocationStreamManager extends NotifyManager {
             final timeToArrive = _distance / _driverCurrentPosition.speed;
 
             // If the distance is smaller than 5 meters, then we
-            // assume that driver has meet passenger.
+            // assume that driver has met passenger.
             if (_distance < 5.0) {
               _socketHandler.emitEvent(
-                content: SocketEventName.revokeDriverPosition,
-                eventName: 'Get on car!',
+                eventName: SocketEventName.revokeDriverPosition,
+                content: 'Get on car!',
               );
               _roleProvider.hasRevokedDriverPosition = true;
-              // _driverPositionStream.cancel();
+
+              // Unsubscribe from `driverPositionStream` because driver
+              // will no longer send any location-related data after passenger
+              // emit `revokeDriverPostion`.
+              _driverPositionStream.cancel();
+
+              // Delete `otherside` marker because its location won't update
+              // anymore.
+              _locationProvider.mapComponent.deleteMarker(Character.otherSide);
             }
           }
         }
