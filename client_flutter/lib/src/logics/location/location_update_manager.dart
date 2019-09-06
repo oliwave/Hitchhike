@@ -18,6 +18,21 @@ class LocationUpdateManager extends NotifyManager {
   final MapComponent _mapComponent = MapComponent();
   final Completer<GoogleMapController> mapController = Completer();
 
+  /// Call this method to render the pairing route on google Map.
+  ///
+  /// However, it usually called when user first get the `pairedData` from
+  /// fcm and wanna instantiate the route. Therefore, in general, we usually
+  /// call [updateCharacterPosition] to update Google Map instead.
+  ///
+  /// * Throw `_UpateMapException` when this method is not invoked in match mode.
+  Future<void> renderPairingRoute() async {
+    if (!_roleProvier.isMatched) throw _UpateMapException();
+    await _updateCameraBounds(
+      northeast: _locationProvider.pairedDataManager.northeast,
+      southwest: _locationProvider.pairedDataManager.southwest,
+    );
+  }
+
   Future<void> updateCharacterPosition({
     @required String character,
     @required Position position,
@@ -72,5 +87,9 @@ class LocationUpdateManager extends NotifyManager {
       ),
     );
     print('Animate camera ... ');
+  }
+class _UpateMapException implements Exception {
+  String errorMessage() {
+    return 'This method can only be invoked when isMatch is true!\n';
   }
 }
