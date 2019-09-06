@@ -31,7 +31,7 @@ class SocketHandler {
   Stream<String> get getRevokeDriverPositionStream =>
       _revokeDriverPositionController.stream;
   Stream<Map<String, dynamic>> get getChatStream => _chatController.stream;
-
+  
   Future<SocketIO> connectSocketServer() async {
     if (!_isConnected) {
       _socket = await _manager.createInstance('https://socket.hitchhike.ml');

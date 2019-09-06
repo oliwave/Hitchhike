@@ -88,7 +88,7 @@ class StepperBody extends StatelessWidget {
             ),
           ],
         ),
-        Padding(padding: EdgeInsets.all(8),)
+        Padding(padding: EdgeInsets.all(8))
       ],
     );
   }
