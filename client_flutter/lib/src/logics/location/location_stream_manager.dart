@@ -149,8 +149,11 @@ class LocationStreamManager extends NotifyManager {
   void listenRevokeDriverPositionStream() {
     _revokePositionStream = _socketHandler.getRevokeDriverPositionStream.listen(
       (_) {
+        // Don't care about incoming data, but care about this triggered event.
         _roleProvider.hasRevokedDriverPosition = true;
-        // _revokePositionStream.cancel();
+
+        _locationProvider.mapComponent.deleteMarker(Character.otherSide);
+        _revokePositionStream.cancel();
       },
     );
   }
