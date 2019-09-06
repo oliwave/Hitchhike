@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../notify_manager.dart';
 import '../../provider/provider_collection.dart'
@@ -17,8 +18,17 @@ class PairedDataManager extends NotifyManager {
 
   final LocationProvider _locationProvider;
   final RoleProvider _roleProvider = RoleProvider();
+  LatLng _northeast;
+  LatLng _southwest;
 
-  void initPairingRoute(Map<String, dynamic> pairedData) {
+  LatLng get northeast => _northeast;
+  LatLng get southwest => _southwest;
+
+  void initPairingRoute(
+    Map<String, dynamic> pairedData, [
+    double initialDriverLat,
+    double initialDriverLng,
+  ]) {
     // Provider waypoint marker for driver and passenger to inspect.
     _locationProvider.mapComponent.createMarker(
       id: Character.passengerStart,
@@ -39,16 +49,8 @@ class PairedDataManager extends NotifyManager {
       windowTitle: pairedData['passengerEndName'],
     );
 
-    // Create `otherSide` marker to distinguishing from `me`.
-    _locationProvider.mapComponent.createMarker(
-      id: Character.otherSide,
-      position: Position(
-        latitude: pairedData['legs'][0]['startLat'],
-        longitude: pairedData['legs'][0]['startLng'],
-      ),
-      iconName:
-          _roleProvider.role == '司機' ? MarkerBitmap.motor : MarkerBitmap.car,
-    );
+    _northeast = LatLng(pairedData['northeastLat'], pairedData['northeastLng']);
+    _southwest = LatLng(pairedData['southwestLat'], pairedData['southwestLng']);
 
     // To record all the cooridates of this route.
     List<Position> polyline = [];
@@ -62,6 +64,18 @@ class PairedDataManager extends NotifyManager {
     );
 
     if (_roleProvider.role == '司機') {
+      // Create `otherSide` marker to distinguishing from `me`.
+      if (!_roleProvider.hasRevokedDriverPosition) {
+        _locationProvider.mapComponent.createMarker(
+          id: Character.otherSide,
+          position: Position(
+            latitude: pairedData['legs'][1]['startLat'],
+            longitude: pairedData['legs'][1]['startLng'],
+          ),
+          iconName: MarkerBitmap.motor,
+        );
+      }
+
       _locationProvider.locationStreamManager
           .listenRevokeDriverPositionStream();
 
@@ -75,6 +89,18 @@ class PairedDataManager extends NotifyManager {
             ),
           );
     } else {
+      // Create `otherSide` marker to distinguishing from `me`.
+      if (!_roleProvider.hasRevokedDriverPosition) {
+        _locationProvider.mapComponent.createMarker(
+          id: Character.otherSide,
+          position: Position(
+            latitude: initialDriverLat ?? pairedData['legs'][0]['startLat'],
+            longitude: initialDriverLat ?? pairedData['legs'][0]['startLng'],
+          ),
+          iconName: MarkerBitmap.car,
+        );
+      }
+
       // Only three legs in a route.
       //
       // 2. Store every end location in each step in every legs to polyline
@@ -99,5 +125,7 @@ class PairedDataManager extends NotifyManager {
       id: Character.route,
       points: polyline,
     );
+
+    _locationProvider.locationUpdateManager.renderPairingRoute();
   }
 }
