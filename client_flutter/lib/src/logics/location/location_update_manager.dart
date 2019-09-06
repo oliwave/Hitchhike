@@ -7,15 +7,19 @@ import 'package:geolocator/geolocator.dart';
 
 import '../notify_manager.dart';
 import '../../widgets/homepage/google_map_widget/map_component.dart';
-import '../../provider/provider_collection.dart' show LocationProvider;
+import '../../provider/provider_collection.dart'
+    show LocationProvider, RoleProvider;
 
 class LocationUpdateManager extends NotifyManager {
   LocationUpdateManager({
     @required VoidCallback notifyListeners,
     @required LocationProvider locationProvider,
-  }) : super(notifyListeners);
+  })  : _locationProvider = locationProvider,
+        super(notifyListeners);
 
   final MapComponent _mapComponent = MapComponent();
+  final RoleProvider _roleProvier = RoleProvider();
+  final LocationProvider _locationProvider;
   final Completer<GoogleMapController> mapController = Completer();
 
   /// Call this method to render the pairing route on google Map.
@@ -33,6 +37,9 @@ class LocationUpdateManager extends NotifyManager {
     );
   }
 
+  // Update Google Map with geo bounds when the user status is
+  // in match mode. Otherwise, only update Google Map with user
+  // current location.
   Future<void> updateCharacterPosition({
     @required String character,
     @required Position position,
@@ -88,6 +95,25 @@ class LocationUpdateManager extends NotifyManager {
     );
     print('Animate camera ... ');
   }
+
+  Future<void> _updateCameraBounds({
+    @required LatLng northeast,
+    @required LatLng southwest,
+  }) async {
+    final controller = await mapController.future;
+
+    controller.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          northeast: northeast,
+          southwest: southwest,
+        ),
+        5.0,
+      ),
+    );
+  }
+}
+
 class _UpateMapException implements Exception {
   String errorMessage() {
     return 'This method can only be invoked when isMatch is true!\n';
