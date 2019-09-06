@@ -16,7 +16,6 @@ class FcmActionManager extends NotifyManager {
   final LocationProvider _locationProvider = LocationProvider();
   final _api = Repository.getApi;
   final _fs = Repository.getJsonFileHandler;
-  Map<String, dynamic> pairedData;
 
   /// It's a primary method of consuming fcm event.
   void messageConsumer(Map<String, dynamic> message, BuildContext context) {
@@ -40,7 +39,7 @@ class FcmActionManager extends NotifyManager {
         );
       } else if (type == FcmEventType.paired) {
         // Assign fcm pairedData to field.
-        pairedData = message['pairedData'];
+        final Map<String, dynamic> pairedData = message['pairedData'];
 
         _fcmAlertDialog(
           title: const Text('暨大搭便車'),
