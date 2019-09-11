@@ -1,12 +1,12 @@
 var db = require('../db.js');
 var express = require('express');
 const auth = require('../auth.js');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 
 var app = express();
 var jsonParser = bodyParser.json();
 
-const router = new express.Router()
+const router = new express.Router();
 
 //pwd
 router.post('/profilePwd', auth.auth, jsonParser,function (req, res) {
