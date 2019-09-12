@@ -25,10 +25,9 @@ class FcmActionManager extends NotifyManager {
      * Formal Ccode
      */
     // Data Message
-    final String type = message['type'];
-
-    if (message['notification'] == null) {
-      final duration = Duration(seconds: message['duration']);
+    if (!message.containsKey('notification')) {
+      final String type = message['data']['type'];
+      final duration = Duration(seconds: message['data']['duration']);
 
       if (type == FcmEventType.orderConfirmation) {
         _fcmAlertDialog(
@@ -36,15 +35,18 @@ class FcmActionManager extends NotifyManager {
           content: Text('離乘客起點尚需 : ${duration.inMinutes}分鐘'),
           confirmButtonName: '開始訂單',
           cancelButtonName: '掰掰',
+          confirmCallback: _confirmCallback('success'),
+          cancelCallback: _confirmCallback('fail'),
         );
       } else if (type == FcmEventType.paired) {
         // Assign fcm pairedData to field.
-        final Map<String, dynamic> pairedData = message['pairedData'];
+        final Map<String, dynamic> pairedData = message['data']['pairedData'];
 
         _fcmAlertDialog(
           title: const Text('暨大搭便車'),
           content: Text('已經完成配對囉～'),
           confirmButtonName: '了解',
+          confirmCallback: () => Navigator.pop(_context),
           barrierDismissible: true,
         );
 
@@ -66,7 +68,9 @@ class FcmActionManager extends NotifyManager {
       title: Text(message['notification']['title'] ?? message['data']['name']),
       content: Text(message['notification']['body'] ?? message['data']['name']),
       confirmButtonName: '確認',
+      confirmCallback: () => Navigator.pop(_context),
       cancelButtonName: '掰掰',
+      cancelCallback: () => Navigator.pop(_context),
     );
   }
 
@@ -75,36 +79,45 @@ class FcmActionManager extends NotifyManager {
     @required Widget title,
     @required Widget content,
     @required String confirmButtonName,
+    @required VoidCallback confirmCallback,
     String cancelButtonName,
-    bool barrierDismissible,
+    VoidCallback cancelCallback,
+    bool barrierDismissible = true,
   }) {
-    return showDialog(
-      context: _context,
-      barrierDismissible: barrierDismissible,
-      builder: (_) => AlertDialog(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
+    if (cancelButtonName != null && cancelCallback != null) {
+      return showDialog(
+        context: _context,
+        barrierDismissible: barrierDismissible,
+        builder: (_) => AlertDialog(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10),
+            ),
           ),
-        ),
-        actions: <Widget>[
-          if (cancelButtonName != null)
-            FlatButton(
-              child: Text(cancelButtonName,
+          actions: <Widget>[
+            if (cancelButtonName != null)
+              FlatButton(
+                child: Text(
+                  cancelButtonName,
                   style: const TextStyle(
                     color: Colors.grey,
-                  )),
-              onPressed: _confirmCallback('cancel'),
-            ),
-          FlatButton(
-            child: Text(confirmButtonName),
-            onPressed: _confirmCallback('success'),
-          )
-        ],
-        title: title,
-        content: content,
-      ),
-    );
+                  ),
+                ),
+                onPressed: confirmCallback,
+              ),
+            FlatButton(
+              child: Text(confirmButtonName),
+              onPressed: cancelCallback,
+            )
+          ],
+          title: title,
+          content: content,
+        ),
+      );
+    } else {
+      throw Exception(
+          'cancelButtonName and cancelCallback must be specified together or not!');
+    }
   }
 
   /// [_confirmCallback] method returns a callback method that conducts
