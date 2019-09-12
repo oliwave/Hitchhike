@@ -47,7 +47,7 @@ class MapComponent {
       infoWindow: windowTitle == null && iconName != null
           ? InfoWindow.noText
           : InfoWindow(title: windowTitle),
-      rotation: position.heading - 45,
+      // rotation: position.heading - 45,
     );
 
     markers[markerId] = marker;

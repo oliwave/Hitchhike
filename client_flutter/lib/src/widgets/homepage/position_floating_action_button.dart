@@ -51,11 +51,6 @@ class _PositionFloatingActionButtonState
 
   @override
   Widget build(BuildContext context) {
-    final locationProvider = Provider.of<LocationProvider>(
-      context,
-      listen: false,
-    );
-
     return AnimatedBuilder(
       animation: _alignmentAnimation,
       builder: (BuildContext context, Widget floatingButton) {
@@ -77,18 +72,19 @@ class _PositionFloatingActionButtonState
             ),
           ],
         ),
-        child: Consumer<HomepageProvider>(
-          builder: (context, homepageProvider, _) {
+        child: Consumer<LocationProvider>(
+          builder: (context, locationProvider, _) {
             return IconButton(
-              disabledColor: Colors.blue[600],
+              color:
+                  locationProvider.hasMoved ? Colors.black : Colors.blue[600],
               icon: Icon(Icons.my_location),
-              onPressed: homepageProvider.hasMoved
-                  ? () {
-                      homepageProvider.hasMoved = false;
-                      locationProvider.locationStreamManager
-                          .listenMyPositionStream();
-                    }
-                  : null,
+              onPressed: () {
+                if (locationProvider.hasMoved) {
+                  locationProvider.locationStreamManager
+                      .listenMyPositionStream();
+                  locationProvider.hasMoved = false;
+                }
+              },
             );
           },
         ),

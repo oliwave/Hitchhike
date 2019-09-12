@@ -5,7 +5,15 @@ import 'package:provider/provider.dart';
 import '../provider/provider_collection.dart';
 import '../util/platform_info.dart';
 
-class TestingGeoInfo extends StatelessWidget {
+class TestingGeoInfo extends StatefulWidget {
+  @override
+  _TestingGeoInfoState createState() => _TestingGeoInfoState();
+}
+
+class _TestingGeoInfoState extends State<TestingGeoInfo> {
+
+  double geoCount = 0;
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<HomepageProvider>(context);
@@ -25,11 +33,13 @@ class TestingGeoInfo extends StatelessWidget {
                 ],
               ),
               width: PlatformInfo.screenAwareSize(160),
-              height: PlatformInfo.screenAwareSize(90),
+              height: PlatformInfo.screenAwareSize(180),
               child: Consumer<LocationProvider>(
                 builder: (context, locationProvider, _) {
                   final info =
                       locationProvider.locationStreamManager.positionInfo;
+
+                      print('GeoInfo is updating ...');
 
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -37,8 +47,8 @@ class TestingGeoInfo extends StatelessWidget {
                     children: <Widget>[
                       geoText('經度', info.latitude),
                       geoText('緯度', info.longitude),
-                      geoText('方向', info.heading),
                       geoText('速度', info.speed),
+                      geoText('呼叫次數', geoCount++),
                     ],
                   );
                 },

@@ -20,11 +20,10 @@ class HomepageProvider with ChangeNotifier {
 
   AutocompleteManager _autocompleteManager;
 
-  /// Used to detect whether the google map has been dragged.
-  bool _hasMoved = false;
-
   /// WARNING : Only for testing
   bool _hasInfo = false;
+
+  bool _mapFirstRendered = true;
 
   /// Client can launch homepage animation with [HomepageAnimationManager].
   HomepageAnimationManager get animationManager => _homepageAnimationManager;
@@ -33,15 +32,16 @@ class HomepageProvider with ChangeNotifier {
 
   AutocompleteManager get autocompleteManager => _autocompleteManager;
 
-  /// The field will be set with true when clients tap on the Google map.
-  bool get hasMoved => _hasMoved;
-
   /// WARNING : Only for testing
   bool get hasInfo => _hasInfo;
 
-  set hasMoved(bool moved) {
-    _hasMoved = moved;
-    notifyListeners();
+  bool get mapFirstRendered {
+    bool temp = false;
+    if (_mapFirstRendered) {
+      temp = _mapFirstRendered;
+      _mapFirstRendered = !_mapFirstRendered;
+    }
+    return temp;
   }
 
   /// WARNING : Only for testing

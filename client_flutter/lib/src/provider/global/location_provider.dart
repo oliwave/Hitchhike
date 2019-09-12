@@ -26,16 +26,26 @@ class LocationProvider extends ChangeNotifier {
   final _roleProvider = RoleProvider();
   final _fs = Repository.getJsonFileHandler;
   final mapComponent = MapComponent();
+  // final Completer<GoogleMapController> _futureMapController = Completer();
+  GoogleMapController mapController;
 
   LocationUpdateManager _locationUpdateManager;
   LocationStreamManager _locationStreamManager;
   PairedDataManager _pairedDataManager;
+
+  /// Used to detect whether the google map has been dragged.
+  bool _hasMoved = false;
 
   Position _initPosition;
 
   LocationUpdateManager get locationUpdateManager => _locationUpdateManager;
   LocationStreamManager get locationStreamManager => _locationStreamManager;
   PairedDataManager get pairedDataManager => _pairedDataManager;
+
+  /// The field will be set with true when clients tap on the Google map.
+  bool get hasMoved => _hasMoved;
+  // Completer<GoogleMapController> get futureMapController =>
+  //     _futureMapController;
 
   /// A very basis method called whenever clients need to get
   /// a up-to-date position.
@@ -47,6 +57,11 @@ class LocationProvider extends ChangeNotifier {
   /// When launching the application, the client can use [_initPosition]
   /// as the starting point for the map.
   Position get initialPosition => _initPosition;
+
+  set hasMoved(bool moved) {
+    _hasMoved = moved;
+    notifyListeners();
+  }
 
   /// This method only needs to be called once at the launching stage,
   /// in order to get current initialization location and instantiate
