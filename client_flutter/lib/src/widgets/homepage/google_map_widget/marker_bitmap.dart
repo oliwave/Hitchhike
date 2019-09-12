@@ -33,7 +33,7 @@ class MarkerBitmap {
     for (int i = 0; i < text.length; i++) {
       final target = text[i];
       bitmaps[target] = await _createBitmap(path: path[i]);
-      print('Get the $text bitmap!');
+      print('Get the $target bitmap!');
     }
   }
 

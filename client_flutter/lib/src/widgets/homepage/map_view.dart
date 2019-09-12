@@ -23,34 +23,41 @@ class MapView extends StatelessWidget {
     final position = locationProvider.initialPosition;
 
     // acitvatePositionStream method to keep the latest position on the map.
-    locationProvider.locationStreamManager.listenMyPositionStream();
+    if (homepageProvider.mapFirstRendered)
+      locationProvider.locationStreamManager.listenMyPositionStream();
 
-    return GoogleMap(
-      initialCameraPosition: CameraPosition(
-        target: LatLng(
-          position.latitude,
-          position.longitude,
-        ),
-        zoom: 14.4746,
-      ),
-      mapType: MapType.normal,
-      onMapCreated: (GoogleMapController controller) {
-        locationProvider.locationUpdateManager.mapController
-            .complete(controller);
+    return Consumer<LocationProvider>(
+      builder: (_, locationProvider, child) {
+        return GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(
+              position.latitude,
+              position.longitude,
+            ),
+            zoom: 14.4746,
+          ),
+          compassEnabled: false,
+          mapType: MapType.normal,
+          onMapCreated: (GoogleMapController controller) {
+            // locationProvider.futureMapController.complete(controller);
+            locationProvider.mapController = controller;
+          },
+          myLocationButtonEnabled: false,
+          myLocationEnabled: false,
+          markers: Set<Marker>.of(locationProvider.mapComponent.markersValue),
+          polylines:
+              Set<Polyline>.of(locationProvider.mapComponent.polylinesValue),
+          // TODO: This is an alternative solution for updating the google map
+          // by implementing 'onTap' callback when users drag it.
+          // Instead, we should implement 'onDrag' callback to update.
+          onTap: (_) => _onTapMap(locationProvider),
+        );
       },
-      myLocationButtonEnabled: false,
-      myLocationEnabled: false,
-      markers: Set<Marker>.of(locationProvider.mapComponent.markersValue),
-      polylines: Set<Polyline>.of(locationProvider.mapComponent.polylinesValue),
-      // TODO: This is an alternative solution for updating the google map
-      // by implementing 'onTap' callback when users drag it.
-      // Instead, we should implement 'onDrag' callback to update.
-      onTap: (_) => _onTapMap(locationProvider, homepageProvider),
     );
   }
 
-  void _onTapMap(LocationProvider location, HomepageProvider homepage) {
+  void _onTapMap(LocationProvider location) {
     location.locationStreamManager.cancelMyPositionStream();
-    homepage.hasMoved = true;
+    location.hasMoved = true;
   }
 }

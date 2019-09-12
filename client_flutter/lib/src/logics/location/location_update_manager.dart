@@ -20,7 +20,6 @@ class LocationUpdateManager extends NotifyManager {
   final MapComponent _mapComponent = MapComponent();
   final RoleProvider _roleProvier = RoleProvider();
   final LocationProvider _locationProvider;
-  final Completer<GoogleMapController> mapController = Completer();
 
   /// Call this method to render the pairing route on google Map.
   ///
@@ -28,9 +27,11 @@ class LocationUpdateManager extends NotifyManager {
   /// fcm and wanna instantiate the route. Therefore, in general, we usually
   /// call [updateCharacterPosition] to update Google Map instead.
   ///
-  /// * Throw `_UpateMapException` when this method is not invoked in match mode.
+  /// * Throw `Exception` when this method is not invoked in match mode.
   Future<void> renderPairingRoute() async {
-    if (!_roleProvier.isMatched) throw _UpateMapException();
+    if (!_roleProvier.isMatched)
+      throw Exception(
+          'This method can only be invoked when isMatch is true!\n');
     await _updateCameraBounds(
       northeast: _locationProvider.pairedDataManager.northeast,
       southwest: _locationProvider.pairedDataManager.southwest,
@@ -62,27 +63,30 @@ class LocationUpdateManager extends NotifyManager {
   }
 
   void _updateMarkerPosition({
-    @required Position position,
     @required String markerId,
+    @required Position position,
   }) {
-    final updateMarker =
-        _mapComponent.markers[_mapComponent.markersId[markerId]].copyWith(
+    final originalMarker =
+        _mapComponent.markers[_mapComponent.markersId[markerId]];
+
+    final updateMarker = originalMarker.copyWith(
       positionParam: LatLng(position.latitude, position.longitude),
-      rotationParam: position.heading - 45,
+      // rotationParam: position.heading - 45,
     );
 
     _mapComponent.markers[_mapComponent.markersId[markerId]] = updateMarker;
-    print('Update marker position ... ');
+    print('Update marker $markerId position ... ');
   }
 
   Future<void> _updateCameraLatLng(Position position) async {
-    final controller = await mapController.future;
+    // final controller = await _locationProvider.futureMapController.future;
+    final controller = _locationProvider.mapController;
 
     controller.animateCamera(
       CameraUpdate.newLatLngZoom(
         LatLng(position.latitude, position.longitude),
-        15,
-        // 14.4746,
+        // 16.0,
+        14.4746,
       ),
     );
     print('Animate camera ... ');
@@ -92,7 +96,8 @@ class LocationUpdateManager extends NotifyManager {
     @required LatLng northeast,
     @required LatLng southwest,
   }) async {
-    final controller = await mapController.future;
+    // final controller = await _locationProvider.futureMapController.future;
+    final controller = _locationProvider.mapController;
 
     controller.animateCamera(
       CameraUpdate.newLatLngBounds(
@@ -103,11 +108,5 @@ class LocationUpdateManager extends NotifyManager {
         5.0,
       ),
     );
-  }
-}
-
-class _UpateMapException implements Exception {
-  String errorMessage() {
-    return 'This method can only be invoked when isMatch is true!\n';
   }
 }
