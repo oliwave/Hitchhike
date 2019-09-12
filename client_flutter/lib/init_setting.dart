@@ -1,15 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import 'package:permission_handler/permission_handler.dart';
+import 'package:connectivity/connectivity.dart';
 
 import './src/resources/file/directory_access.dart';
 import './src/widgets/homepage/google_map_widget/marker_bitmap.dart';
 import './src/resources/repository.dart';
 import './src/resources/restful/request_method.dart' show FcmTokenRequest;
 import './src/provider/provider_collection.dart'
-    show LocationProvider, FavoriteRoutesProvider;
+    show LocationProvider, FavoriteRoutesProvider, ConnectivityProvider;
 
-/// [init] is a comile-time constant.
-/// [https://dart.dev/guides/language/language-tour#final-and-const]
+/// TODO : Must add Wifi and data permission to make sure every user behavior is correct.
 final init = InitSetting();
 
 class InitSetting {
@@ -21,9 +24,11 @@ class InitSetting {
   static final _bitmap = MarkerBitmap();
   static final _locationProvider = LocationProvider();
   static final _favoriteRoutesProvider = FavoriteRoutesProvider();
+  static final _connectivityProvider = ConnectivityProvider();
 
   Future<void> runInitSetting(BuildContext context) async {
     await _setLocationPermission();
+    _networkConnection();
     await _prefs.init();
     await _fcm.init();
     await _bitmap.initializeBitmap(context);
@@ -32,7 +37,7 @@ class InitSetting {
     await _db.init();
     await _favoriteRoutesProvider.initRoutesList();
 
-    _checkLaunchingTimes();
+    _checkHasFcmToken();
   }
 
   Future<void> _setLocationPermission() async {
@@ -45,18 +50,47 @@ class InitSetting {
         '${permissions[PermissionGroup.locationWhenInUse]}');
   }
 
-  void _checkLaunchingTimes() {
-    final hasMultipleLaunched =
-        _prefs.getBool(TargetSourceString.hasMultipleLaunched);
+  Future<void> _checkHasFcmToken() async {
+    final hasFcmToken = _prefs.getBool(TargetSourceString.hasFcmToken);
+    print(
+        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhas'
+        'FcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
+        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
+        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
+        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
+        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
+        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken is $hasFcmToken');
 
-    if (!hasMultipleLaunched) {
-      final response = _api.sendHttpRequest(FcmTokenRequest(
-        fcmToken: _fcm.fcmToken,
-        jwtToken: '',
-      ));
+    /// TODO : refactor to use hasSendFcmToken instead of hasFcmToken
+    if (!hasFcmToken) {
+      final response = await _api.sendHttpRequest(
+        FcmTokenRequest(
+          fcmToken: _fcm.fcmToken,
+          jwtToken: '',
+        ),
+      );
 
-      _prefs.setBool(TargetSourceString.hasMultipleLaunched, true).then(
-          (onValue) => print('hasMultipleLaunched is set with : $onValue'));
+      print(
+          'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
+          'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
+          'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
+          'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
+          'fcm response : ${response.statusCode}');
+
+      final result = await _prefs.setBool(
+        TargetSourceString.hasFcmToken,
+        response.statusCode == 200,
+      );
+
+      print('hasFcmToken is set with : $result');
     }
+  }
+
+  void _networkConnection() {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      print(
+          'Connectivity has been triggered and the network status is $result');
+      _connectivityProvider.networkStatus = result != ConnectivityResult.none;
+    });
   }
 }
