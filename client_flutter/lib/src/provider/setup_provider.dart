@@ -27,4 +27,7 @@ final globalProviders = <SingleChildCloneableWidget>[
   ChangeNotifierProvider.value(
     value: CloudMessageProvider(),
   ),
+  ChangeNotifierProvider.value(
+    value: ConnectivityProvider(),
+  ),
 ];
