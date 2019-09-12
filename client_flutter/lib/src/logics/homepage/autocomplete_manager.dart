@@ -12,6 +12,8 @@ import 'package:google_maps_webservice/places.dart';
 
 import '../../model/order_info.dart';
 import '../../util/util_collection.dart' show Uuid, PlacesHandler;
+import '../../provider/provider_collection.dart'
+    show ConnectivityProvider;
 
 import '../notify_manager.dart';
 
@@ -24,6 +26,8 @@ class AutocompleteManager extends NotifyManager {
 
   /// Holds the reference of google places api key.
   final PlacesHandler _placesHandler = PlacesHandler();
+
+  static final _connect = ConnectivityProvider();
 
   /// It's the status of the [currentPositionButton] and determines
   /// if client is using the current location for ordering.
@@ -49,6 +53,8 @@ class AutocompleteManager extends NotifyManager {
     @required String target,
     @required Future<Position> futurePosition,
   }) async {
+    if (!_connect.checkNetworkStatus()) return null;
+
     final token = Uuid().generateV4();
     // final key = await _getPlacesApiKey(); // uncomment this when api key development is done.
     final key = 'AIzaSyB9Ht6FmmPwYbY87YDtM-Krno95W3ozqmM';

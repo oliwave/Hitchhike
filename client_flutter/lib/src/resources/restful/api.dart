@@ -1,6 +1,9 @@
+import 'package:client_flutter/src/provider/provider_collection.dart';
 import 'package:http/http.dart' show Response;
 
-import './request_method.dart';
+import './request_method.dart' show RequestMethod;
+import '../../provider/provider_collection.dart'
+    show ConnectivityProvider;
 
 /// This class manages every http request from our client to server.
 class Api {
@@ -11,6 +14,7 @@ class Api {
   }
 
   static final Api _api = Api._();
+  static final _connect = ConnectivityProvider();
 
   /// Send a specific http request assigned by the client to our server.
   ///
@@ -21,6 +25,8 @@ class Api {
   /// e.g., [VerifyUserId], [SignUp], etc. are all instances that is defined
   /// in [request_method.dart] that actually call http api.
   Future<Response> sendHttpRequest(RequestMethod action) async {
+    if (!_connect.checkNetworkStatus()) return null;
+
     final response = await action.request();
 
     // print('Let me check : ${response.body}');
