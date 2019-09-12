@@ -24,11 +24,11 @@ class PairedDataManager extends NotifyManager {
   LatLng get northeast => _northeast;
   LatLng get southwest => _southwest;
 
-  void initPairingRoute(
+  Future initPairingRoute(
     Map<String, dynamic> pairedData, [
     double initialDriverLat,
     double initialDriverLng,
-  ]) {
+  ]) async {
     // Provider waypoint marker for driver and passenger to inspect.
     _locationProvider.mapComponent.createMarker(
       id: Character.passengerStart,
@@ -126,6 +126,6 @@ class PairedDataManager extends NotifyManager {
       points: polyline,
     );
 
-    _locationProvider.locationUpdateManager.renderPairingRoute();
+    await _locationProvider.locationUpdateManager.renderPairingRoute();
   }
 }
