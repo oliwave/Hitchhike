@@ -55,7 +55,7 @@ class LocationStreamManager extends NotifyManager {
 
         print('activatePositionStream has been triggered!!!\n');
 
-        _locationProvider.locationUpdateManager.updateCharacterPosition(
+        await _locationProvider.locationUpdateManager.updateCharacterPosition(
           character: Character.me,
           position: position,
         );
@@ -70,7 +70,7 @@ class LocationStreamManager extends NotifyManager {
               content: {
                 'lat': '${position.latitude}',
                 'lng': '${position.longitude}',
-                'heading': '${position.heading}',
+                // 'heading': '${position.heading}',
                 'speed': '${position.speed}',
               },
             );
@@ -118,7 +118,7 @@ class LocationStreamManager extends NotifyManager {
   /// should listen to this stream.
   void listenDriverPositionStream() {
     _driverPositionStream = _socketHandler.getDriverPositionStream.listen(
-      (Map<String, String> data) {
+      (Map<String, String> data) async {
         final lat = double.parse(data['lat']);
         final lng = double.parse(data['lng']);
 
@@ -131,12 +131,12 @@ class LocationStreamManager extends NotifyManager {
         _driverCurrentPosition = Position(
           latitude: lat,
           longitude: lng,
-          heading: double.parse(data['heading']),
+          // heading: double.parse(data['heading']),
           speed: double.parse(data['speed']),
         );
 
         // Update `otherside` position.
-        _locationProvider.locationUpdateManager.updateCharacterPosition(
+        await _locationProvider.locationUpdateManager.updateCharacterPosition(
           character: Character.otherSide,
           position: _driverCurrentPosition,
         );
