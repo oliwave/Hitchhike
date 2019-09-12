@@ -53,12 +53,12 @@ class Bookmark extends StatelessWidget {
             order: orderInfo,
           ),
         );
-        bulletinProvider.showBulletin(success ? '成功儲存路線！' : '重複路線！');
+        bulletinProvider.showBulletin(text: success ? '成功儲存路線！' : '重複路線！');
       } else {
-        bulletinProvider.showBulletin('最多紀錄 5 條路線！');
+        bulletinProvider.showBulletin(text: '最多紀錄 5 條路線！');
       }
     } else {
-      bulletinProvider.showBulletin('請先設定好路線！');
+      bulletinProvider.showBulletin(text: '請先設定好路線！');
     }
   }
 }

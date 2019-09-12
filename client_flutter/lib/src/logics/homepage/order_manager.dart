@@ -34,14 +34,14 @@ class OrderManager extends NotifyManager {
       roleProvider.role = null;
     } else {
       if (roleProvider.isMatched) {
-        bulletinProvider.showBulletin('行程中無法新增訂單！');
+        bulletinProvider.showBulletin(text: '行程中無法新增訂單！');
         return;
       }
 
       if (_hasCompleteOrderInfo()) {
         _orderRequest(roleProvider.role);
       } else {
-        bulletinProvider.showBulletin('還沒設定路線喔！');
+        bulletinProvider.showBulletin(text: '還沒設定路線喔！');
       }
     }
   }

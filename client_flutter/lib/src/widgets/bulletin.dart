@@ -57,40 +57,36 @@ class _BulletinState extends State<Bulletin>
           ),
         );
       },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 4.0,
-            ),
-            child: Image.asset(
-              'assets/icons/bullhorn/bullhorn.png',
-              height: PlatformInfo.screenAwareSize(20),
-              width: PlatformInfo.screenAwareSize(20),
-              color: Colors.orange.withOpacity(0.65),
-            ),
-          ),
-          bulletinContent(),
-        ],
+      child: Consumer<BulletinProvider>(
+        builder: (context, provider, child) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8.0,
+                  horizontal: 4.0,
+                ),
+                child: Image.asset(
+                  'assets/icons/bullhorn/bullhorn.png',
+                  height: PlatformInfo.screenAwareSize(20),
+                  width: PlatformInfo.screenAwareSize(20),
+                  color: provider.iconColor,
+                ),
+              ),
+              Text(
+                provider.showText,
+                style: TextStyle(
+                  color: provider.textColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  letterSpacing: 2,
+                ),
+              ),
+            ],
+          );
+        },
       ),
-    );
-  }
-
-  Consumer<BulletinProvider> bulletinContent() {
-    return Consumer<BulletinProvider>(
-      builder: (_, BulletinProvider value, child) {
-        return Text(
-          value.showText,
-          style: const TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-            letterSpacing: 2,
-          ),
-        );
-      },
     );
   }
 }
