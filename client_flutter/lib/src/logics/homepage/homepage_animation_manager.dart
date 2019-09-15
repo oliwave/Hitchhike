@@ -9,7 +9,9 @@ class HomepageAnimationManager extends NotifyManager {
   ) : super(notifyListeners);
 
   /// Enable the bottom sheet to animate its heitght.
-  AnimationController bottomSheetController;
+  AnimationController bottomSheetHeightController;
+
+  AnimationController bottomSheetOpacityController;
 
   /// Enable the customized [PositionFloatingActionButton] to animate its height
   /// when the [bottomSheetController] call the method of foreword or reverse.
@@ -23,30 +25,34 @@ class HomepageAnimationManager extends NotifyManager {
 
   /// Use boolean value to switch the UI between [RoleNavigatorBar]
   /// and [OrderPanel].
-  bool _isOrderPanel = false;
+  bool isOrderPanel = false;
 
-  /// It is used to switch the bottom sheet.
-  bool get isOrderPanel => _isOrderPanel;
+  // /// It is used to switch the bottom sheet.
+  // bool get isOrderPanel => _isOrderPanel;
 
-  /// It is used to switch the bottom sheet.
-  set isOrderPanel(bool isOrderPanel) {
-    _isOrderPanel = isOrderPanel;
-    notifyListeners();
-  }
+  // /// It is used to switch the bottom sheet.
+  // set isOrderPanel(bool isOrderPanel) {
+  //   _isOrderPanel = isOrderPanel;
+  //   // notifyListeners();
+  // }
 
-  void showPanelHideBar() {
+  Future<void> showPanelHideBar() async {
     isOrderPanel = true;
-    bottomSheetController.forward();
     positionButtonController.forward();
     favoriteButtonController.forward();
     appBarController.forward();
+    notifyListeners();
+    await bottomSheetHeightController.forward();
+    bottomSheetOpacityController.forward();
   }
 
-  void showBarHidePanel() {
-    bottomSheetController.reverse();
+  Future<void> showBarHidePanel() async {
+    isOrderPanel = false;
     positionButtonController.reverse();
     favoriteButtonController.reverse();
     appBarController.reverse();
-    isOrderPanel = false;
+    bottomSheetOpacityController.reverse();
+    bottomSheetHeightController.reverse();
+    notifyListeners();
   }
 }

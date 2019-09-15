@@ -20,6 +20,10 @@ class HomepageProvider with ChangeNotifier {
 
   AutocompleteManager _autocompleteManager;
 
+  BuildContext _bottomSheetContext;
+
+  BuildContext get bottomSheetContext => _bottomSheetContext;
+
   /// WARNING : Only for testing
   bool _hasInfo = false;
 
@@ -44,6 +48,14 @@ class HomepageProvider with ChangeNotifier {
     return temp;
   }
 
+  set bottomSheetContext(BuildContext context) {
+    if (!context.toString().contains('HomepageBottomSheet')) {
+      throw Exception('The context must be HomepageBottomSheet');
+    }
+    print('The context is $context');
+    _bottomSheetContext = context;
+  }
+
   /// WARNING : Only for testing
   void changeHasInfo() {
     _hasInfo = !hasInfo;
@@ -54,7 +66,10 @@ class HomepageProvider with ChangeNotifier {
     _homepageAnimationManager =
         HomepageAnimationManager(_registerNotifyListeners);
 
-    _orderManager = OrderManager(_registerNotifyListeners);
+    _orderManager = OrderManager(
+      notifyListeners: _registerNotifyListeners,
+      homepageProvider: this,
+    );
 
     _autocompleteManager = AutocompleteManager(_registerNotifyListeners);
   }
