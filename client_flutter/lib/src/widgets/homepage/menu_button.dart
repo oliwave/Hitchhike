@@ -28,9 +28,15 @@ class _MenuButtonState extends State<MenuButton>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     print('Refreshing MenuButton ...');
-    
+
     return Padding(
       padding: EdgeInsets.only(
         top: PlatformInfo.screenAwareSize(10.0),
