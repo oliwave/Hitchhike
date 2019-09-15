@@ -14,7 +14,7 @@ class LocationAppBar extends StatefulWidget {
 }
 
 class _LocationAppBarState extends State<LocationAppBar>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController _appBarController;
   Animation<double> _appBarAnimation;
   Animation<Color> _statusBarColorAnimation;

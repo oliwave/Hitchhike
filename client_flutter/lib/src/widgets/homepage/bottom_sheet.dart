@@ -13,34 +13,40 @@ class HomepageBottomSheet extends StatefulWidget {
 }
 
 class _HomepageBottomSheetState extends State<HomepageBottomSheet>
-    with SingleTickerProviderStateMixin {
-  AnimationController _bottomSheetController;
+    with TickerProviderStateMixin {
+  AnimationController _bottomSheetHeightController;
   Animation<double> _sheetHeightAnimation;
+  AnimationController _bottomSheetOpacityController;
   Animation<double> _opacityAnimation;
 
   @override
   void initState() {
     print('AnimtionController is in initState!!!');
 
-    _bottomSheetController = AnimationController(
+    _bottomSheetHeightController = AnimationController(
       duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _bottomSheetOpacityController = AnimationController(
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
 
     CurvedAnimation curvedAnimation = CurvedAnimation(
       curve: Curves.ease,
-      parent: _bottomSheetController,
+      parent: _bottomSheetHeightController,
       reverseCurve: Curves.ease,
     );
 
     _sheetHeightAnimation = curvedAnimation.drive(Tween<double>(
       begin: PlatformInfo.screenAwareSize(60),
-      end: PlatformInfo.screenAwareSize(250),
+      end: PlatformInfo.screenAwareSize(255),
     ));
 
     curvedAnimation = CurvedAnimation(
       curve: Curves.easeIn,
-      parent: _bottomSheetController,
+      parent: _bottomSheetOpacityController,
       reverseCurve: Curves.easeOut,
     );
 
@@ -51,15 +57,20 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
       ),
     );
 
-    final manager = Provider.of<HomepageProvider>(
+    final provider = Provider.of<HomepageProvider>(
       context,
       listen: false,
-    ).animationManager;
+    );
 
     // 'sheetHeightAnimation' and 'opacityAnimation' are triggered at
     // very deep widget tree. Therefore, we hold the reference of
     // 'AnimationController' in 'HomepageProvider'.
-    manager.bottomSheetController = _bottomSheetController;
+    provider.animationManager.bottomSheetHeightController =
+        _bottomSheetHeightController;
+    provider.animationManager.bottomSheetOpacityController =
+        _bottomSheetOpacityController;
+
+    provider.bottomSheetContext = context;
 
     super.initState();
   }
@@ -69,7 +80,8 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     print('AnimationController has been disposed!!!');
     // Controller should be dispose before the ticker was disposed,
     // because it may cause memory leak.
-    _bottomSheetController.dispose();
+    _bottomSheetHeightController.dispose();
+    _bottomSheetOpacityController.dispose();
     super.dispose();
   }
 
