@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../provider/provider_collection.dart';
+import '../../provider/provider_collection.dart' show HomepageProvider;
 import '../../util/platform_info.dart';
+import '../../widgets/favorite_routes_page/geo_step_tile.dart';
 
 class OrderPanel extends StatelessWidget {
   OrderPanel({@required this.opacityAnimation});
@@ -11,7 +12,7 @@ class OrderPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<RoleProvider>(
+    final state = Provider.of<HomepageProvider>(
       context,
       listen: false,
     );
@@ -26,9 +27,9 @@ class OrderPanel extends StatelessWidget {
           );
         },
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            if (state.role == '司機') ...[
+            if (state.orderManager.hasCompleteOrderInfo())
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -50,19 +51,31 @@ class OrderPanel extends StatelessWidget {
                       subtitle: state.orderManager.orderInfo.addressEnd,
                     ),
                   ],
-            if (state.role != '司機') ...[
-              Icon(Icons.motorcycle),
-            ],
+                ),
+              ),
+            if (!state.orderManager.hasCompleteOrderInfo())
+              Expanded(
+                child: Center(
+                  child: Text(
+                    '你想去哪ㄦ～～',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                      fontSize: 15.0,
+                    ),
+                  ),
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   _OrderButton(
-                    buttonName: '取消訂單',
+                    buttonName: '返回',
                   ),
                   _OrderButton(
-                    buttonName: '送出訂單',
+                    buttonName: '建立訂單',
                   ),
                 ],
               ),
@@ -77,8 +90,8 @@ class OrderPanel extends StatelessWidget {
 class _OrderButton extends StatelessWidget {
   _OrderButton({@required this.buttonName})
       : buttonColor =
-            buttonName == '送出訂單' ? Colors.green[700] : Colors.redAccent[700],
-        buttonIcon = buttonName == '送出訂單' ? Icons.send : Icons.cancel;
+            buttonName == '建立訂單' ? Colors.green[700] : Colors.redAccent[700],
+        buttonIcon = buttonName == '建立訂單' ? Icons.send : Icons.cancel;
 
   final String buttonName;
   final Color buttonColor;
