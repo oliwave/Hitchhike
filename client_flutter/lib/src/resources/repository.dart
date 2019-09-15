@@ -42,7 +42,7 @@ class TargetSourceString {
 
   static const String isMatched = 'isMatched';
   static const String hasRevokedDriverPosition = 'hasRevokedDriverPosition';
-  static const String hasFcmToken = 'hasFcmToken';
+  static const String hasSentFcmToken = 'hasSentFcmToken';
   static const String role = 'role';
   static const String jwt = 'jwt';
   static const String pwd = 'pwd';

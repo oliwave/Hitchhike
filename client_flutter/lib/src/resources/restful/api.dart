@@ -29,8 +29,6 @@ class Api {
 
     final response = await action.request();
 
-    // print('Let me check : ${response.body}');
-
     return response;
   }
 }

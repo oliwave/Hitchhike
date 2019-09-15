@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../resources/repository.dart';
 import '../../logics/fcm/fcm_action_manager.dart';
+import '../../logics/fcm/fcm_token_manager.dart';
 
 class CloudMessageProvider with ChangeNotifier {
   CloudMessageProvider._() {
@@ -21,6 +22,10 @@ class CloudMessageProvider with ChangeNotifier {
   StreamSubscription _fcmEventSubscription;
   BuildContext _context;
   FcmActionManager _fcmActionManager;
+  FcmTokenManager _fcmTokenManager;
+
+  FcmActionManager get fcmActionManager => _fcmActionManager;
+  FcmTokenManager get fcmTokenManager => _fcmTokenManager;
 
   set context(BuildContext context) => _context = context;
 
@@ -42,6 +47,7 @@ class CloudMessageProvider with ChangeNotifier {
 
   void _managerInit() {
     _fcmActionManager = FcmActionManager(_registerNotifyListeners);
+    _fcmTokenManager = FcmTokenManager(_registerNotifyListeners);
   }
 
   void _registerNotifyListeners() {

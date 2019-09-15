@@ -10,11 +10,7 @@ class CloudMessageHandler {
   }
 
   static final _cloudMessageHandler = CloudMessageHandler._();
-  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
-  String _fcmToken;
-
-  String get fcmToken => _fcmToken;
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   final _fcmEventController = StreamController<Map<String, dynamic>>();
 
@@ -25,26 +21,12 @@ class CloudMessageHandler {
 
   Stream<Map<String, dynamic>> get fcmEvent => _fcmEventController.stream;
 
-  Future<void> init() async {
-    if (_fcmToken != null) {
-      print(
-          'CloudMessageHandler had been initialized since the app was launched!');
-      return;
-    }
-    _fcmToken = await _firebaseMessaging.getToken();
+  // Future<String> refreshMessagingToken() async {
+  //   return _fcmToken = await firebaseMessaging.getToken();
+  // }
 
-    _messageConfiguration();
-
-    print(
-        'CloudMessageHandler has been resolved !!! and fcm token is : $_fcmToken');
-  }
-
-  Future<String> refreshMessagingToken() async {
-    return _fcmToken = await _firebaseMessaging.getToken();
-  }
-
-  void _messageConfiguration() {
-    _firebaseMessaging.configure(
+  void messageConfiguration() {
+    firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         _fcmEvent = message;
         print('Message received in onMessage : $message');
@@ -61,11 +43,11 @@ class CloudMessageHandler {
   }
 
   void iOSPermissionRequest() {
-    _firebaseMessaging.requestNotificationPermissions(
+    firebaseMessaging.requestNotificationPermissions(
       const IosNotificationSettings(sound: true, badge: true, alert: true),
     );
 
-    _firebaseMessaging.onIosSettingsRegistered
+    firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings settings) {});
   }
 

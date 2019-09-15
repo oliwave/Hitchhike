@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../provider/provider_collection.dart' show BulletinProvider;
+import 'package:connectivity/connectivity.dart';
+
+import '../../resources/repository.dart';
+import '../../provider/provider_collection.dart'
+    show BulletinProvider, CloudMessageProvider;
 
 class ConnectivityProvider with ChangeNotifier {
   ConnectivityProvider._();
@@ -11,6 +15,8 @@ class ConnectivityProvider with ChangeNotifier {
 
   static final _connectivityProvider = ConnectivityProvider._();
   final _bulletin = BulletinProvider();
+  final _fcmHandler = Repository.getCloudMessageHandler;
+  final _fcmProvider = CloudMessageProvider();
 
   bool networkStatus;
 
@@ -24,5 +30,19 @@ class ConnectivityProvider with ChangeNotifier {
       return false;
     }
     return true;
+  }
+
+  void networkConnection() {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      print(
+          'Connectivity has been triggered and the network status is $result');
+      _connectivityProvider.networkStatus = result != ConnectivityResult.none;
+
+      if (_connectivityProvider.networkStatus &&
+          !_fcmProvider.fcmTokenManager.hasSentFcmToken) {
+        _fcmHandler.messageConfiguration();
+        _fcmProvider.fcmTokenManager.initSendFcmToken();
+      }
+    });
   }
 }

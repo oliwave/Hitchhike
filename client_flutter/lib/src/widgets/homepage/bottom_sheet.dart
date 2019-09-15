@@ -67,6 +67,7 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     // 'AnimationController' in 'HomepageProvider'.
     provider.animationManager.bottomSheetHeightController =
         _bottomSheetHeightController;
+        
     provider.animationManager.bottomSheetOpacityController =
         _bottomSheetOpacityController;
 
