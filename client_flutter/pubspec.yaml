@@ -44,7 +44,7 @@ dependencies:
   crypto: ^2.0.6
 
   # For service permission in both Android and iOS
-  permission_handler: ^3.1.0
+  permission_handler: ^3.2.0
 
   # For socket.io connection
   adhara_socket_io: ^0.1.11
@@ -62,6 +62,8 @@ dependencies:
 
   # For Wifi connection.
   connectivity: ^0.4.4
+
+  flutter_screenutil: ^0.6.0
 
 dev_dependencies:
   flutter_test:
