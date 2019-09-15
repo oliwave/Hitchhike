@@ -1,3 +1,4 @@
+import 'package:client_flutter/src/util/util_collection.dart';
 import 'package:flutter/Material.dart';
 import 'package:provider/provider.dart';
 
@@ -48,7 +49,8 @@ class StepperBody extends StatelessWidget {
         ),
         Divider(
           color: Colors.black,
-          height: PlatformInfo.screenAwareSize(50),
+          // height: PlatformInfo.screenAwareSize(50),
+          height: SizeConfig.screenAwareHeight(7),
           indent: 20,
           endIndent: 20,
         ),

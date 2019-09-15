@@ -24,7 +24,7 @@ class _BulletinState extends State<Bulletin>
     _bulletinHeight = _bulletinSizeController.drive(
       Tween<double>(
         begin: 0,
-        end: 30,
+        end: 10,
       ),
     );
 
@@ -52,7 +52,8 @@ class _BulletinState extends State<Bulletin>
         return Align(
           alignment: Alignment(0, -0.4),
           child: Container(
-            height: PlatformInfo.screenAwareSize(_bulletinHeight.value),
+            // height: PlatformInfo.screenAwareSize(_bulletinHeight.value),
+            height: SizeConfig.screenAwareHeight(_bulletinHeight.value),
             child: bulletin,
           ),
         );
@@ -69,8 +70,10 @@ class _BulletinState extends State<Bulletin>
                 ),
                 child: Image.asset(
                   'assets/icons/bullhorn/bullhorn.png',
-                  height: PlatformInfo.screenAwareSize(20),
-                  width: PlatformInfo.screenAwareSize(20),
+                  // height: PlatformInfo.screenAwareSize(20),
+                  // width: PlatformInfo.screenAwareSize(20),
+                  width: SizeConfig.screenAwareWidth(5),
+                  height: SizeConfig.screenAwareHeight(5),
                   color: provider.iconColor,
                 ),
               ),

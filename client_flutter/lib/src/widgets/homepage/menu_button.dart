@@ -39,7 +39,8 @@ class _MenuButtonState extends State<MenuButton>
 
     return Padding(
       padding: EdgeInsets.only(
-        top: PlatformInfo.screenAwareSize(10.0),
+        // top: PlatformInfo.screenAwareSize(10.0),
+        top: SizeConfig.screenAwareWidth(3.0),
         // left: PlatformInfo.screenAwareSize(12.0),
         // right: PlatformInfo.screenAwareSize(5.0),
       ),
@@ -49,7 +50,8 @@ class _MenuButtonState extends State<MenuButton>
           child: AnimatedIcon(
             progress: iconAnimation,
             icon: AnimatedIcons.menu_close,
-            size: PlatformInfo.screenAwareSize(23),
+            // size: PlatformInfo.screenAwareWidth(23),
+            size: SizeConfig.screenAwareWidth(7),
           ),
           onTap: () {
             if (controller.status == AnimationStatus.completed) {

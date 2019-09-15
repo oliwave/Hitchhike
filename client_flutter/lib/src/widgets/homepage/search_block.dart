@@ -27,8 +27,10 @@ class _LocationIndicatorIcons extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: PlatformInfo.screenAwareSize(5),
-        vertical: PlatformInfo.screenAwareSize(15),
+        // horizontal: PlatformInfo.screenAwareSize(5),
+        // vertical: PlatformInfo.screenAwareSize(15),
+        horizontal: SizeConfig.screenAwareWidth(1),
+        vertical: SizeConfig.screenAwareHeight(1),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -43,7 +45,8 @@ class _LocationIndicatorIcons extends StatelessWidget {
           ),
           Container(
             color: Colors.grey,
-            height: PlatformInfo.screenAwareSize(15),
+            // height: PlatformInfo.screenAwareSize(15),
+            height: SizeConfig.screenAwareHeight(2),
             width: 2,
           ),
           Expanded(
@@ -69,7 +72,8 @@ class _LocationSearchList extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _SearchField(hintText: '起點'),
-          SizedBox(height: PlatformInfo.screenAwareSize(10)),
+          // SizedBox(height: PlatformInfo.screenAwareSize(10)),
+          SizedBox(height: SizeConfig.screenAwareHeight(2.2)),
           _SearchField(hintText: '終點'),
         ],
       ),
@@ -97,8 +101,10 @@ class _SearchField extends StatelessWidget {
     print('Refreshing SeachField ... $hintText 1');
 
     return Container(
-      width: PlatformInfo.screenAwareSize(175),
-      height: PlatformInfo.screenAwareSize(30),
+      // width: PlatformInfo.screenAwareSize(175),
+      // height: PlatformInfo.screenAwareSize(30),
+      width: SizeConfig.screenAwareWidth(55),
+      height: SizeConfig.screenAwareHeight(5),
       decoration: BoxDecoration(
         border: Border.all(width: 1),
         borderRadius: const BorderRadius.all(
@@ -144,7 +150,8 @@ class _SearchField extends StatelessWidget {
             target['text'],
             style: TextStyle(
               color: target['color'],
-              fontSize: PlatformInfo.screenAwareSize(12),
+              // fontSize: PlatformInfo.screenAwareSize(12),
+              fontSize: SizeConfig.screenAwareWidth(4),
               fontWeight: FontWeight.bold,
               letterSpacing: 3,
             ),

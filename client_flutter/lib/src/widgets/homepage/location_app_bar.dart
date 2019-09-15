@@ -28,7 +28,7 @@ class _LocationAppBarState extends State<LocationAppBar>
 
     _appBarAnimation = _appBarController.drive(
       Tween<double>(
-        begin: 90,
+        begin: 17,
         end: 0,
       ),
     );
@@ -76,7 +76,8 @@ class _LocationAppBarState extends State<LocationAppBar>
         builder: (BuildContext context, Widget rowOfWidgets) {
           return Container(
             width: MediaQuery.of(context).size.width,
-            height: PlatformInfo.screenAwareSize(_appBarAnimation.value),
+            // height: PlatformInfo.screenAwareSize(_appBarAnimation.value),
+            height: SizeConfig.screenAwareHeight(_appBarAnimation.value),
             decoration: const BoxDecoration(
               color: Colors.white,
               boxShadow: [

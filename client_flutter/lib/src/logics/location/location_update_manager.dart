@@ -85,8 +85,8 @@ class LocationUpdateManager extends NotifyManager {
     controller.animateCamera(
       CameraUpdate.newLatLngZoom(
         LatLng(position.latitude, position.longitude),
-        // 16.0,
-        14.4746,
+        16.0,
+        // 14.4746,
       ),
     );
     print('Animate camera ... ');

@@ -124,7 +124,7 @@ class _OrderButton extends StatelessWidget {
             padding: const EdgeInsets.only(left: 8.0),
             child: Icon(
               buttonIcon,
-              size: 20,
+              size: SizeConfig.screenAwareWidth(5),
               color: buttonColor,
             ),
           ),
@@ -136,7 +136,8 @@ class _OrderButton extends StatelessWidget {
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
-          Radius.circular(PlatformInfo.screenAwareSize(15)),
+          // Radius.circular(PlatformInfo.screenAwareSize(15)),
+          Radius.circular(SizeConfig.screenAwareWidth(5)),
         ),
       ),
       onPressed: () {

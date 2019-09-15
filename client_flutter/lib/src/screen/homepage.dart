@@ -19,7 +19,7 @@ class Homepage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PlatformInfo.context = context;
+    // PlatformInfo.context = context;
 
     Provider.of<CloudMessageProvider>(
       context,

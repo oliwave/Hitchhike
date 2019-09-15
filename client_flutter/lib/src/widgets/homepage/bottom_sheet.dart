@@ -40,8 +40,10 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     );
 
     _sheetHeightAnimation = curvedAnimation.drive(Tween<double>(
-      begin: PlatformInfo.screenAwareSize(60),
-      end: PlatformInfo.screenAwareSize(255),
+      // begin: PlatformInfo.screenAwareSize(60),
+      // end: PlatformInfo.screenAwareSize(255),
+      begin: SizeConfig.screenAwareHeight(10),
+      end: SizeConfig.screenAwareHeight(40),
     ));
 
     curvedAnimation = CurvedAnimation(
@@ -100,8 +102,10 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(PlatformInfo.screenAwareSize(50)),
-              topRight: Radius.circular(PlatformInfo.screenAwareSize(50)),
+              // topLeft: Radius.circular(PlatformInfo.screenAwareSize(50)),
+              // topRight: Radius.circular(PlatformInfo.screenAwareSize(50)),
+              topLeft: Radius.circular(SizeConfig.screenAwareWidth(15)),
+              topRight: Radius.circular(SizeConfig.screenAwareWidth(15)),
             ),
             boxShadow: [
               BoxShadow(

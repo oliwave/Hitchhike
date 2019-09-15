@@ -71,10 +71,12 @@ class _RoleButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(
-            roleName == '司機' ? 0 : PlatformInfo.screenAwareSize(35),
+            // roleName == '司機' ? 0 : PlatformInfo.screenAwareSize(35),
+            roleName == '司機' ? 0 : SizeConfig.screenAwareWidth(3),
           ),
           topRight: Radius.circular(
-            roleName == '司機' ? PlatformInfo.screenAwareSize(35) : 0,
+            roleName == '司機' ? SizeConfig.screenAwareWidth(3) : 0,
+            // roleName == '司機' ? PlatformInfo.screenAwareSize(35) : 0,
           ),
         ),
       ),

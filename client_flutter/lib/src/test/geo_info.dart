@@ -32,8 +32,10 @@ class _TestingGeoInfoState extends State<TestingGeoInfo> {
                   ),
                 ],
               ),
-              width: PlatformInfo.screenAwareSize(160),
-              height: PlatformInfo.screenAwareSize(180),
+              // width: PlatformInfo.screenAwareSize(160),
+              // height: PlatformInfo.screenAwareSize(180),
+              width: SizeConfig.screenAwareWidth(30),
+              height: SizeConfig.screenAwareHeight(20),
               child: Consumer<LocationProvider>(
                 builder: (context, locationProvider, _) {
                   final info =
