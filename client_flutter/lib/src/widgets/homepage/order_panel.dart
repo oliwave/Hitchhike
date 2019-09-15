@@ -30,9 +30,26 @@ class OrderPanel extends StatelessWidget {
           children: <Widget>[
             if (state.role == '司機') ...[
               Expanded(
-                child: Icon(Icons.motorcycle),
-              ),
-            ],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    GeoStepTile(
+                      title: state.orderManager.orderInfo.nameStart,
+                      subtitle: state.orderManager.orderInfo.addressStart,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.arrow_downward,
+                        color: Colors.blueGrey[300],
+                      ),
+                    ),
+                    GeoStepTile(
+                      title: state.orderManager.orderInfo.nameEnd,
+                      subtitle: state.orderManager.orderInfo.addressEnd,
+                    ),
+                  ],
             if (state.role != '司機') ...[
               Icon(Icons.motorcycle),
             ],

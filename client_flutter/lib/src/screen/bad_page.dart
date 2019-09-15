@@ -11,6 +11,5 @@ class BadRoutePage extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }

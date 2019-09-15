@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../util/util_collection.dart' show PlatformInfo;
 import '../../provider/provider_collection.dart' show FavoriteRoutesProvider;
 import '../../model/favorite_route_item.dart';
+import './geo_step_tile.dart';
 
 class StepperBody extends StatelessWidget {
   const StepperBody({
@@ -22,7 +23,7 @@ class StepperBody extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        _geoStep(
+        GeoStepTile(
           title: routeItem.nameStart,
           subtitle: routeItem.addressStart,
           isStart: true,
@@ -40,7 +41,7 @@ class StepperBody extends StatelessWidget {
             },
           ),
         ),
-        _geoStep(
+        GeoStepTile(
           title: routeItem.nameEnd,
           subtitle: routeItem.addressEnd,
           isStart: false,
@@ -90,26 +91,6 @@ class StepperBody extends StatelessWidget {
         ),
         Padding(padding: EdgeInsets.all(8))
       ],
-    );
-  }
-
-  Widget _geoStep({
-    @required String title,
-    @required String subtitle,
-    @required bool isStart,
-  }) {
-    return ListTile(
-      isThreeLine: true,
-      leading: Icon(
-        isStart ? Icons.looks_one : Icons.looks_two,
-        color: Colors.blue,
-        size: 25,
-      ),
-      title: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(title),
-      ),
-      subtitle: Text(subtitle),
     );
   }
 }
