@@ -9,3 +9,4 @@ export './global/connectivity_provider.dart';
 /// Local provider
 export './local/homepage_provider.dart';
 export './local/favorite_routes_provider.dart';
+export './local/chating_provider.dart';
