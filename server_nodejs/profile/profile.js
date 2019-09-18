@@ -15,12 +15,12 @@ router.post('/profilePwd', auth.auth, jsonParser,function (req, res) {
     const sql = `UPDATE user SET pwd = '${pwd}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send({"status": fail});
+            res.send({"status": "fail"});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send({"status": success});
+            res.send({"status": "success"});
         }
     });
 });
@@ -32,12 +32,12 @@ router.post('/profileName', auth.auth, jsonParser,function (req, res) {
     const sql = `UPDATE user SET name = '${name}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send({"status": fail});
+            res.send({"status": "fail"});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send({"status": success});
+            res.send({"status": "success"});
         }
     });
 });
@@ -49,12 +49,12 @@ router.post('/profilePhoto', auth.auth, jsonParser,function (req, res) {
     const sql = `UPDATE user SET photo = '${photo}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send({"status": fail});
+            res.send({"status": "fail"});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send({"status": success});
+            res.send({"status": "success"});
         }
     });
 });
@@ -66,12 +66,12 @@ router.post('/profileDepartment', auth.auth, jsonParser,function (req, res) {
     const sql = `UPDATE user SET department = '${department}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send({"status": fail});
+            res.send({"status": "fail"});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send({"status": success});
+            res.send({"status": "success"});
         }
     });
 });
@@ -83,12 +83,12 @@ router.post('/profileCarNum', auth.auth, jsonParser,function (req, res) {
     const sql = `UPDATE user SET car_num = '${carNum}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send({"status": fail});
+            res.send({"status": "fail"});
             console.log(err);
         }
         else {
             console.log(result);
-            res.send({"status": success});
+            res.send({"status": "success"});
         }
     });
 });

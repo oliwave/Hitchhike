@@ -20,7 +20,6 @@ router.post('/passenger_route', auth.auth, jsonParser, function (req, res) {
     var destinationX = req.body.destinationX;
     var originName = req.body.originName;
     var destinationName = req.body.destinationName;
-    var time = req.body.time;
     passengerList.push({
         "passenger": uid,
         "originY": originY,
@@ -54,17 +53,17 @@ router.post('/driver_route', auth.auth, jsonParser, async function (req, res) {
         // space = %2C
         //  "|"  = %7C
         var url = `https://maps.googleapis.com/maps/api/directions/json?origin=${originX_D}%2C${originY_D}&destination=${destinationX_D}%2C${destinationY_D}&waypoints=${originX_P}%2C${originY_P}%7C${destinationX_P}%2C${destinationY_P}&language=zh-TW&key=AIzaSyAGGrLwvvLN3W92yY3zrDcP8P9BPXieqyY`
-        try{
+        try {
             // get google map data
             pairMap[passengerList[i].passenger] = await getData(url)
             // get totalTime
-            for(let j = 0; j < 3; j++){
+            for (let j = 0; j < 3; j++) {
                 totalTime += pairMap[passengerList[i].passenger].routes[0].legs[j].duration.value
             }
             // add totalTime into passengerList
             passengerList[i]['time'] = totalTime
         }
-        catch(e){
+        catch (e) {
             console.log(e)
         }
     }

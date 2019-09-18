@@ -16,11 +16,11 @@ router.post('/signUp', jsonParser,function (req, res) {
     const sql = `INSERT INTO user (uid, pwd, name) VALUES ('${uid}', '${pwd}', '${name}')`;
     db.query(sql, function (err, result) {
         if (err) {
-            res.send({"status": fail});
+            res.send({"status": "fail"});
             console.log(err);
         }
         else {
-            res.send({"status": success});
+            res.send({"status": "success"});
         }
     });
 });
@@ -35,7 +35,7 @@ router.post('/verify', jsonParser,function (req, res) {
             console.log(err);
         }
         if (result.length > 0) {
-            res.send({"status": fail});
+            res.send({"status": "fail"});
         }
         else{
             //sent mail
