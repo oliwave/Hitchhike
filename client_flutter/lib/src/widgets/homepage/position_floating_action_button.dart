@@ -28,8 +28,8 @@ class _PositionFloatingActionButtonState
 
     _alignmentAnimation = _positionButtonController.drive(
       AlignmentTween(
-        begin: Alignment(0.875, 0.7),
-        end: Alignment(0.875, -0.15),
+        begin: Alignment(0.9, 0.65),
+        end: Alignment(0.9, 0.0),
       ),
     );
 

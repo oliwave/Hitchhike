@@ -26,8 +26,8 @@ class _FavoriteFloatingActionButtonState
 
     _alignmentAnimation = _favoriteButtonController.drive(
       AlignmentTween(
-        begin: Alignment(0.875, -0.6),
-        end: Alignment(2, -0.6),
+        begin: Alignment(0.9, -0.5),
+        end: Alignment(2, -0.5),
       ),
     );
 
