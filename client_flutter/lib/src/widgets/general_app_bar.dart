@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 
-class FavoriteAppBar extends StatelessWidget {
-  const FavoriteAppBar({
+class GeneralAppBar extends StatelessWidget {
+  GeneralAppBar({
+    @required String title,
+    @required String heroTag,
+    @required IconData icon,
     Key key,
-  }) : super(key: key);
+  })  : _title = title,
+        _heroTag = heroTag,
+        _icon = icon,
+        super(key: key);
+
+  final String _title;
+  final String _heroTag;
+  final IconData _icon;
 
   @override
   Widget build(BuildContext context) {
@@ -11,19 +21,19 @@ class FavoriteAppBar extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Text(
-          '最愛路線',
+          _title,
           style: const TextStyle(
             color: Colors.black,
             letterSpacing: 1,
           ),
         ),
         Hero(
-          tag: 'bookmark',
+          tag: _heroTag,
           child: Material(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: Icon(
-                Icons.bookmark_border,
+                _icon,
                 color: Colors.black,
                 size: 20,
               ),

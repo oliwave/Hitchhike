@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/provider_collection.dart' show CloudMessageProvider;
-import '../widgets/favorite_routes_page/app_bar.dart';
+import '../widgets/general_app_bar.dart';
 import '../widgets/favorite_routes_page/routes_list_view.dart';
 
 class FavoriteRoutesPage extends StatelessWidget {
@@ -24,7 +24,11 @@ class FavoriteRoutesPage extends StatelessWidget {
         ),
         elevation: 2,
         backgroundColor: Colors.white,
-        title: FavoriteAppBar(),
+        title: GeneralAppBar(
+          title: '最愛路線',
+          heroTag: 'bookmark',
+          icon: Icons.bookmark_border,
+        ),
       ),
       body: RoutesListView(),
     );
