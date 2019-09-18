@@ -28,18 +28,21 @@ class FcmActionManager extends NotifyManager {
     // Data Message
     if (message.containsKey('data')) {
       final String type = message['data']['type'];
-      final duration = Duration(seconds: message['data']['duration']);
+      final duration =
+          Duration(seconds: int.parse(message['data']['duration']));
 
+      /// TODO : Filter the following messages when user is in paired mode.
       if (type == FcmEventType.orderConfirmation) {
         customizedAlertDialog(
           context: context,
           title: const Text('預選乘客'),
-          content: Text('離乘客起點尚需 : ${duration.inMinutes}分鐘'),
+          content: Text('離乘客起點尚需 ${duration.inMinutes} 分鐘'),
           confirmButtonName: '開始訂單',
           cancelButtonName: '掰掰',
           confirmCallback: _confirmCallback('success'),
           cancelCallback: _confirmCallback('fail'),
         );
+        return;
       } else if (type == FcmEventType.paired) {
         // Assign fcm pairedData to field.
         final Map<String, dynamic> pairedData = message['data'];
@@ -62,6 +65,8 @@ class FcmActionManager extends NotifyManager {
           fileName: FileName.pairedData,
           data: pairedData,
         );
+
+        return;
       }
     }
 
@@ -83,12 +88,12 @@ class FcmActionManager extends NotifyManager {
   ///
   /// * [status] is String type variable that determines if a paired
   /// order is valid.
-  VoidCallback _confirmCallback(String status) => () {
+  VoidCallback _confirmCallback(String status) => () async {
         Navigator.pop(_context);
 
         _roleProvider.isMatched = (status == 'success');
 
-        _api.sendHttpRequest(
+        final response = await _api.sendHttpRequest(
           OrderConfirmationRequest(
             status: status,
             jwtToken: '',
