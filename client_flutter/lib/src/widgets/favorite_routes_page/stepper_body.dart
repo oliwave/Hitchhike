@@ -29,6 +29,8 @@ class StepperBody extends StatelessWidget {
           subtitle: routeItem.addressStart,
           isStart: true,
         ),
+        Text('lat:${routeItem.geoStart.lat}'),
+        Text('lng:${routeItem.geoStart.lng}'),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: IconButton(
@@ -47,6 +49,8 @@ class StepperBody extends StatelessWidget {
           subtitle: routeItem.addressEnd,
           isStart: false,
         ),
+        Text('lat:${routeItem.geoEnd.lat}'),
+        Text('lng:${routeItem.geoEnd.lng}'),
         Divider(
           color: Colors.black,
           // height: PlatformInfo.screenAwareSize(50),

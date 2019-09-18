@@ -73,7 +73,7 @@ class SocketEventName {
 class FcmEventType {
   FcmEventType._();
 
-  static const String orderConfirmation = 'order_confirmation';
+  static const String orderConfirmation = 'orderConfirmation';
   static const String paired = 'paired';
 }
 

@@ -47,8 +47,8 @@ class _TestingGeoInfoState extends State<TestingGeoInfo> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      geoText('經度', info.latitude),
-                      geoText('緯度', info.longitude),
+                      geoText('經度', info.longitude),
+                      geoText('緯度', info.latitude),
                       geoText('速度', info.speed),
                       geoText('呼叫次數', geoCount++),
                     ],

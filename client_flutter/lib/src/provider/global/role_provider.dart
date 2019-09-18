@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../resources/repository.dart';
 import '../../resources/source_collection.dart';
+import '../../provider/provider_collection.dart' show ChatingProvider;
 
 /// Recording the current client information
 ///
@@ -16,9 +17,10 @@ class RoleProvider with ChangeNotifier {
   }
 
   static final _roleProvider = RoleProvider._();
+  static final _chatingProvider = ChatingProvider();
 
   SimpleStorage _prefs;
-  bool isMatched;
+  bool _isMatched;
   bool hasRevokedDriverPosition;
   String role;
   double driverLat;
@@ -27,6 +29,13 @@ class RoleProvider with ChangeNotifier {
   List<String> routeLongitude;
 
   bool _isFirst = true;
+
+  set isMatched(bool isMatched) {
+    _isMatched = isMatched;
+    _chatingProvider.toggleChatingButtonVisibility(_isMatched);
+  }
+
+  bool get isMatched => _isMatched;
 
   /// This method should only be triggered one time.
   void init() {
@@ -48,9 +57,9 @@ class RoleProvider with ChangeNotifier {
   @override
   void dispose() {
     // Save the state in case the client turns off the app
-    if (isMatched) {
+    if (_isMatched) {
       _prefs.setString(TargetSourceString.role, role);
-      _prefs.setBool(TargetSourceString.isMatched, isMatched);
+      _prefs.setBool(TargetSourceString.isMatched, _isMatched);
       _prefs.setBool(TargetSourceString.hasRevokedDriverPosition,
           hasRevokedDriverPosition);
       _prefs.setDouble(TargetSourceString.driverLat, driverLat);
