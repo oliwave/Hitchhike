@@ -7,7 +7,7 @@ import '../../model/order_info.dart';
 
 import '../notify_manager.dart';
 import '../../provider/provider_collection.dart'
-    show RoleProvider, BulletinProvider, HomepageProvider;
+    show RoleProvider, BulletinProvider, CloudMessageProvider, HomepageProvider;
 import '../../widgets/customized_alert_dialog.dart';
 
 /// [OrderManager] handle the major process of sending order and relative tasks.
@@ -36,6 +36,10 @@ class OrderManager extends NotifyManager {
       context,
       listen: false,
     );
+    final _fcmProvider = Provider.of<CloudMessageProvider>(
+      context,
+      listen: false,
+    );
 
     if (buttonName != '建立訂單') {
       roleProvider.role = null;
@@ -60,7 +64,8 @@ class OrderManager extends NotifyManager {
 
         if (result) {
           // The fcm token must be sent to server before sending an order.
-          await _fcmProvider.fcmTokenManager.initSendFcmToken();
+          if (!_fcmProvider.fcmTokenManager.hasSentFcmToken)
+            await _fcmProvider.fcmTokenManager.initSendFcmToken();
 
           _orderRequest(roleProvider.role, bulletinProvider);
         }
