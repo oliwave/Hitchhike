@@ -25,7 +25,7 @@ router.post('/login',  jsonParser, function (req, res) {
         }
         else{
             res.status(401);
-            res.send({"status": fail});
+            res.send({"status": "fail"});
         }
     });
 });
