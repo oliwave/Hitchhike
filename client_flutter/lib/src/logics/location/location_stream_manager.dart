@@ -32,6 +32,7 @@ class LocationStreamManager extends NotifyManager {
 
   /// WARNING : Only for testing
   Position _positionInfo;
+  Position _prePosition;
 
   StreamSubscription<Position> _myPositionStream;
   StreamSubscription<Map<String, String>> _driverPositionStream;
@@ -54,6 +55,10 @@ class LocationStreamManager extends NotifyManager {
         positionInfo = position; // WARNING : Only for testing
 
         print('activatePositionStream has been triggered!!!\n');
+
+        // if (!(await _reasonableDistance(_prePosition, position))) return;
+
+        _prePosition = position;
 
         await _locationProvider.locationUpdateManager.updateCharacterPosition(
           character: Character.me,
@@ -162,6 +167,17 @@ class LocationStreamManager extends NotifyManager {
   void cancelMyPositionStream() {
     print('Just triggered cancelPositionStream!!! on tap');
     _myPositionStream.cancel();
+  }
+
+  Future<bool> _reasonableDistance(Position previous, Position current) async {
+    final distance = await _geolocator.distanceBetween(
+      previous?.latitude ?? _locationProvider.initialPosition.latitude,
+      previous?.longitude ?? _locationProvider.initialPosition.longitude,
+      current.latitude,
+      current.longitude,
+    );
+
+    return distance < 40;
   }
 
   dispose() {
