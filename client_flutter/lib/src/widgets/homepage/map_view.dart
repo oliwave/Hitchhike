@@ -4,11 +4,18 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/provider_collection.dart'
-    show LocationProvider, HomepageProvider;
+    show LocationProvider, HomepageProvider, CloudMessageProvider;
 
 class MapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    // MapView will rerender every time but homepage won't.
+    Provider.of<CloudMessageProvider>(
+      context,
+      listen: false,
+    ).context = context;
+
     print('Refreshing MapView ...');
 
     final locationProvider = Provider.of<LocationProvider>(
@@ -23,11 +30,14 @@ class MapView extends StatelessWidget {
     final position = locationProvider.initialPosition;
 
     // acitvatePositionStream method to keep the latest position on the map.
-    if (homepageProvider.mapFirstRendered)
+    if (homepageProvider.mapFirstRendered) {
+      print('First time to listen my position stream');
       locationProvider.locationStreamManager.listenMyPositionStream();
+    }
 
     return Consumer<LocationProvider>(
       builder: (_, locationProvider, child) {
+        print('Rerendering the Google map!');
         return GoogleMap(
           initialCameraPosition: CameraPosition(
             target: LatLng(

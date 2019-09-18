@@ -1,11 +1,10 @@
-import 'package:client_flutter/src/widgets/homepage/favorite_floating_action_button.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../provider/provider_collection.dart' show CloudMessageProvider;
 import '../widgets/homepage/location_app_bar.dart';
 import '../widgets/homepage/map_view.dart';
 import '../widgets/homepage/position_floating_action_button.dart';
+import '../widgets/homepage/favorite_floating_action_button.dart';
+import '../widgets/homepage/chating_floating_action_button.dart';
 import '../widgets/homepage/bottom_sheet.dart';
 import '../widgets/bulletin.dart';
 
@@ -21,11 +20,6 @@ class Homepage extends StatelessWidget {
   Widget build(BuildContext context) {
     // PlatformInfo.context = context;
 
-    Provider.of<CloudMessageProvider>(
-      context,
-      listen: false,
-    ).context = context;
-
     print('Refreshing Homepage ...');
 
     return Scaffold(
@@ -34,15 +28,18 @@ class Homepage extends StatelessWidget {
         children: <Widget>[
           MapView(),
           LocationAppBar(),
-          TestingInfoButton(), // WARNING : Only for testing
+          // TestingInfoButton(), // WARNING : Only for testing
           TestingGeoInfo(), // WARNING : Only for testing
           GoogleLogo(),
           PositionFloatingActionButton(),
           FavoriteFloatingActionButton(),
+          // ChatingFloatingActionButton(),
           Bulletin(),
         ],
       ),
       bottomSheet: HomepageBottomSheet(),
+      floatingActionButton: ChatingFloatingActionButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }
