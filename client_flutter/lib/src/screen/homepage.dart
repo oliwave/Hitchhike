@@ -4,7 +4,7 @@ import '../widgets/homepage/location_app_bar.dart';
 import '../widgets/homepage/map_view.dart';
 import '../widgets/homepage/position_floating_action_button.dart';
 import '../widgets/homepage/favorite_floating_action_button.dart';
-import '../widgets/homepage/chating_floating_action_button.dart';
+import '../widgets/homepage/chatting_floating_action_button.dart';
 import '../widgets/homepage/bottom_sheet.dart';
 import '../widgets/bulletin.dart';
 

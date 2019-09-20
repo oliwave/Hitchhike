@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../resources/repository.dart';
 import '../../resources/source_collection.dart';
-import '../../provider/provider_collection.dart' show ChatingProvider;
+import '../../provider/provider_collection.dart' show ChattingProvider;
 
 /// Recording the current client information
 ///
@@ -17,7 +17,8 @@ class RoleProvider with ChangeNotifier {
   }
 
   static final _roleProvider = RoleProvider._();
-  static final _chatingProvider = ChatingProvider();
+
+  static final _chatingProvider = ChattingProvider();
 
   SimpleStorage _prefs;
   bool _isMatched;
@@ -32,7 +33,7 @@ class RoleProvider with ChangeNotifier {
 
   set isMatched(bool isMatched) {
     _isMatched = isMatched;
-    _chatingProvider.toggleChatingButtonVisibility(_isMatched);
+    _chatingProvider.toggleChattingButtonVisibility(_isMatched);
   }
 
   bool get isMatched => _isMatched;

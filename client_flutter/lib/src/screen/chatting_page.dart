@@ -1,12 +1,13 @@
-import 'package:client_flutter/src/widgets/general_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
 import '../provider/provider_collection.dart' show CloudMessageProvider;
+import '../widgets/general_app_bar.dart';
+import '../widgets/chatting_page/text_bar.dart';
 
-class ChatingPage extends StatelessWidget {
-  static const String routeName = '/chating_page';
+class ChattingPage extends StatelessWidget {
+  static const String routeName = '/chatting_page';
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class ChatingPage extends StatelessWidget {
     ).context = context;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         iconTheme: IconThemeData(
           color: Colors.black,
@@ -29,7 +30,14 @@ class ChatingPage extends StatelessWidget {
           icon: Icons.chat_bubble_outline,
         ),
       ),
-      body: Text('雞掰～～'),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: Container(),
+          ),
+          TextBar(),
+        ],
+      ),
     );
   }
 }

@@ -10,7 +10,7 @@ final localProviders = <SingleChildCloneableWidget>[
     value: FavoriteRoutesProvider(),
   ),
   ChangeNotifierProvider.value(
-    value: ChatingProvider(),
+    value: ChattingProvider(),
   ),
 ];
 

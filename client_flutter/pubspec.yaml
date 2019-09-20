@@ -63,6 +63,10 @@ dependencies:
   # For Wifi connection.
   connectivity: ^0.4.4
 
+  flutter_staggered_animations: "^0.1.2"
+  bubble: ^1.1.9+1
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

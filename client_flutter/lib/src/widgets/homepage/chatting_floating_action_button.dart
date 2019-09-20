@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../screen/page_collection.dart' show ChatingPage;
-import '../../provider/provider_collection.dart' show ChatingProvider;
+import '../../screen/page_collection.dart' show ChattingPage;
+import '../../provider/provider_collection.dart' show ChattingProvider;
 
 class ChatingFloatingActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final chatinProvider = Provider.of<ChatingProvider>(context);
+    final chatinProvider = Provider.of<ChattingProvider>(context);
 
     return Visibility(
       visible: chatinProvider.isVisible,
@@ -35,7 +35,7 @@ class ChatingFloatingActionButton extends StatelessWidget {
               ),
               onPressed: () => Navigator.pushNamed(
                 context,
-                ChatingPage.routeName,
+                ChattingPage.routeName,
               ),
             ),
           ),
