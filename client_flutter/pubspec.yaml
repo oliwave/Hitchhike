@@ -66,6 +66,8 @@ dependencies:
   flutter_staggered_animations: "^0.1.2"
   bubble: ^1.1.9+1
 
+  flutter_datetime_picker: ^1.2.6
+
 
 dev_dependencies:
   flutter_test:
