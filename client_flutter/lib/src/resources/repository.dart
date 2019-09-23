@@ -50,6 +50,7 @@ class TargetSourceString {
   static const String driverLng = 'driverLng';
   static const String routeLatitude = 'routeLatitude';
   static const String routeLongitude = 'routeLongitude';
+  static const String lastLoginTime = 'lastLoginTime';
 }
 
 class Character {
