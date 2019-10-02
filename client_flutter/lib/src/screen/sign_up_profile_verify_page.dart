@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'sign_up_profile_name_page.dart';
+import 'package:client_flutter/src/provider/provider_collection.dart';
 
 class VerifyPage extends StatefulWidget {
   VerifyPage({Key key, this.title}) : super(key: key);
@@ -11,7 +13,8 @@ class VerifyPage extends StatefulWidget {
 class _VerifyPageState extends State<VerifyPage> {
   final _formKey = GlobalKey<FormState>(); // GlobalKey: to access form
 
-  var sixDigits = '';
+  var rawSixDigits = '';
+  var verifyPassed = false;
 
   TextEditingController controller;
 
@@ -24,6 +27,8 @@ class _VerifyPageState extends State<VerifyPage> {
   @override
   Widget build(BuildContext context) {
     Map user = Map.of(ModalRoute.of(context).settings.arguments);
+    final authProivder = Provider.of<AuthProvider>(context, listen: false);
+    final hashedrawSixDigits = authProivder.invokeVerifyCode(user['uid']);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal[400],
@@ -52,8 +57,9 @@ class _VerifyPageState extends State<VerifyPage> {
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
                         _formKey.currentState.save();
-                        print(sixDigits);
-                        // authProvider/httprequest
+                        print(rawSixDigits);
+                        verifyPassed = authProivder.checkVerifyCode(
+                            rawSixDigits, hashedrawSixDigits);
                       } else {
                         return null;
                       }
@@ -70,19 +76,17 @@ class _VerifyPageState extends State<VerifyPage> {
                               disabledTextColor: Colors.teal[50], // 按鈕禁用時顏色
                               color: Colors.teal,
                               onPressed: () {
-                                // if (userHashCode != serverHashCode) {
-                                // // if (_formKey.currentState.validate()) {
-                                //   return null;
+                                // if (verifyPassed == true) {
+                                  Navigator.push<String>(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            NamePage(title: "Sign Up"),
+                                        settings:
+                                            RouteSettings(arguments: user),
+                                      ));
                                 // } else {
-                                Navigator.push<String>(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          NamePage(title: "Sign Up"),
-                                      settings: RouteSettings(
-                                        arguments: user
-                                      ),
-                                    ));
+                                //   return null;
                                 // }
                               },
                               child: Text("Next")),
@@ -118,7 +122,7 @@ class _VerifyPageState extends State<VerifyPage> {
         LengthLimitingTextInputFormatter(6), //限制輸入長度
       ],
       onSaved: (String value) {
-        sixDigits = value;
+        rawSixDigits = value;
       },
     );
   }

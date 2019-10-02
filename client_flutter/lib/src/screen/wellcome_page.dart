@@ -13,7 +13,7 @@ class WellcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initializing the client app.
-    PlatformInfo.context = context;
+    // PlatformInfo.context = context;
 
     print('Device width : ${MediaQuery.of(context).size.width}');
     print('Device heigth : ${MediaQuery.of(context).size.height}');
