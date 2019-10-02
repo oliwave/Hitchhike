@@ -1,4 +1,5 @@
 import 'package:client_flutter/src/provider/provider_collection.dart';
+import 'package:client_flutter/src/screen/page_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -46,14 +47,14 @@ class _LoginPageState extends State<LoginPage> {
               ),
               Form(
                 key: _formKey, //設置globalKey，用於後面獲取FormState
-                autovalidate: true, //開啟自動驗證
+                // autovalidate: true, //開啟自動驗證
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   // crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Theme(
                       child: TextFormField(
-                          autofocus: true,
+                          autofocus: false,
                           controller: _idController,
                           decoration: InputDecoration(
                               labelText: "帳號",
@@ -86,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     // 登入按鈕
                     Padding(
-                        padding: const EdgeInsets.only(top: 28.0),
+                        padding: const EdgeInsets.only(top: 50.0),
                         child: Container(
                           width: 300.0,
                           child: RaisedButton(
@@ -121,10 +122,13 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(60),
                                 side: BorderSide(color: Colors.teal[400])),
                             onPressed: () {
-                              if ((_formKey.currentState as FormState)
-                                  .validate()) {
-                                // 驗證通過提交數據
-                              }
+                              String targetRoute;
+                              targetRoute = SignUpProfilePage.routeName;
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                targetRoute,
+                                (Route<dynamic> route) => true,
+                              );
                             },
                             padding: EdgeInsets.all(10),
                             child: Text('註冊',
@@ -142,5 +146,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
-class GePadding {}
