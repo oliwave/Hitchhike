@@ -3,6 +3,7 @@ var express = require('express');
 const auth = require('../auth.js');
 var bodyParser = require('body-parser');
 var axios = require('axios');
+var admin = require('../fcm/fcm.js');
 
 var app = express();
 var jsonParser = bodyParser.json();
@@ -10,6 +11,7 @@ var jsonParser = bodyParser.json();
 const router = new express.Router();
 
 var passengerList = [];
+var pairMapDone = {};
 
 //passenger
 router.post('/passenger_route', auth.auth, jsonParser, function (req, res) {
@@ -41,6 +43,7 @@ router.post('/driver_route', auth.auth, jsonParser, async function (req, res) {
     var originY_D = req.body.originY;
     var destinationX_D = req.body.destinationX;
     var destinationY_D = req.body.destinationY;
+    var registrationToken;
     //map
     var pairMap = {};
 
@@ -71,8 +74,92 @@ router.post('/driver_route', auth.auth, jsonParser, async function (req, res) {
     passengerList = passengerList.sort(function (a, b) {
         return a.time > b.time ? 1 : -1
     })
-    console.log(passengerList);
-    res.send(passengerList[0]);
+
+    // take driver token
+    const sql = `SELECT token from user where uid=${uid}`
+    db.query(sql, function (err, result) {
+        if (err) {
+            res.send({ "status": "fail" });
+            console.log(err);
+        }
+        else {
+            //?
+            registrationToken = result[0].token;
+
+            var message = {
+                "data": {
+                    "type": "orderConfirmation",
+                    "totalTime": passengerList[0].time,
+                    "passengerStartName": passengerList[0].originName,
+                    "passengerEndName": passengerList[0].destinationName
+                },
+                "token": registrationToken
+            };
+            //console.log(passengerList);
+            //res.send(passengerList[0]);
+            pairMapDone[uid] = {
+                "passenger": passengerList[0].passenger,
+                "route": pairMap[passengerList[0].passenger]
+            };
+            admin.messaging().send(message);
+        }
+    });
+});
+
+//orderConfirmation
+router.post('/orderConfirmation', auth.auth, jsonParser, function (req, res) {
+    var uid = auth.uid;
+    var status = req.body.status;
+    if (status == "fail") {
+        res.send("fail");
+    }
+    if (status == "success") {
+        var passengerUid = pairMapDone[uid].passenger;
+
+        // driver
+        const sql = `SELECT * from user where uid=${uid}`
+        db.query(sql, function (err, result) {
+            if (err) {
+                res.send({ "status": "fail" });
+                console.log(err);
+            }
+            else {
+                registrationDriverToken = result[0].token;
+                carNum = result[0].car_num;
+
+                const sql = `SELECT * from user where uid= ${passengerUid}`
+                db.query(sql, function (err, result) {
+                    if (err) {
+                        res.send({ "status": "fail" });
+                        console.log(err);
+                    }
+                    else {
+                        registrationPassengerToken = result[0].token;
+
+                        var message = {
+                            "data": {
+                                "type": "paired",
+                                "roomId": "testRoom",
+                                "carNum": carNum,
+                                "carDescripition": "notInDB",
+                                "duration": passengerList[0].time,
+                                "startName": passengerList[0].originName,
+                                "endName": passengerList[0].destinationName,
+                                "northeastLat" : pairMap[passengerUid].routes[0].bounds.northeast.lat,
+                                "northeastLng" : pairMap[passengerUid].routes[0].bounds.northeast.lng,
+                                "southwestLat" : pairMap[passengerUid].routes[0].bounds.southwest.lat,
+                                "southwestLng" : pairMap[passengerUid].routes[0].bounds.southwest.lng,
+                                "legs": pairMap[passengerUid].routes[0].legs
+                            },
+                            "token": [registrationDriverToken, registrationPassengerToken]
+                        };
+                        
+                        admin.messaging().send(message);
+                    }
+                });
+            }
+        });
+    }
 });
 
 // google map api request

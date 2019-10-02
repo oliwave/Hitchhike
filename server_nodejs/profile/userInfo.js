@@ -36,4 +36,22 @@ router.post('/userInfo', auth.auth, function (req, res) {
         }
     });
 });
+
+// fcm token get, store to database
+router.post('/fcm', auth.auth, function (req, res) {
+    var uid = auth.uid;
+    var fcmToken = req.body.fcmToken;
+    const sql = `UPDATE user SET token = '${fcmToken}' WHERE uid = '${uid}' `
+    db.query(sql, function (err, result) {
+        if (err) {
+            res.send({"status": "fail"});
+            console.log(err);
+        }
+        else {
+            console.log(result);
+            res.send({"status": "success"});
+        }
+    });
+});
+
 module.exports = router;
