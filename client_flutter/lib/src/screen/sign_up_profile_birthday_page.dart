@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import '../resources/restful/request_method.dart';
+import 'package:client_flutter/src/provider/provider_collection.dart';
 
 class BirthdayPage extends StatefulWidget {
   final String title;
@@ -27,6 +28,7 @@ class _BirthdayPage extends State<BirthdayPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProivder = Provider.of<AuthProvider>(context, listen: false);
     Map user = Map.of(ModalRoute.of(context).settings.arguments);
     return Scaffold(
       appBar: AppBar(
@@ -105,25 +107,7 @@ class _BirthdayPage extends State<BirthdayPage> {
                                 onPressed: () {
                                   user['birthday'] = _date;
                                   print(user);
-                                  // authProvider/httprequest
-                                  SignUpRequest(
-                                    userId: user['id'],
-                                    password: user['password'],
-                                    username: user['name'],
-                                  );
-                                  // if (controller.text == '') {
-                                  //   return null;
-                                  // } else if (_formKey.currentState.validate()) {
-                                  // _formKey.currentState.save();
-                                  // Navigator.push<String>(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //       builder: (BuildContext context) =>
-                                  //           VerifyPage(
-                                  //         title: 'Sign Up',
-                                  //       ),
-                                  //     ));
-                                  // }
+                                  authProivder.invokeSignUp(user);
                                 },
                                 child: Text("Finish")),
                           ),

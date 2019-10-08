@@ -98,71 +98,79 @@ class _NamePageState extends State<NamePage> {
   }
 
   Widget usernameField(Map user) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-          icon: Icon(
-            Icons.assignment_ind, //contacts,
-            color: Colors.teal[400],
-            size: 24.0,
-          ),
-          hintText: 'Your name',
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.teal,
-              width: 2.0,
-            ),
-          ),
-          suffixIcon: IconButton(
+    return Theme(
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
             icon: Icon(
-              Icons.highlight_off,
-              color: Colors.grey,
+              Icons.assignment_ind, //contacts,
+              size: 24.0,
             ),
-            onPressed: () {
-              controller.clear();
-            },
-          )),
-      inputFormatters: <TextInputFormatter>[
-        LengthLimitingTextInputFormatter(50) //限制長度
-      ],
-      validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
-      onSaved: (String value) {
-        user['name'] = value;
-      },
+            hintText: 'Your name',
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.teal,
+                width: 2.0,
+              ),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                Icons.highlight_off,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                controller.clear();
+              },
+            )),
+        inputFormatters: <TextInputFormatter>[
+          LengthLimitingTextInputFormatter(50) //限制長度
+        ],
+        validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
+        onSaved: (String value) {
+          user['name'] = value;
+        },
+      ),
+      data: Theme.of(context).copyWith(
+        primaryColor: Colors.teal[400],
+      ),
     );
   }
 
   Widget passwordField(Map user) {
-    return TextFormField(
-      controller: controller2,
-      obscureText: true, // 密碼輸入後顯示為點
-      decoration: InputDecoration(
-          icon: Icon(
-            Icons.lock_outline,
-            color: Colors.teal[400],
-            size: 24.0,
-          ),
-          hintText: 'Password',
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.teal,
-              width: 2.0,
+    return Theme(
+      child: TextFormField(
+        controller: controller2,
+        obscureText: true, // 密碼輸入後顯示為點
+        decoration: InputDecoration(
+            icon: Icon(
+              Icons.lock_outline,
+              size: 24.0,
             ),
-          ),
-          suffixIcon: IconButton(
-            icon: Icon(Icons.highlight_off),
-            color: Colors.grey,
-            onPressed: () {
-              controller2.clear();
-            },
-          )),
-      inputFormatters: <TextInputFormatter>[
-        LengthLimitingTextInputFormatter(50) //限制長度
-      ],
-      validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
-      onSaved: (String value) {
-        user['password'] = value;
-      },
+            hintText: 'Password',
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.teal,
+                width: 2.0,
+              ),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(Icons.highlight_off),
+              color: Colors.grey,
+              onPressed: () {
+                controller2.clear();
+              },
+            )),
+        inputFormatters: <TextInputFormatter>[
+          LengthLimitingTextInputFormatter(50) //限制長度
+        ],
+        validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
+        onSaved: (String value) {
+          user['password'] = value;
+        },
+      ),
+      data: Theme.of(context).copyWith(
+        primaryColor: Colors.teal[400],
+      ),
     );
   }
 }

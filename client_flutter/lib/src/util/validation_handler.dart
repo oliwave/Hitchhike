@@ -16,7 +16,7 @@ class ValidationHandler {
 
   /// For instance, client can use [verifySixDigitsCode] to check whether
   /// the [hashedSixDigits] has the same value as [rawSixDigits] after hashing.
-  bool verifySixDigitsCode({
+  static bool verifySixDigitsCode({
     @required String rawSixDigits,
     @required String hashedSixDigits,
   }) {

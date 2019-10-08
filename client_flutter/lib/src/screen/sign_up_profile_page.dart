@@ -58,7 +58,12 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
                   padding: EdgeInsets.only(top: 50.0, right: 50.0, left: 50.0),
                   child: Column(
                     children: <Widget>[
-                      emailField(),
+                      Theme(
+                        child: emailField(),
+                        data: Theme.of(context).copyWith(
+                          primaryColor: Colors.teal[400],
+                        ),
+                      ),
                       Container(
                           child: Text(
                               'Notice:\n  Please fill in the NCNU\'s email address.\n  And you don\'t need to fill in \'@ncnu.edu.tw\'.'),
@@ -113,7 +118,6 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
       decoration: InputDecoration(
         icon: Icon(
           Icons.email,
-          color: Colors.teal[400],
           size: 24.0,
         ),
         hintText: 'Email address',
@@ -149,7 +153,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
       inputFormatters: [
         WhitelistingTextInputFormatter(RegExp("[a-z,A-Z,0-9]")), //只能輸入數字,字母
         LengthLimitingTextInputFormatter(25), //長度不能超過25
-      ], 
+      ],
       onSaved: (String value) {
         user['uid'] = value;
         user['email'] = '$value@ncnu.edu.tw';

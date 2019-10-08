@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../resources/repository.dart';
 
 import '../../resources/restful/request_method.dart';
+import '../../util/validation_handler.dart';
 
 class AuthProvider with ChangeNotifier {
   AuthProvider._();
@@ -16,6 +17,30 @@ class AuthProvider with ChangeNotifier {
   static final _secure = Repository.getSecureStorage;
   static final _api = Repository.getApi;
   static final _prefs = Repository.getSimpleStorage;
+
+  Future invokeVerifyCode(String uid) async {
+    final response = await _api.sendHttpRequest(VerifyUserIdRequest(
+      userId: uid,
+    ));
+    return response.statusCode;
+  }
+
+  bool checkVerifyCode(String rawSixDigits, final hashedrawSixDigits) {
+    return ValidationHandler.verifySixDigitsCode(rawSixDigits: rawSixDigits, hashedSixDigits: hashedrawSixDigits.toString());
+  }
+
+  Future<void> invokeSignUp(Map user) async{
+    final response = await _api.sendHttpRequest(SignUpRequest(
+      userId: user['uid'],
+      password: user['password'],
+      username: user['name'],
+      gender: user['gender'],
+      birthday: user['birthday'],
+    ));
+    
+    print(response.statusCode);
+
+  }
 
   String jwt;
 
