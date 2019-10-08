@@ -27,7 +27,9 @@ class AuthProvider with ChangeNotifier {
 
     print(response.statusCode);
 
-    _secure.storeSecret(TargetSourceString.jwt, response.body);
+    if (response.statusCode == 200) {
+      _secure.storeSecret(TargetSourceString.jwt, response.body);
+    }
 
     jwt = response.body;
 
@@ -40,13 +42,18 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> init() async {
     jwt = await _secure.getSecret(TargetSourceString.jwt);
+    print('The value of jwt token is $jwt');
     final lastLoginTime = _prefs.getString(TargetSourceString.lastLoginTime);
-    final lastDateTime = DateTime.parse(lastLoginTime);
 
-    final duration = lastDateTime.difference(DateTime.now()).inDays;
+    ///TODO
+    if (lastLoginTime != null) { 
+      final lastDateTime = DateTime.parse(lastLoginTime);
 
-    if (duration > 30) {
-      jwt = null;
+      final duration = lastDateTime.difference(DateTime.now()).inDays;
+
+      if (duration > 30) {
+        jwt = null;
+      }
     }
   }
 }

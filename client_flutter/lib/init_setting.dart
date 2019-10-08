@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:client_flutter/src/provider/provider_collection.dart';
 import 'package:flutter/material.dart';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -9,7 +8,7 @@ import './src/resources/file/directory_access.dart';
 import './src/widgets/homepage/google_map_widget/marker_bitmap.dart';
 import './src/resources/repository.dart';
 import './src/provider/provider_collection.dart'
-    show LocationProvider, FavoriteRoutesProvider, ConnectivityProvider;
+    show LocationProvider, FavoriteRoutesProvider, ConnectivityProvider, AuthProvider;
 
 final init = InitSetting();
 
@@ -22,6 +21,7 @@ class InitSetting {
   static final _locationProvider = LocationProvider();
   static final _favoriteRoutesProvider = FavoriteRoutesProvider();
   static final _connectivityProvider = ConnectivityProvider();
+  static final _authProvider = AuthProvider();
 
   Future<void> runInitSetting(BuildContext context) async {
     await _setLocationPermission();
@@ -34,6 +34,7 @@ class InitSetting {
     await _locationProvider.initializePosition();
     await _db.init();
     await _favoriteRoutesProvider.initRoutesList();
+    await _authProvider.init();
   }
 
   Future<void> _setLocationPermission() async {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import './page_collection.dart' show Homepage, FavoriteRoutesPage, LoginPage;
-import '../util/util_collection.dart' show PlatformInfo;
+import '../util/util_collection.dart' show SizeConfig;
 
 import '../../init_setting.dart';
 import '../provider/provider_collection.dart' show AuthProvider;
@@ -12,8 +12,9 @@ class WellcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig.init(context);
     // Initializing the client app.
-    PlatformInfo.context = context;
+    // PlatformInfo.context = context;
 
     print('Device width : ${MediaQuery.of(context).size.width}');
     print('Device heigth : ${MediaQuery.of(context).size.height}');

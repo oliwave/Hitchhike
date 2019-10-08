@@ -1,6 +1,7 @@
 import 'package:client_flutter/src/provider/provider_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'page_collection.dart';
 
 class LoginPage extends StatefulWidget {
   static const String routeName = '/login_page';
@@ -46,14 +47,14 @@ class _LoginPageState extends State<LoginPage> {
               ),
               Form(
                 key: _formKey, //設置globalKey，用於後面獲取FormState
-                autovalidate: true, //開啟自動驗證
+                // autovalidate: true, //開啟自動驗證
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   // crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Theme(
                       child: TextFormField(
-                          autofocus: true,
+                          // autofocus: true,
                           controller: _idController,
                           decoration: InputDecoration(
                               labelText: "帳號",
@@ -94,12 +95,18 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(60),
                             ),
                             onPressed: () {
+                              //TODO
                               authProivder.invokeLogin(
                                   _idController.text, _pwdController.text);
 
                               if ((_formKey.currentState as FormState)
                                   .validate()) {
-                                // 驗證通過提交數據
+                                Navigator.push<String>(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          Homepage(),
+                                    ));
                               }
                             },
                             padding: EdgeInsets.all(10),
@@ -123,7 +130,12 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {
                               if ((_formKey.currentState as FormState)
                                   .validate()) {
-                                // 驗證通過提交數據
+                                Navigator.push<String>(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          SignUpProfilePage(title: 'Sign Up'),
+                                    ));
                               }
                             },
                             padding: EdgeInsets.all(10),
@@ -142,5 +154,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
-class GePadding {}

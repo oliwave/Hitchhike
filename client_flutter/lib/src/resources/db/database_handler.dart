@@ -31,7 +31,7 @@ class DatabaseHandler {
         id INTEGER PRIMARY_KEY,
         character TEXT,
         time TEXT,
-        room TEXT,
+        room TEXT
       )
     """,
   };

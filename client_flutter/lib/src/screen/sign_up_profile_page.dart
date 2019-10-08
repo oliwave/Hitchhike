@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../provider/global/auth_provider.dart';
-// import 'sign_up_profile_verify_page.dart';
-import 'sign_up_profile_verify_page_test.dart';
+import 'sign_up_profile_verify_page.dart';
+// import 'sign_up_profile_verify_page_test.dart';
 
 class SignUpProfilePage extends StatefulWidget {
   static const String routeName = '/sign_up_profile_page';
