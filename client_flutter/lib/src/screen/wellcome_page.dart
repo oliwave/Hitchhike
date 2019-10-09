@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import './page_collection.dart' show Homepage, FavoriteRoutesPage;
+import './page_collection.dart' show Homepage, FavoriteRoutesPage, LoginPage;
 import '../util/util_collection.dart' show SizeConfig;
 
 import '../../init_setting.dart';
+import '../provider/provider_collection.dart' show AuthProvider;
 
 class WellcomePage extends StatelessWidget {
   static const String routeName = '/wellcome_page';
@@ -11,7 +13,6 @@ class WellcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
-
     // Initializing the client app.
     // PlatformInfo.context = context;
 
@@ -20,10 +21,17 @@ class WellcomePage extends StatelessWidget {
 
     init.runInitSetting(context).then((_) {
       print('Finished initial setup!\n');
+      final authProivder = Provider.of<AuthProvider>(context, listen: false);
+      String targetRoute;
+      if (authProivder.jwt == null) {
+        targetRoute = LoginPage.routeName;
+      } else {
+        targetRoute = Homepage.routeName;
+      }
 
       Navigator.pushNamedAndRemoveUntil(
         context,
-        Homepage.routeName,
+        targetRoute,
         // FavoriteRoutesPage.routeName,
         (Route<dynamic> route) => false,
       );

@@ -90,10 +90,14 @@ class SignUpRequest extends BasePost {
     @required String userId,
     @required String password,
     @required String username,
+    @required String gender,
+    @required String birthday,
   }) : super(body: {
           'userId': userId,
           'password': password,
           'username': username,
+          'gender': gender,
+          'birthday': birthday,
         });
 
   @override
