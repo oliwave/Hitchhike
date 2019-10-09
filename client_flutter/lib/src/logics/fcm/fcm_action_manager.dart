@@ -1,3 +1,4 @@
+import 'package:client_flutter/src/util/platform_info.dart';
 import 'package:flutter/material.dart';
 
 import '../notify_manager.dart';
@@ -35,8 +36,38 @@ class FcmActionManager extends NotifyManager {
       if (type == FcmEventType.orderConfirmation) {
         customizedAlertDialog(
           context: context,
-          title: const Text('預選乘客'),
-          content: Text('離乘客起點尚需 ${duration.inMinutes} 分鐘'),
+          barrierDismissible: false,
+          title: const Text('乘客資訊'),
+          content: Container(
+            height: SizeConfig.screenAwareHeight(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        message['data']['startName'],
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                        color: Colors.grey,
+                        height: 1,
+                        width: 8,
+                      ),
+                      Text(
+                        message['data']['endName'],
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                Text('離乘客起點尚需 ${duration.inMinutes} 分鐘'),
+              ],
+            ),
+          ),
           confirmButtonName: '開始訂單',
           cancelButtonName: '掰掰',
           confirmCallback: _confirmCallback('success'),
