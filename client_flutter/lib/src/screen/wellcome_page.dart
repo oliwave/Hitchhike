@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './page_collection.dart' show Homepage, FavoriteRoutesPage;
-import '../util/util_collection.dart' show PlatformInfo, SizeConfig;
+import '../util/util_collection.dart' show SizeConfig;
 
 import '../../init_setting.dart';
 

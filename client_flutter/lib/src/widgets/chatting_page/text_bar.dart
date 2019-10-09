@@ -17,7 +17,7 @@ class TextBar extends StatelessWidget {
     );
 
     return Container(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
