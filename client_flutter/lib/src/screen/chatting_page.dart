@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../provider/provider_collection.dart' show CloudMessageProvider;
 import '../widgets/general_app_bar.dart';
 import '../widgets/chatting_page/text_bar.dart';
+import '../widgets/chatting_page/chat_list_view.dart';
 
 class ChattingPage extends StatelessWidget {
   static const String routeName = '/chatting_page';
@@ -33,7 +34,7 @@ class ChattingPage extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: Container(),
+            child: ChatListView(),
           ),
           TextBar(),
         ],

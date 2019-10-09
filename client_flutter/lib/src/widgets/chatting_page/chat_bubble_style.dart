@@ -13,7 +13,7 @@ class ChatBubbleStyle {
     elevation: 1,
     margin: BubbleEdges.only(
       top: SizeConfig.screenAwareHeight(1.0),
-      right: SizeConfig.screenAwareHeight(10.0),
+      right: SizeConfig.screenAwareHeight(25.0),
     ),
     alignment: Alignment.topLeft,
   );
@@ -25,7 +25,7 @@ class ChatBubbleStyle {
     elevation: 1,
     margin: BubbleEdges.only(
       top: SizeConfig.screenAwareHeight(1.0),
-      left: SizeConfig.screenAwareHeight(10.0),
+      left: SizeConfig.screenAwareHeight(25.0),
     ),
     alignment: Alignment.topRight,
   );

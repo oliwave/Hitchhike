@@ -21,7 +21,9 @@ class SocketHandler {
 
   final _driverPositionController = StreamController<Map<String, String>>();
   final _revokeDriverPositionController = StreamController<String>();
-  final _chatController = StreamController<Map<String, dynamic>>();
+  final _previousMessagesController =
+      StreamController<List<Map<String, dynamic>>>();
+  final _newMessageController = StreamController<Map<String, dynamic>>();
 
   bool get isConnected => _isConnected;
 
@@ -30,8 +32,11 @@ class SocketHandler {
       _driverPositionController.stream;
   Stream<String> get getRevokeDriverPositionStream =>
       _revokeDriverPositionController.stream;
-  Stream<Map<String, dynamic>> get getChatStream => _chatController.stream;
-  
+  Stream<List<Map<String, dynamic>>> get getPreviousMessagesStream =>
+      _previousMessagesController.stream;
+  Stream<Map<String, dynamic>> get getNewMessageStream =>
+      _newMessageController.stream;
+
   Future<SocketIO> connectSocketServer() async {
     if (!_isConnected) {
       _socket = await _manager.createInstance('https://socket.hitchhike.ml');
@@ -72,14 +77,19 @@ class SocketHandler {
     );
 
     _addDataToSink(
-      eventName: SocketEventName.chat,
-      sink: _chatController.sink,
+      eventName: SocketEventName.previousMessages,
+      sink: _previousMessagesController.sink,
+    );
+
+    _addDataToSink(
+      eventName: SocketEventName.newMessage,
+      sink: _newMessageController.sink,
     );
   }
 
   _addDataToSink({
     @required String eventName,
-    @required StreamSink sink,
+    @required StreamSink<dynamic> sink,
   }) {
     _socket.on(eventName, (data) => sink.add(data));
   }
@@ -87,6 +97,7 @@ class SocketHandler {
   dispose() {
     _driverPositionController.close();
     _revokeDriverPositionController.close();
-    _chatController.close();
+    _previousMessagesController.close();
+    _newMessageController.close();
   }
 }

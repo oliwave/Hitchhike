@@ -67,7 +67,9 @@ class SocketEventName {
 
   static const String revokeDriverPosition = 'revokeDriverPosition';
   static const String driverPosition = 'driverPosition';
-  static const String chat = 'chat';
+  static const String previousMessages = 'previousMessages';
+  static const String newMessage = 'newMessage';
+  static const String sendMessage = 'sendMessage';
 }
 
 class FcmEventType {

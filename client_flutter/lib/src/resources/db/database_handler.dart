@@ -28,10 +28,10 @@ class DatabaseHandler {
     """,
     chatRecords: """ 
       CREATE TABLE $chatRecords (
-        id INTEGER PRIMARY_KEY,
-        character TEXT,
+        room TEXT PRIMARY_KEY,
         time TEXT,
-        room TEXT,
+        character TEXT,
+        text TEXT
       )
     """,
   };
