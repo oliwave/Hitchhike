@@ -18,13 +18,15 @@ class AuthProvider with ChangeNotifier {
   static final _api = Repository.getApi;
   static final _prefs = Repository.getSimpleStorage;
 
-  Future invokeVerifyCode(String uid) async {
+  // get hash verification code
+  Future<void> invokeVerifyCode(String uid) async {
     final response = await _api.sendHttpRequest(VerifyUserIdRequest(
       userId: uid,
     ));
     return response.statusCode;
   }
 
+  // check if the verification code is correct
   bool checkVerifyCode(String rawSixDigits, final hashedrawSixDigits) {
     return ValidationHandler.verifySixDigitsCode(rawSixDigits: rawSixDigits, hashedSixDigits: hashedrawSixDigits.toString());
   }
