@@ -5,4 +5,5 @@ export './sign_up_profile_page.dart';
 export './wellcome_page.dart';
 export './favorite_routes_page.dart';
 export './chatting_page.dart';
+export './friend_list_page.dart';
 export './bad_page.dart';
