@@ -14,8 +14,10 @@ class HomepageBottomSheet extends StatefulWidget {
 
 class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     with TickerProviderStateMixin {
-  AnimationController _bottomSheetHeightController;
-  Animation<double> _sheetHeightAnimation;
+  AnimationController _bottomSheetHeightByItselfController;
+  AnimationController _bottomSheetHeightByMenuController;
+  Animation<double> _sheetHeightByItselfAnimation;
+  Animation<double> _sheetHeightByMenuAnimation;
   AnimationController _bottomSheetOpacityController;
   Animation<double> _opacityAnimation;
 
@@ -23,7 +25,12 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
   void initState() {
     print('AnimtionController is in initState!!!');
 
-    _bottomSheetHeightController = AnimationController(
+    _bottomSheetHeightByItselfController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _bottomSheetHeightByMenuController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
@@ -33,26 +40,29 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
       vsync: this,
     );
 
-    CurvedAnimation curvedAnimation = CurvedAnimation(
+    _sheetHeightByItselfAnimation = CurvedAnimation(
       curve: Curves.ease,
-      parent: _bottomSheetHeightController,
+      parent: _bottomSheetHeightByItselfController,
       reverseCurve: Curves.ease,
-    );
-
-    _sheetHeightAnimation = curvedAnimation.drive(Tween<double>(
-      // begin: PlatformInfo.screenAwareSize(60),
-      // end: PlatformInfo.screenAwareSize(255),
+    ).drive(Tween<double>(
       begin: SizeConfig.screenAwareHeight(10),
       end: SizeConfig.screenAwareHeight(40),
     ));
 
-    curvedAnimation = CurvedAnimation(
+    _sheetHeightByMenuAnimation = CurvedAnimation(
+      curve: Curves.ease,
+      parent: _bottomSheetHeightByMenuController,
+      reverseCurve: Curves.ease,
+    ).drive(Tween<double>(
+      begin: SizeConfig.screenAwareHeight(10),
+      end: SizeConfig.screenAwareHeight(0),
+    ));
+
+    _opacityAnimation = CurvedAnimation(
       curve: Curves.easeIn,
       parent: _bottomSheetOpacityController,
       reverseCurve: Curves.easeOut,
-    );
-
-    _opacityAnimation = curvedAnimation.drive(
+    ).drive(
       Tween<double>(
         begin: 1,
         end: 0,
@@ -67,9 +77,12 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     // 'sheetHeightAnimation' and 'opacityAnimation' are triggered at
     // very deep widget tree. Therefore, we hold the reference of
     // 'AnimationController' in 'HomepageProvider'.
-    provider.animationManager.bottomSheetHeightController =
-        _bottomSheetHeightController;
-        
+    provider.animationManager.bottomSheetHeightByItselfController =
+        _bottomSheetHeightByItselfController;
+
+    provider.animationManager.bottomSheetHeightByMenuController =
+        _bottomSheetHeightByMenuController;
+
     provider.animationManager.bottomSheetOpacityController =
         _bottomSheetOpacityController;
 
@@ -83,7 +96,8 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     print('AnimationController has been disposed!!!');
     // Controller should be dispose before the ticker was disposed,
     // because it may cause memory leak.
-    _bottomSheetHeightController.dispose();
+    _bottomSheetHeightByItselfController.dispose();
+    _bottomSheetHeightByMenuController.dispose();
     _bottomSheetOpacityController.dispose();
     super.dispose();
   }
@@ -93,45 +107,64 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     print('Refreshing HomepageBottomSheetState ... ');
 
     return AnimatedBuilder(
-      animation: _sheetHeightAnimation,
-      builder: (BuildContext context, Widget bottomSheetContent) {
-        return Container(
-          // The decoration of bottom sheet
-          height: _sheetHeightAnimation.value,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              // topLeft: Radius.circular(PlatformInfo.screenAwareSize(50)),
-              // topRight: Radius.circular(PlatformInfo.screenAwareSize(50)),
-              topLeft: Radius.circular(SizeConfig.screenAwareWidth(15)),
-              topRight: Radius.circular(SizeConfig.screenAwareWidth(15)),
+      animation: _sheetHeightByItselfAnimation,
+      builder: (BuildContext context, Widget child) {
+        return AnimatedBuilder(
+          animation: _sheetHeightByMenuAnimation,
+          builder: (BuildContext context, Widget bottomSheetContent) {
+            final provider = Provider.of<HomepageProvider>(
+              context,
+              listen: false,
+            );
+
+            final value = provider.animationManager.menuTriggered
+                ? _sheetHeightByMenuAnimation.value
+                : _sheetHeightByItselfAnimation.value;
+
+            return Container(
+              // The decoration of bottom sheet
+              height: value,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  // topLeft: Radius.circular(PlatformInfo.screenAwareSize(50)),
+                  // topRight: Radius.circular(PlatformInfo.screenAwareSize(50)),
+                  topLeft: Radius.circular(SizeConfig.screenAwareWidth(15)),
+                  topRight: Radius.circular(SizeConfig.screenAwareWidth(15)),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    blurRadius: 3,
+                  )
+                ],
+              ),
+              // The content of bottomSheet
+              child: bottomSheetContent,
+            );
+          },
+          child: Consumer<HomepageProvider>(
+            builder: (_, HomepageProvider value, Widget panel) {
+              // To determine which view should show on the screen.
+              // return value.isOrderPanel
+              return Stack(
+                children: <Widget>[
+                  value.animationManager.isOrderPanel
+                      ? panel
+                      : RoleNavigatorBar(
+                          opacityAnimation: _opacityAnimation,
+                        ),
+                  // if (value.menuVisible) buildBackdropFilter(context),
+                ],
+              );
+            },
+            child: OrderPanel(
+              opacityAnimation: _opacityAnimation,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                blurRadius: 3,
-              )
-            ],
           ),
-          // The content of bottomSheet
-          child: bottomSheetContent,
         );
       },
-      child: Consumer<HomepageProvider>(
-        builder: (_, HomepageProvider value, Widget panel) {
-          // To determine which view should show on the screen.
-          // return value.isOrderPanel
-          return value.animationManager.isOrderPanel
-              ? panel
-              : RoleNavigatorBar(
-                  opacityAnimation: _opacityAnimation,
-                );
-        },
-        child: OrderPanel(
-          opacityAnimation: _opacityAnimation,
-        ),
-      ),
     );
   }
 }

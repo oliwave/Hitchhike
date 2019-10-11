@@ -9,7 +9,8 @@ class HomepageAnimationManager extends NotifyManager {
   ) : super(notifyListeners);
 
   /// Enable the bottom sheet to animate its heitght.
-  AnimationController bottomSheetHeightController;
+  AnimationController bottomSheetHeightByItselfController;
+  AnimationController bottomSheetHeightByMenuController;
 
   AnimationController bottomSheetOpacityController;
 
@@ -27,32 +28,27 @@ class HomepageAnimationManager extends NotifyManager {
   /// and [OrderPanel].
   bool isOrderPanel = false;
 
-  // /// It is used to switch the bottom sheet.
-  // bool get isOrderPanel => _isOrderPanel;
-
-  // /// It is used to switch the bottom sheet.
-  // set isOrderPanel(bool isOrderPanel) {
-  //   _isOrderPanel = isOrderPanel;
-  //   // notifyListeners();
-  // }
+  bool menuTriggered = false;
 
   Future<void> showPanelHideBar() async {
     isOrderPanel = true;
+    menuTriggered = false;
     positionButtonController.forward();
     favoriteButtonController.forward();
     appBarController.forward();
     notifyListeners();
-    await bottomSheetHeightController.forward();
+    await bottomSheetHeightByItselfController.forward();
     bottomSheetOpacityController.forward();
   }
 
   Future<void> showBarHidePanel() async {
     isOrderPanel = false;
+    menuTriggered = false;
     positionButtonController.reverse();
     favoriteButtonController.reverse();
     appBarController.reverse();
     bottomSheetOpacityController.reverse();
-    bottomSheetHeightController.reverse();
+    bottomSheetHeightByItselfController.reverse();
     notifyListeners();
   }
 }
