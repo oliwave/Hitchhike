@@ -12,6 +12,7 @@ class DatabaseHandler {
 
   static const String favoriteRoutes = 'FavoriteRoutes';
   static const String chatRecords = 'chatRecords';
+  static const String friends = 'friends';
 
   static const _tables = <String, String>{
     favoriteRoutes: """ 
@@ -26,10 +27,17 @@ class DatabaseHandler {
         addressEnd TEXT
       )
     """,
+    friends: """
+      CREATE TABLE $friends (
+        room TEXT PRIMARY_KEY,
+        name TEXT,
+        avatar TEXT
+      )
+    """,
     chatRecords: """ 
       CREATE TABLE $chatRecords (
-        room TEXT PRIMARY_KEY,
-        time TEXT,
+        room TEXT FOREIGN_KEY,
+        time INTEGER,
         character TEXT,
         text TEXT
       )
@@ -50,6 +58,7 @@ class DatabaseHandler {
       onCreate: (Database newDb, int version) {
         newDb.execute(_tables[favoriteRoutes]);
         newDb.execute(_tables[chatRecords]);
+        newDb.execute(_tables[friends]);
       },
     );
   }
