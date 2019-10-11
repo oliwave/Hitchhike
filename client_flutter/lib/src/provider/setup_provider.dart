@@ -12,6 +12,12 @@ final localProviders = <SingleChildCloneableWidget>[
   ChangeNotifierProvider.value(
     value: ChattingProvider(),
   ),
+  ChangeNotifierProvider.value(
+    value: MenuProvider(),
+  ),
+  ChangeNotifierProvider.value(
+    value: FriendListProvider(),
+  ),
 ];
 
 final globalProviders = <SingleChildCloneableWidget>[
