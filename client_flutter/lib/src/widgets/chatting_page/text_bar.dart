@@ -63,6 +63,6 @@ class TextBar extends StatelessWidget {
     String value,
     ChattingProvider chatProvider,
   ) {
-    chatProvider.newText = value;
+    chatProvider.sendMessage = value;
   }
 }

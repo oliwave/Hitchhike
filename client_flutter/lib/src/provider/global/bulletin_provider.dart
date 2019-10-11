@@ -20,13 +20,6 @@ class BulletinProvider extends ChangeNotifier {
   Color get textColor => _textColor;
   Color get iconColor => _iconColor;
 
-  void _changeBulletinState(String text, Color textColor, Color iconColor) {
-    _showText = text;
-    _textColor = textColor;
-    _iconColor = iconColor ?? Colors.orange.withOpacity(0.65);
-    notifyListeners();
-  }
-
   set bulletinSizeController(AnimationController controller) {
     _bulletinSizeController = controller;
   }
@@ -40,5 +33,12 @@ class BulletinProvider extends ChangeNotifier {
     await _bulletinSizeController.forward();
     await Future.delayed(Duration(milliseconds: 1200));
     await _bulletinSizeController.reverse();
+  }
+
+  void _changeBulletinState(String text, Color textColor, Color iconColor) {
+    _showText = text;
+    _textColor = textColor;
+    _iconColor = iconColor ?? Colors.orange.withOpacity(0.65);
+    notifyListeners();
   }
 }
