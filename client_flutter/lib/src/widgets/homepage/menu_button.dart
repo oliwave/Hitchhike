@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../util/platform_info.dart';
+import '../../provider/provider_collection.dart'
+    show HomepageProvider, MenuProvider;
 
 class MenuButton extends StatefulWidget {
   @override
@@ -9,33 +12,50 @@ class MenuButton extends StatefulWidget {
 
 class _MenuButtonState extends State<MenuButton>
     with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> iconAnimation;
+  // AnimationController menuIconController;
+  // Animation<double> iconAnimation;
 
-  @override
-  void initState() {
-    controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
+  // @override
+  // void initState() {
+  //   menuIconController = AnimationController(
+  //     vsync: this,
+  //     duration: Duration(milliseconds: 500),
+  //   );
 
-    iconAnimation = CurvedAnimation(
-      parent: controller,
-      curve: Curves.linear,
-    );
+  //   iconAnimation = CurvedAnimation(
+  //     parent: menuIconController,
+  //     curve: Curves.linear,
+  //   );
 
-    super.initState();
-  }
+  //   final provider = Provider.of<MenuProvider>(
+  //     context,
+  //     listen: false,
+  //   );
 
-  @override
-  void dispose() {
-    super.dispose();
-    controller.dispose();
-  }
+  //   provider.menuIconController = menuIconController;
+
+  //   super.initState();
+  // }
+
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   menuIconController.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     print('Refreshing MenuButton ...');
+
+    final homeProvider = Provider.of<HomepageProvider>(
+      context,
+      listen: false,
+    );
+
+    final menuProvider = Provider.of<MenuProvider>(
+      context,
+      listen: false,
+    );
 
     return Padding(
       padding: EdgeInsets.only(
@@ -47,18 +67,18 @@ class _MenuButtonState extends State<MenuButton>
       child: Align(
         alignment: Alignment.topCenter,
         child: GestureDetector(
-          child: AnimatedIcon(
-            progress: iconAnimation,
-            icon: AnimatedIcons.menu_close,
-            // size: PlatformInfo.screenAwareWidth(23),
-            size: SizeConfig.screenAwareWidth(7),
+          child: Hero(
+            tag: 'menu',
+            child: Icon(
+              // progress: iconAnimation,
+              // icon: AnimatedIcons.menu_close,
+              Icons.menu,
+              // size: PlatformInfo.screenAwareWidth(23),
+              size: SizeConfig.screenAwareWidth(7),
+            ),
           ),
           onTap: () {
-            if (controller.status == AnimationStatus.completed) {
-              controller.reverse();
-            } else if (controller.status == AnimationStatus.dismissed) {
-              controller.forward();
-            }
+            menuProvider.setMenuVisible(true, homeProvider);
           },
         ),
       ),
