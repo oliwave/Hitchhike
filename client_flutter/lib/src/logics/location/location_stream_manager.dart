@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/Material.dart';
 
@@ -72,12 +73,12 @@ class LocationStreamManager extends NotifyManager {
             // your current position.
             _socketHandler.emitEvent(
               eventName: SocketEventName.driverPosition,
-              content: {
+              content: json.encode({
                 'lat': '${position.latitude}',
                 'lng': '${position.longitude}',
                 // 'heading': '${position.heading}',
                 'speed': '${position.speed}',
-              },
+              }),
             );
           } else {
             // You are passenger.
