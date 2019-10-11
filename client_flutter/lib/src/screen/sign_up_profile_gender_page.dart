@@ -18,7 +18,15 @@ class _GenderPageState extends State<GenderPage> {
     Map user = Map.of(ModalRoute.of(context).settings.arguments);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal[400],
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
+        textTheme: TextTheme(
+          title: TextStyle(
+            color: Colors.black,
+            fontSize: 18.0,
+          ),
+        ),
         title: Text(widget.title),
       ),
       body: Container(

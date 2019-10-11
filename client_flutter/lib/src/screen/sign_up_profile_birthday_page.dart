@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:client_flutter/src/provider/provider_collection.dart';
+import 'page_collection.dart';
 
 class BirthdayPage extends StatefulWidget {
   final String title;
@@ -32,7 +33,15 @@ class _BirthdayPage extends State<BirthdayPage> {
     Map user = Map.of(ModalRoute.of(context).settings.arguments);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal[400],
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
+        textTheme: TextTheme(
+          title: TextStyle(
+            color: Colors.black,
+            fontSize: 18.0,
+          ),
+        ),
         title: Text(widget.title),
       ),
       body: GestureDetector(
@@ -108,6 +117,13 @@ class _BirthdayPage extends State<BirthdayPage> {
                                   user['birthday'] = _date;
                                   print(user);
                                   authProivder.invokeSignUp(user);
+                                  String targetRoute;
+                                  targetRoute = LoginPage.routeName;
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    targetRoute,
+                                    (Route<dynamic> route) => false,
+                                  );
                                 },
                                 child: Text("Finish")),
                           ),

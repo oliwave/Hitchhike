@@ -7,22 +7,24 @@ class NamePage extends StatefulWidget {
   final String title;
 
   @override
-  State<StatefulWidget> createState() {
-    return new _NamePageState();
-  }
+  State<StatefulWidget> createState() => _NamePageState();
 }
 
 class _NamePageState extends State<NamePage> {
   final _formKey = GlobalKey<FormState>(); // GlobalKey: to access form
 
-  TextEditingController controller;
-  TextEditingController controller2;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController pwdController = TextEditingController();
 
   @override
   void initState() {
-    controller = TextEditingController();
-    controller2 = TextEditingController();
     super.initState();
+    nameController.addListener(() {
+      setState(() {});
+    });
+    pwdController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -30,7 +32,15 @@ class _NamePageState extends State<NamePage> {
     Map user = Map.of(ModalRoute.of(context).settings.arguments);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal[400],
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
+        textTheme: TextTheme(
+          title: TextStyle(
+            color: Colors.black,
+            fontSize: 18.0,
+          ),
+        ),
         title: Text(widget.title),
       ),
       body: GestureDetector(
@@ -46,15 +56,20 @@ class _NamePageState extends State<NamePage> {
             child: Center(
               child: Column(
                 children: <Widget>[
-                  Container(
-                    padding:
-                        EdgeInsets.only(top: 50.0, right: 50.0, left: 50.0),
-                    child: Column(
-                      children: <Widget>[
-                        usernameField(user),
-                        SizedBox(height: 25.0),
-                        passwordField(user),
-                      ],
+                  Theme(
+                    child: Container(
+                      padding:
+                          EdgeInsets.only(top: 50.0, right: 30.0, left: 30.0),
+                      child: Column(
+                        children: <Widget>[
+                          usernameField(user),
+                          SizedBox(height: 25.0),
+                          passwordField(user),
+                        ],
+                      ),
+                    ),
+                    data: Theme.of(context).copyWith(
+                      primaryColor: Colors.teal[400],
                     ),
                   ),
                   Flexible(
@@ -98,79 +113,65 @@ class _NamePageState extends State<NamePage> {
   }
 
   Widget usernameField(Map user) {
-    return Theme(
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-            icon: Icon(
-              Icons.assignment_ind, //contacts,
-              size: 24.0,
-            ),
-            hintText: 'Your name',
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.teal,
-                width: 2.0,
-              ),
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                Icons.highlight_off,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                controller.clear();
-              },
-            )),
-        inputFormatters: <TextInputFormatter>[
-          LengthLimitingTextInputFormatter(50) //限制長度
-        ],
-        validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
-        onSaved: (String value) {
-          user['name'] = value;
-        },
+    return TextFormField(
+      controller: nameController,
+      decoration: InputDecoration(
+        icon: Icon(Icons.assignment_ind),
+        labelText: '姓名',
+        hintText: 'Your name',
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.teal,
+            width: 2.0,
+          ),
+        ),
+        suffixIcon: GestureDetector(
+          onTap: () {
+            nameController.clear();
+          },
+          child: Icon(nameController.text.length > 0 ? Icons.clear : null),
+        ),
       ),
-      data: Theme.of(context).copyWith(
-        primaryColor: Colors.teal[400],
-      ),
+      maxLines: 1,
+      validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
+      inputFormatters: <TextInputFormatter>[
+        LengthLimitingTextInputFormatter(40) //限制長度
+      ],
+      onSaved: (String value) {
+        user['name'] = value;
+      },
     );
   }
 
   Widget passwordField(Map user) {
-    return Theme(
-      child: TextFormField(
-        controller: controller2,
-        obscureText: true, // 密碼輸入後顯示為點
-        decoration: InputDecoration(
-            icon: Icon(
-              Icons.lock_outline,
-              size: 24.0,
-            ),
-            hintText: 'Password',
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.teal,
-                width: 2.0,
-              ),
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(Icons.highlight_off),
-              color: Colors.grey,
-              onPressed: () {
-                controller2.clear();
-              },
-            )),
-        inputFormatters: <TextInputFormatter>[
-          LengthLimitingTextInputFormatter(50) //限制長度
-        ],
-        validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
-        onSaved: (String value) {
-          user['password'] = value;
-        },
+    return TextFormField(
+      controller: pwdController,
+      obscureText: true, // 密碼輸入後顯示為點
+      decoration: InputDecoration(
+        icon: Icon(Icons.lock),
+        labelText: '密碼',
+        hintText: 'Password',
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.teal,
+            width: 2.0,
+          ),
+        ),
+        suffixIcon: GestureDetector(
+          onTap: () {
+            pwdController.clear();
+          },
+          child: Icon(pwdController.text.length > 0 ? Icons.clear : null),
+        ),
       ),
-      data: Theme.of(context).copyWith(
-        primaryColor: Colors.teal[400],
-      ),
+      maxLines: 1,
+      validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
+      inputFormatters: <TextInputFormatter>[
+        LengthLimitingTextInputFormatter(40) //限制長度
+      ],
+      onSaved: (String value) {
+        user['password'] = value;
+      },
     );
   }
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../provider/global/auth_provider.dart';
 import 'sign_up_profile_verify_page.dart';
-// import 'sign_up_profile_verify_page_test.dart';
 
 class SignUpProfilePage extends StatefulWidget {
   static const String routeName = '/sign_up_profile_page';
@@ -19,28 +17,47 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
 
   Map user = {
     'uid': '',
-    'email': '',
     'password': '',
     'name': '',
     'gender': '',
     'birthday': '',
   };
 
-  TextEditingController controller;
+  TextEditingController controller = TextEditingController();
+  bool isButtonEnable = true; // 按鈕是否可以點擊
 
   @override
   void initState() {
-    controller = TextEditingController();
-
     super.initState();
+    controller.addListener(() {
+      setState(() {});
+    });
+  }
+  void _buttonClickListen() {
+    setState(() {
+      if (isButtonEnable) {
+        isButtonEnable = false;
+        return null; //按鈕禁用
+      } else {
+        return null;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal[400],
-        title: Text("Sign up"),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
+        textTheme: TextTheme(
+          title: TextStyle(
+            color: Colors.black,
+            fontSize: 18.0,
+          ),
+        ),
+        title: Text("Sign Up"),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -55,19 +72,15 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
             child: Column(
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.only(top: 50.0, right: 50.0, left: 50.0),
+                  padding: EdgeInsets.only(top: 50.0, right: 30.0, left: 30.0),
                   child: Column(
                     children: <Widget>[
                       Theme(
-                        child: emailField(),
+                        child: uidField(),
                         data: Theme.of(context).copyWith(
                           primaryColor: Colors.teal[400],
                         ),
                       ),
-                      Container(
-                          child: Text(
-                              'Notice:\n  Please fill in the NCNU\'s email address.\n  And you don\'t need to fill in \'@ncnu.edu.tw\'.'),
-                          margin: EdgeInsets.only(top: 35.0)),
                     ],
                   ),
                 ),
@@ -79,10 +92,13 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
                         width: double.infinity,
                         height: 55.0,
                         child: FlatButton(
-                            // disabledTextColor: Colors.teal[50],
+                            disabledTextColor: Colors.teal[50],
                             color: Colors.teal,
+                            // color: _formKey.currentState.validate()
+                            //     ? Colors.teal
+                            //     : Colors.teal[50],
                             onPressed: () {
-                              if (!_formKey.currentState.validate()) {
+                              if (_formKey.currentState.validate() == false) {
                                 return null;
                               } else {
                                 _formKey.currentState.save();
@@ -110,17 +126,14 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
     );
   }
 
-  Widget emailField() {
+  Widget uidField() {
     return TextFormField(
-      scrollPadding: EdgeInsets.all(50.0),
       controller: controller,
       keyboardType: TextInputType.emailAddress, // 鍵盤樣式
       decoration: InputDecoration(
-        icon: Icon(
-          Icons.email,
-          size: 24.0,
-        ),
-        hintText: 'Email address',
+        icon: Icon(Icons.email),
+        labelText: '帳號',
+        hintText: '學校信箱',
         // 點擊輸入框時底線樣式
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
@@ -130,22 +143,19 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
         ),
         suffixText: '@ncnu.edu.tw',
         suffixStyle: TextStyle(color: Colors.black),
-        suffixIcon: IconButton(
-          icon: Icon(
-            Icons.highlight_off,
-            color: Colors.grey,
-          ),
-          onPressed: () {
+        suffixIcon: GestureDetector(
+          onTap: () {
             controller.clear();
           },
+          child: Icon(controller.text.length > 0 ? Icons.clear : null),
         ),
-        // counterText: 'You don\'t need to fill in \'@ncnu.edu.tw\'.',
       ),
+      maxLines: 1,
       validator: (String value) {
         if (value.isEmpty) {
           return 'Can not be empty.';
         } else if (value.contains('@')) {
-          return 'You don\'t need to fill in \'@ncnu.edu.tw\'.';
+          return '';
         } else {
           return null;
         }
@@ -156,7 +166,6 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
       ],
       onSaved: (String value) {
         user['uid'] = value;
-        user['email'] = '$value@ncnu.edu.tw';
       },
     );
   }
