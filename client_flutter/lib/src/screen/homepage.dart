@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../provider/provider_collection.dart' show HomepageProvider;
+import '../provider/provider_collection.dart'
+    show HomepageProvider, MenuProvider;
 import '../widgets/homepage/location_app_bar.dart';
 import '../widgets/homepage/map_view.dart';
 import '../widgets/homepage/position_floating_action_button.dart';
@@ -51,11 +52,18 @@ class Homepage extends StatelessWidget {
   }
 
   Widget _blurHomepage(BuildContext context) {
-    return Consumer<HomepageProvider>(
-      builder: (context, provider, child) {
-        return provider.animationManager.isOrderPanel ? child : Container();
+    return Consumer<MenuProvider>(
+      builder: (context, menuProvider, child) {
+        return Consumer<HomepageProvider>(
+          builder: (context, provider, child) {
+            return provider.animationManager.isOrderPanel ||
+                    menuProvider.menuVisible
+                ? child
+                : Container();
+          },
+          child: buildBackdropFilter(context),
+        );
       },
-      child: buildBackdropFilter(context),
     );
   }
 }
