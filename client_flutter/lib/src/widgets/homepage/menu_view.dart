@@ -29,7 +29,7 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
       reverseCurve: Curves.easeOut,
     ).drive(Tween<double>(
       begin: SizeConfig.screenAwareHeight(0),
-      end: SizeConfig.screenAwareHeight(35),
+      end: SizeConfig.screenAwareHeight(40),
     ));
 
     final menuProvider = Provider.of<MenuProvider>(
@@ -138,13 +138,13 @@ class MenuListView extends StatelessWidget {
           OptionFlatbutton(
             icon: Icons.chat,
             routeName: FriendListPage.routeName,
-            text: '聊天',
+            text: '聊天室',
           ),
-          // OptionFlatbutton(
-          //   icon: Icons.settings,
-          //   routeName: FriendListPage.routeName,
-          //   text: '設定',
-          // ),
+          OptionFlatbutton(
+            icon: Icons.add_to_home_screen,
+            routeName: LoginPage.routeName,
+            text: '登出',
+          ),
         ],
       ),
     );

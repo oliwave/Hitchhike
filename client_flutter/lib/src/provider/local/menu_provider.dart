@@ -8,17 +8,17 @@ class MenuProvider with ChangeNotifier {
 
   double _menuOpacity = 0.0;
 
-  final _menuListData = <Map<IconData, String>>[
-    {Icons.chat_bubble_outline: '聊天'},
-    {Icons.perm_identity: '編輯個人'},
-    {Icons.settings: '設定'},
-  ];
+  // final _menuListData = <Map<IconData, String>>[
+  //   {Icons.chat_bubble_outline: '聊天'},
+  //   {Icons.perm_identity: '編輯個人'},
+  //   {Icons.settings: '設定'},
+  // ];
 
   bool get menuVisible => _menuVisible;
 
   double get menuOpacity => _menuOpacity;
 
-  List<Map<IconData, String>> get menuListData => _menuListData;
+  // List<Map<IconData, String>> get menuListData => _menuListData;
 
   set menuOpacity(double opacity) {
     _menuOpacity = opacity;
@@ -27,6 +27,9 @@ class MenuProvider with ChangeNotifier {
 
   void setMenuVisible(bool visible, HomepageProvider homeProvider) async {
     _menuVisible = visible;
+
+    notifyListeners();
+    
     if (_menuVisible) {
       await Future.wait([
         menuHeightController.forward(),
@@ -46,6 +49,5 @@ class MenuProvider with ChangeNotifier {
 
     homeProvider.animationManager.menuTriggered = true;
 
-    notifyListeners();
   }
 }
