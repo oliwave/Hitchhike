@@ -155,7 +155,6 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
                       : RoleNavigatorBar(
                           opacityAnimation: _opacityAnimation,
                         ),
-                  // if (value.menuVisible) buildBackdropFilter(context),
                 ],
               );
             },

@@ -15,10 +15,13 @@ class FriendListPage extends StatelessWidget {
         elevation: 2,
         backgroundColor: Colors.white,
         title: GeneralAppBar(
-          title: '聊天室',
+          title: '朋友',
           heroTag: 'chat',
-          icon: Icons.chat_bubble_outline,
+          icon: Icons.people,
         ),
+      ),
+      body: Container(
+        color: Colors.white,
       ),
     );
   }

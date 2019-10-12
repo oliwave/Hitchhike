@@ -77,9 +77,7 @@ class _MenuButtonState extends State<MenuButton>
               size: SizeConfig.screenAwareWidth(7),
             ),
           ),
-          onTap: () {
-            menuProvider.setMenuVisible(true, homeProvider);
-          },
+          onTap: () => menuProvider.setMenuVisible(true, homeProvider),
         ),
       ),
     );
