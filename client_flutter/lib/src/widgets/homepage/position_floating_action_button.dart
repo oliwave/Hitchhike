@@ -2,63 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../provider/provider_collection.dart'
-    show HomepageProvider, LocationProvider;
+import '../../provider/provider_collection.dart' show LocationProvider;
 
-class PositionFloatingActionButton extends StatefulWidget {
-  @override
-  _PositionFloatingActionButtonState createState() =>
-      _PositionFloatingActionButtonState();
-}
-
-class _PositionFloatingActionButtonState
-    extends State<PositionFloatingActionButton>
-    with SingleTickerProviderStateMixin {
-  AnimationController _positionButtonController;
-  Animation<Alignment> _alignmentAnimation;
-
-  @override
-  void initState() {
-    _positionButtonController = AnimationController(
-      vsync: this,
-      duration: Duration(
-        milliseconds: 300,
-      ),
-    );
-
-    _alignmentAnimation = _positionButtonController.drive(
-      AlignmentTween(
-        begin: Alignment(0.9, 0.65),
-        end: Alignment(0.9, 0.0),
-      ),
-    );
-
-    final manager = Provider.of<HomepageProvider>(
-      context,
-      listen: false,
-    ).animationManager;
-
-    manager.positionButtonController = _positionButtonController;
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _positionButtonController.dispose();
-    super.dispose();
-  }
-
+class PositionFloatingActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _alignmentAnimation,
-      builder: (BuildContext context, Widget floatingButton) {
-        return Align(
-          alignment: _alignmentAnimation.value,
-          child: floatingButton,
-        );
-      },
+    return Align(
+      alignment: const Alignment(0.9, 0.65),
       child: Container(
         decoration: const BoxDecoration(
           color: Colors.white,

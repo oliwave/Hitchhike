@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'dart:convert';
+
+import '../../resources/repository.dart';
 import '../../logics/chat/chat_stream_manager.dart';
+import '../../logics/chat/chat_record_manager.dart';
 
 class ChattingProvider with ChangeNotifier {
   ChattingProvider._() {
@@ -15,37 +19,54 @@ class ChattingProvider with ChangeNotifier {
 
   final TextEditingController _chatController = TextEditingController();
   final ScrollController _listController = ScrollController();
+  final _socket = Repository.getSocketHandler;
 
   ChatStreamManager _chatStreamManager;
-
+  ChatRecordManager _chatRecordManager;
   bool _isVisible = false;
-  List<String> _data = [
-    '使用者發送訊息的時間。',
-    '兩個使用者共用的一個 **聊天室ID 也就是 roomId**。不使用聊天對象的JWT',
-    '來辨別訊息的歸屬，是因為避免唯',
-    '一辨別使用者的ID散播到其他裝置上。至於 `roomId`',
-    '成功時放在 `fcm` 一起傳到使用者端。 text: 聊天的內容。',
-  ];
+  int touchDown = 0; // TESTING
 
-  List<String> get data => _data.reversed.toList();
+  ChatRecordManager get chatRecordManager => _chatRecordManager;
 
-  /// The value of [isVisible] determines whether the [ChattingFloatingActionButton] shoud
-  /// be displayed on the screen.
-  bool get isVisible => _isVisible;
-
-  /// Controller the user input text.
+  /// The Controller that controll the user's input text.
   TextEditingController get chatTextController => _chatController;
   ScrollController get listController => _listController;
 
-  /// [newText] is a field that used to handle the message which
+  /// TESTING LIST
+  // List<String> get testData => _testData.toList();
+
+  /// The value of [isVisible] determines whether the [ChattingFloatingActionButton] should
+  /// be displayed on the screen.
+  bool get isVisible => _isVisible;
+
+  /// [sendMessage] is a field that used to handle the message which
   /// user input in `TextField`.
-  set newText(String newText) {
-    _data.add(newText);
+  set sendMessage(String newText) {
+    // _testData.insert(0, newText); // TEST
+
+    if (!_textFilter(newText)) return;
+
+    var message = <String, dynamic>{
+      'text': newText,
+      'room': chatRecordManager.room,
+      'time': DateTime.now().millisecondsSinceEpoch,
+    };
+
+    _socket.emitEvent(
+      eventName: 'sendMessage',
+      content: json.encode(message),
+    );
+
+    message['character'] = Character.me;
+
+    chatRecordManager.storeRecord(message);
+
     _listController.animateTo(
       0,
       curve: Curves.ease,
       duration: Duration(milliseconds: 400),
     );
+
     _chatController.clear();
     notifyListeners();
   }
@@ -56,8 +77,31 @@ class ChattingProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Tigger the callback function to load more chat messages
+  /// on screen.
+  reachTheTopOfListLisnter() {
+    return (notification) {
+      if (notification is ScrollEndNotification &&
+          _listController.offset == _listController.position.maxScrollExtent &&
+          !_listController.position.outOfRange) {
+        // Update the UI for showing more chat messages on screen.
+        notifyListeners();
+
+        print('You reach the end of chat room! ${touchDown++}');
+      }
+    };
+  }
+
+  bool _textFilter(String newText) {
+    return newText != '';
+  }
+
   void _initManager() {
     _chatStreamManager = ChatStreamManager(
+      notifyListeners: _registerNotifyListeners,
+      chattingProvider: this,
+    );
+    _chatRecordManager = ChatRecordManager(
       notifyListeners: _registerNotifyListeners,
       chattingProvider: this,
     );

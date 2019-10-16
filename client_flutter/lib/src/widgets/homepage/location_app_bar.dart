@@ -71,7 +71,8 @@ class _LocationAppBarState extends State<LocationAppBar>
           ),
         );
       },
-      child: AnimatedBuilder( // content
+      child: AnimatedBuilder(
+        // content
         animation: _appBarAnimation,
         builder: (BuildContext context, Widget rowOfWidgets) {
           return Container(
@@ -91,7 +92,8 @@ class _LocationAppBarState extends State<LocationAppBar>
             child: _appBarController.isDismissed ? rowOfWidgets : null,
           );
         },
-        child: Row( // rowOfWidgets
+        child: Row(
+          // rowOfWidgets
           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Flexible(

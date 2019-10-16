@@ -10,3 +10,5 @@ export './global/connectivity_provider.dart';
 export './local/homepage_provider.dart';
 export './local/favorite_routes_provider.dart';
 export './local/chatting_provider.dart';
+export './local/friend_list_provider.dart';
+export './local/menu_provider.dart';

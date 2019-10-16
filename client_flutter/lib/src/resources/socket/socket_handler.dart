@@ -17,7 +17,7 @@ class SocketHandler {
 
   final SocketIOManager _manager = SocketIOManager();
   SocketIO _socket;
-  bool _isConnected;
+  bool _isConnected = false;
 
   final _driverPositionController = StreamController<Map<String, String>>();
   final _revokeDriverPositionController = StreamController<String>();
@@ -37,17 +37,18 @@ class SocketHandler {
   Stream<Map<String, dynamic>> get getNewMessageStream =>
       _newMessageController.stream;
 
-  Future<SocketIO> connectSocketServer() async {
+  Future<void> connectSocketServer() async {
     if (!_isConnected) {
       _socket = await _manager.createInstance('https://socket.hitchhike.ml');
       _socket.connect();
       _isConnected = true;
       _subscribeEvents();
 
-      return _socket;
-    } else {
-      return null;
+      // return _socket;
     }
+    // else {
+    // return null;
+    // }
   }
 
   Future<void> disconnetSocket() async {
@@ -61,7 +62,7 @@ class SocketHandler {
     @required String eventName,
     @required dynamic content,
   }) {
-    _socket.emit(eventName, content);
+    _socket.emit(eventName, [content]);
   }
 
   _subscribeEvents() {
@@ -91,7 +92,11 @@ class SocketHandler {
     @required String eventName,
     @required StreamSink<dynamic> sink,
   }) {
-    _socket.on(eventName, (data) => sink.add(data));
+    _socket.on(
+      eventName,
+      // Convert a Json object to map type.
+      (data) => sink.add(data),
+    );
   }
 
   dispose() {

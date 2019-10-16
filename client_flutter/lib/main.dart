@@ -58,6 +58,8 @@ class MyApp extends StatelessWidget {
       page = FavoriteRoutesPage();
     } else if (routeName == ChattingPage.routeName) {
       page = ChattingPage();
+    } else if (routeName == FriendListPage.routeName) {
+      page = FriendListPage();
     } else {
       page = BadRoutePage();
     }

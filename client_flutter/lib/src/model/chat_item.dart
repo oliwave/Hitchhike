@@ -8,23 +8,28 @@ class ChatItem {
     @required this.text,
   });
 
-  ChatItem.fromDB(Map<String, dynamic> parsedJson)
+  ChatItem.fromInstance(Map<String, dynamic> parsedJson)
+      : this._mapType(parsedJson);
+
+  ChatItem.fromDB(Map<String, dynamic> parsedJson) : this._mapType(parsedJson);
+
+  ChatItem._mapType(Map<String, dynamic> parsedJson)
       : room = parsedJson['room'],
-        time = parsedJson['time'],
+        time = DateTime.fromMillisecondsSinceEpoch(parsedJson['time']),
         character = parsedJson['character'],
         text = parsedJson['text'];
 
   Map<String, dynamic> toMapForDb() {
     return <String, dynamic>{
       'room': room,
-      'time': time,
+      'time': time.millisecondsSinceEpoch,
       'character': character,
       'text': text,
     };
   }
 
   final String room;
-  final String time;
+  final DateTime time;
   final String character;
   final String text;
 }
