@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'sign_up_profile_gender_page.dart';
+import 'sign_up_profile_name_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class NamePage extends StatefulWidget {
-  NamePage({Key key, this.title}) : super(key: key);
+class PasswordPage extends StatefulWidget {
+  PasswordPage({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
-  _NamePageState createState() => _NamePageState();
+  _PasswordPageState createState() => _PasswordPageState();
 }
 
-class _NamePageState extends State<NamePage> {
+class _PasswordPageState extends State<PasswordPage> {
   final _formKey = GlobalKey<FormState>(); // GlobalKey: to access form
 
-  TextEditingController nameController = TextEditingController();
   TextEditingController pwdController = TextEditingController();
+  TextEditingController checkController = TextEditingController();
 
   bool isNextBtnEnable = false;
 
   @override
   void initState() {
     super.initState();
-    nameController.addListener(() => setState(() {}));
     pwdController.addListener(() => setState(() {}));
+    checkController.addListener(() => setState(() {}));
   }
 
   void _nextBtnClickListen() {
-    if (nameController.text.length > 0 ) {
+    if (pwdController.text.length > 0 &&
+        pwdController.text == checkController.text) {
       isNextBtnEnable = true;
-    }else{
+    } else {
       isNextBtnEnable = false;
     }
   }
@@ -65,10 +67,19 @@ class _NamePageState extends State<NamePage> {
                   Theme(
                     child: Container(
                       padding:
-                          EdgeInsets.only(top: 50.0, right: 30.0, left: 30.0),
+                          EdgeInsets.only(top: 40.0, right: 30.0, left: 30.0),
                       child: Column(
                         children: <Widget>[
-                          usernameField(user),
+                          Container(
+                            padding: EdgeInsets.only(bottom: 10.0),
+                            child: Text(
+                              "設定密碼",
+                              style: TextStyle(fontSize: 18.0),
+                            ),
+                          ),
+                          passwordField(user),
+                          SizedBox(height: 25.0),
+                          checkPwdField(user),
                         ],
                       ),
                     ),
@@ -90,12 +101,11 @@ class _NamePageState extends State<NamePage> {
                               if (_formKey.currentState.validate() &&
                                   isNextBtnEnable) {
                                 _formKey.currentState.save();
-                                print(user);
                                 Navigator.push<String>(
                                     context,
                                     MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          GenderPage(title: "填寫基本資訊(2/3)"),
+                                          NamePage(title: "填寫基本資訊(1/3)"),
                                       settings: RouteSettings(
                                         arguments: user,
                                       ),
@@ -125,14 +135,15 @@ class _NamePageState extends State<NamePage> {
     );
   }
 
-  Widget usernameField(Map user) {
+  Widget passwordField(Map user) {
     return TextFormField(
-      controller: nameController,
+      controller: pwdController,
       autofocus: true,
+      obscureText: true, // 密碼輸入後顯示為點
       decoration: InputDecoration(
-        icon: Icon(Icons.assignment_ind),
-        labelText: '姓名',
-        hintText: '請輸入中文姓名',
+        icon: Icon(Icons.lock),
+        labelText: '密碼',
+        hintText: 'Password',
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
             color: Colors.teal,
@@ -141,23 +152,65 @@ class _NamePageState extends State<NamePage> {
         ),
         suffixIcon: GestureDetector(
           onTap: () {
-            nameController.clear();
+            pwdController.clear();
             isNextBtnEnable = false;
           },
-          child: Icon(nameController.text.length > 0 ? Icons.clear : null),
+          child: Icon(pwdController.text.length > 0 ? Icons.clear : null),
         ),
       ),
+      onChanged: (term) {
+        _nextBtnClickListen();
+      },
       // validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
+      inputFormatters: <TextInputFormatter>[
+        LengthLimitingTextInputFormatter(40) //限制長度
+      ],
+      onSaved: (String value) {
+        user['password'] = value;
+      },
+    );
+  }
+
+  Widget checkPwdField(Map user) {
+    return TextFormField(
+      controller: checkController,
+      obscureText: true, // 密碼輸入後顯示為點
+      decoration: InputDecoration(
+        icon: Icon(Icons.lock_outline),
+        labelText: '確認密碼',
+        hintText: '請再次輸入密碼',
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.teal,
+            width: 2.0,
+          ),
+        ),
+        suffixIcon: GestureDetector(
+          onTap: () {
+            checkController.clear();
+            isNextBtnEnable = false;
+          },
+          child: Icon(checkController.text.length > 0 ? Icons.clear : null),
+        ),
+      ),
       inputFormatters: <TextInputFormatter>[
         LengthLimitingTextInputFormatter(40) //限制長度
       ],
       onChanged: (term) {
         _nextBtnClickListen();
+        if (pwdController.text.length <= checkController.text.length && pwdController.text != checkController.text) {
+          Fluttertoast.showToast(
+              msg: "密碼不相符",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIos: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
       },
-      onSaved: (String value) {
-        user['name'] = value;
-      },
+      // onSaved: (String value) {
+      // },
     );
   }
-
 }

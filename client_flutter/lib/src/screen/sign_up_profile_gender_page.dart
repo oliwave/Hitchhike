@@ -7,12 +7,16 @@ class GenderPage extends StatefulWidget {
   GenderPage({this.title, this.selectCallback});
 
   @override
-  State<StatefulWidget> createState() => _GenderPageState();
+  _GenderPageState createState() => _GenderPageState();
 }
 
 class _GenderPageState extends State<GenderPage> {
   final _formKey = GlobalKey<FormState>(); // GlobalKey: to access form
+
   var pressAttention = '';
+  bool isNextBtnEnable = false;
+  String _gender = '';
+
   @override
   Widget build(BuildContext context) {
     Map user = Map.of(ModalRoute.of(context).settings.arguments);
@@ -44,7 +48,10 @@ class _GenderPageState extends State<GenderPage> {
                         Icons.star_half,
                         color: Colors.teal,
                       ),
-                      Text("Select your gender."),
+                      Text(
+                        "生理性別",
+                        style: TextStyle(fontSize: 18.0),
+                      ),
                       SizedBox(height: 25.0),
                       genderField(user),
                     ],
@@ -55,28 +62,38 @@ class _GenderPageState extends State<GenderPage> {
                     verticalDirection: VerticalDirection.up,
                     children: <Widget>[
                       Container(
-                          width: double.infinity,
-                          height: 55.0,
-                          child: FlatButton(
-                              disabledTextColor: Colors.teal[50],
-                              color: Colors.teal,
-                              onPressed: () {
-                                if (!_formKey.currentState.validate()) {
-                                  return null;
-                                } else {
-                                  _formKey.currentState.save();
-                                  Navigator.push<String>(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            BirthdayPage(title: "Sign Up"),
-                                        settings: RouteSettings(
-                                          arguments: user,
-                                        ),
-                                      ));
-                                }
-                              },
-                              child: Text("Next"))),
+                        width: double.infinity,
+                        height: 55.0,
+                        child: FlatButton(
+                          color:
+                              isNextBtnEnable ? Colors.teal : Colors.teal[50],
+                          onPressed: () {
+                            if (_formKey.currentState.validate() &&
+                                isNextBtnEnable) {
+                              _formKey.currentState.save();
+                              user['gender'] = _gender;
+                              Navigator.push<String>(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        BirthdayPage(title: "填寫基本資訊(3/3)"),
+                                    settings: RouteSettings(
+                                      arguments: user,
+                                    ),
+                                  ));
+                            } else {
+                              return null;
+                            }
+                          },
+                          child: Text(
+                            "下一步",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -99,22 +116,28 @@ class _GenderPageState extends State<GenderPage> {
             children: <Widget>[
               FlatButton(
                 shape: CircleBorder(side: BorderSide(color: Colors.grey[400])),
-                child: Text('Male'),
+                child: Text('男'),
                 color: pressAttention == 'M' ? Colors.teal : Colors.white,
                 onPressed: () {
-                  user['gender'] = 'Male';
-                  setState(() => pressAttention = 'M');
-                  print(user['gender']);
+                  setState(() {
+                    _gender = 'Male';
+                    pressAttention = 'M';
+                    isNextBtnEnable = true;
+                  });
+                  print(_gender);
                 },
               ),
               FlatButton(
                 shape: CircleBorder(side: BorderSide(color: Colors.grey[400])),
-                child: Text('Female'),
+                child: Text('女'),
                 color: pressAttention == 'F' ? Colors.teal : Colors.white,
                 onPressed: () {
-                  user['gender'] = 'Female';
-                  setState(() => pressAttention = 'F');
-                  print(user['gender']);
+                  setState(() {
+                    _gender = 'Female';
+                    pressAttention = 'F';
+                    isNextBtnEnable = true;
+                  });
+                  print(_gender);
                 },
               ),
             ],

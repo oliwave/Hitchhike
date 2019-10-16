@@ -1,40 +1,62 @@
 // get jwt
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/provider_collection.dart' show AuthProvider;
+import 'modify_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   static const String routeName = '/profile_page';
 
   @override
-  State<StatefulWidget> createState() => ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage> {
   final formKey = GlobalKey<FormState>(); // GlobalKey: to access form
 
-  String name = '';
-  String gender = '';
-  String birthday = '';
-  String star = '';
-  String email = '';
+  String name = 'test1';
+  String gender = '男';
+  String birthday = '2019-12-01';
+  String email = 'test4@ncnu.edu.tw';
+  String carNum = 'test5';
+
+  @override
+  void initState() {
+    super.initState();
+    final authProivder = Provider.of<AuthProvider>(context, listen: false);
+    final jwtToken = authProivder.jwt;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal[400],
-        title: Text('編輯個人檔案'),
+        centerTitle: true,
+        title: Text('個人資訊'),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
-            onPressed: () {},
-            child: Text("完成"),
+            onPressed: () {
+              Navigator.push<String>(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => ModifyProfilePage(),
+                ),
+              );
+            },
+            child: Text(
+              "編輯",
+              style: TextStyle(fontSize: 16.0),
+            ),
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
           ),
         ],
       ),
       body: Container(
           color: Colors.white,
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 50.0),
           child: ListView(
             children: <Widget>[
               Form(
@@ -42,138 +64,90 @@ class ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      width: 120.0,
-                      height: 120.0,
+                      width: 150.0,
+                      height: 150.0,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.teal[400],
+                        // color: Colors.teal[400],
+                        border: Border.all(
+                          color: Colors.teal[400],
+                        ),
                         image: DecorationImage(
-                          image: AssetImage(''
-                              //Utils.getImgPath(''),
-                              ),
+                          image: AssetImage(
+                            'https://github.com/flutter/assets-for-api-docs/tree/master/assets/widgets/owl.jpg',
+                          ),
                         ),
                       ),
                     ),
-                    FlatButton(
-                      child: Text('上傳大頭貼照'),
-                      onPressed: () {
-                        // 上傳照片
-                      },
+                    SizedBox(
+                      height: 20.0,
                     ),
-                    nameField(),
-                    genderField(),
-                    birthdayField(),
-                    starField(),
-                    emailField(),
-                    Container(margin: EdgeInsets.only(top: 25.0)),
-                    submitButton(),
+                    Theme(
+                      child: Column(
+                        children:
+                            ListTile.divideTiles(context: context, tiles: [
+                          nameField(),
+                          genderField(),
+                          birthdayField(),
+                          departmentField(),
+                          emailField(),
+                          carNumField(),
+                        ]).toList(),
+                      ),
+                      data: Theme.of(context).copyWith(
+                        primaryColor: Colors.teal[400],
+                      ),
+                    ),
                   ],
                 ),
               ),
             ],
-          )
-        ),
+          )),
     );
   }
 
   Widget nameField() {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: '姓名',
-        hintText: '',
-      ),
-      onSaved: (String value) {
-        name = value;
-      },
+    return ListTile(
+      title: Text('姓名'),
+      subtitle: Text('$name'),
     );
   }
 
   Widget genderField() {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: '性別',
-        hintText: '',
-      ),
-      onSaved: (String value) {
-        gender = value;
-      },
+    return ListTile(
+      title: Text('性別'),
+      subtitle: Text('$gender'),
     );
   }
 
-  var _chooseDate;
-  _showDataPicker() async {
-    var date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1870),
-      lastDate: DateTime(2050),
-    );
-    setState(() {
-      this._chooseDate = date.toString().split(" ")[0];
-    });
-  }
-
-  var _time;
   Widget birthdayField() {
     return Column(
       children: <Widget>[
-        TextFormField(
-          keyboardType: TextInputType.datetime, // 鍵盤樣式
-          decoration: InputDecoration(
-            labelText: '生日',
-            hintText: '',
-          ),
-          onSaved: (String value) {
-            birthday = value;
-          },
-        ),
-        RaisedButton(
-          child: Text(_time == null ? '選擇日期' : _time),
-          onPressed: () => _showDataPicker(),
+        ListTile(
+          title: Text('生日'),
+          subtitle: Text('$birthday'),
         ),
       ],
     );
   }
 
-  Widget starField() {
-    return TextFormField(
-      // textAlign: TextAlign.center,
-      decoration: InputDecoration(
-        labelText: '星座',
-        hintText: '',
-      ),
-      onSaved: (String value) {
-        star = value;
-      },
+Widget departmentField() {
+    return ListTile(
+      title: Text('姓名'),
+      subtitle: Text('$name'),
+    );
+  }
+  Widget carNumField() {
+    return ListTile(
+      title: Text('登記車輛'),
+      subtitle: Text('$carNum'),
     );
   }
 
   Widget emailField() {
-    return TextFormField(
-      keyboardType: TextInputType.emailAddress, // 鍵盤樣式
-      decoration: InputDecoration(
-        labelText: 'E-mail',
-        hintText: '',
-      ),
-      onSaved: (String value) {
-        email = value;
-      },
-      validator: (String value) {
-        return value.contains('@') ? 'Do not use the @ char.' : null;
-      },
-    );
-  }
-
-  Widget submitButton() {
-    return RaisedButton(
-      color: Colors.blue,
-      child: Text('確認修改'),
-      onPressed: () {
-        if (formKey.currentState.validate()) {
-          formKey.currentState.save();
-          print('$name,$email');
-        }
-      },
+    return ListTile(
+      title: Text('E-mail'),
+      subtitle: Text('$email'),
     );
   }
 }

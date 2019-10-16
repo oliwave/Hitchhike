@@ -28,10 +28,22 @@ class AuthProvider with ChangeNotifier {
 
   // check if the verification code is correct
   bool checkVerifyCode(String rawSixDigits, final hashedrawSixDigits) {
-    return ValidationHandler.verifySixDigitsCode(rawSixDigits: rawSixDigits, hashedSixDigits: hashedrawSixDigits.toString());
+    return ValidationHandler.verifySixDigitsCode(
+        rawSixDigits: rawSixDigits,
+        hashedSixDigits: hashedrawSixDigits.toString());
   }
 
-  Future<void> invokeSignUp(Map user) async{
+  // 判斷帳號是否已存在
+  bool checkAccountExist(String uid) {
+    // test, unfinished
+    if (uid == '123') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> invokeSignUp(Map user) async {
     final response = await _api.sendHttpRequest(SignUpRequest(
       userId: user['uid'],
       password: user['password'],
@@ -39,11 +51,10 @@ class AuthProvider with ChangeNotifier {
       gender: user['gender'],
       birthday: user['birthday'],
     ));
-    
+
     print(response.statusCode);
-
   }
-
+  
   String jwt;
 
   Future<void> invokeLogin(String id, String pwd) async {
@@ -51,7 +62,6 @@ class AuthProvider with ChangeNotifier {
       userId: id,
       password: pwd,
     ));
-
     print(response.statusCode);
 
     if (response.statusCode == 200) {
@@ -73,7 +83,7 @@ class AuthProvider with ChangeNotifier {
     final lastLoginTime = _prefs.getString(TargetSourceString.lastLoginTime);
 
     ///TODO
-    if (lastLoginTime != null) { 
+    if (lastLoginTime != null) {
       final lastDateTime = DateTime.parse(lastLoginTime);
 
       final duration = lastDateTime.difference(DateTime.now()).inDays;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'sign_up_profile_verify_page.dart';
+import 'package:client_flutter/src/provider/provider_collection.dart';
 
 class SignUpProfilePage extends StatefulWidget {
   static const String routeName = '/sign_up_profile_page';
@@ -24,24 +26,29 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
   };
 
   TextEditingController controller = TextEditingController();
-  bool isButtonEnable = true; // 按鈕是否可以點擊
+  bool isNextBtnEnable = false;
+  bool accountExisted = true;
+  String title = "註冊";
 
   @override
   void initState() {
     super.initState();
-    controller.addListener(() {
-      setState(() {});
-    });
+    controller.addListener(() => setState(() {}));
   }
-  void _buttonClickListen() {
-    setState(() {
-      if (isButtonEnable) {
-        isButtonEnable = false;
-        return null; //按鈕禁用
-      } else {
-        return null;
-      }
-    });
+
+  bool _isAccountExisted(String account) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    accountExisted = authProvider.checkAccountExist(controller.text);
+    return accountExisted;
+  }
+
+  void _nextBtnClickListen() {
+    if (controller.text.length > 0 &&
+        _isAccountExisted(controller.text) == false) {
+      isNextBtnEnable = true;
+    } else {
+      isNextBtnEnable = false;
+    }
   }
 
   @override
@@ -57,7 +64,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
             fontSize: 18.0,
           ),
         ),
-        title: Text("Sign Up"),
+        title: Text("$title"),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -92,28 +99,33 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
                         width: double.infinity,
                         height: 55.0,
                         child: FlatButton(
-                            disabledTextColor: Colors.teal[50],
-                            color: Colors.teal,
-                            // color: _formKey.currentState.validate()
-                            //     ? Colors.teal
-                            //     : Colors.teal[50],
-                            onPressed: () {
-                              if (_formKey.currentState.validate() == false) {
-                                return null;
-                              } else {
-                                _formKey.currentState.save();
-                                Navigator.push<String>(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          VerifyPage(title: 'Sign Up'),
-                                      settings: RouteSettings(
-                                        arguments: user,
-                                      ),
-                                    ));
-                              }
-                            },
-                            child: Text("Verify")),
+                          color:
+                              isNextBtnEnable ? Colors.teal : Colors.teal[50],
+                          onPressed: () {
+                            if (_formKey.currentState.validate() &&
+                                isNextBtnEnable) {
+                              _formKey.currentState.save();
+                              Navigator.push<String>(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        VerifyPage(title: "$title"),
+                                    settings: RouteSettings(
+                                      arguments: user,
+                                    ),
+                                  ));
+                            } else {
+                              return null;
+                            }
+                          },
+                          child: Text(
+                            "下一步",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -129,6 +141,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
   Widget uidField() {
     return TextFormField(
       controller: controller,
+      autofocus: true,
       keyboardType: TextInputType.emailAddress, // 鍵盤樣式
       decoration: InputDecoration(
         icon: Icon(Icons.email),
@@ -146,16 +159,17 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
         suffixIcon: GestureDetector(
           onTap: () {
             controller.clear();
+            isNextBtnEnable = false;
           },
           child: Icon(controller.text.length > 0 ? Icons.clear : null),
         ),
       ),
-      maxLines: 1,
+      autovalidate: true,
       validator: (String value) {
-        if (value.isEmpty) {
-          return 'Can not be empty.';
-        } else if (value.contains('@')) {
+        if (value.contains('@')) {
           return '';
+        } else if (_isAccountExisted(value)) {
+          return 'Email address has already existed.';
         } else {
           return null;
         }
@@ -164,6 +178,9 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
         WhitelistingTextInputFormatter(RegExp("[a-z,A-Z,0-9]")), //只能輸入數字,字母
         LengthLimitingTextInputFormatter(25), //長度不能超過25
       ],
+      onChanged: (term) {
+        _nextBtnClickListen();
+      },
       onSaved: (String value) {
         user['uid'] = value;
       },
