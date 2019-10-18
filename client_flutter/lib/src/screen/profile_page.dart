@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/provider_collection.dart' show AuthProvider;
+import '../provider/provider_collection.dart';
 import 'modify_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -14,12 +14,17 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final formKey = GlobalKey<FormState>(); // GlobalKey: to access form
-
-  String name = 'test1';
-  String gender = '男';
-  String birthday = '2019-12-01';
-  String email = 'test4@ncnu.edu.tw';
-  String carNum = 'test5';
+  
+  Map userProfile = {
+    'uid': 'tes1',
+    'password':'aa',
+    'name': 'sss',
+    'gender': '女',
+    'birthday': '1911-01-01',
+    'department': '資管系',
+    'carNum': 'aa123',
+    'email' : 'test4@ncnu.edu.tw'
+  };
 
   @override
   void initState() {
@@ -32,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal[400],
+        backgroundColor: Colors.teal[600],
         centerTitle: true,
         title: Text('個人資訊'),
         actions: <Widget>[
@@ -42,8 +47,10 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.push<String>(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => ModifyProfilePage(),
-                ),
+                    builder: (BuildContext context) => ModifyProfilePage(),
+                    settings: RouteSettings(
+                      arguments: userProfile,
+                    )),
               );
             },
             child: Text(
@@ -68,9 +75,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 150.0,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        // color: Colors.teal[400],
+                        // color: Colors.teal[600],
                         border: Border.all(
-                          color: Colors.teal[400],
+                          color: Colors.teal[600],
                         ),
                         image: DecorationImage(
                           image: AssetImage(
@@ -95,7 +102,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ]).toList(),
                       ),
                       data: Theme.of(context).copyWith(
-                        primaryColor: Colors.teal[400],
+                        primaryColor: Colors.teal[600],
                       ),
                     ),
                   ],
@@ -109,14 +116,14 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget nameField() {
     return ListTile(
       title: Text('姓名'),
-      subtitle: Text('$name'),
+      subtitle: Text(userProfile['name']),
     );
   }
 
   Widget genderField() {
     return ListTile(
       title: Text('性別'),
-      subtitle: Text('$gender'),
+      subtitle: Text(userProfile['gender']),
     );
   }
 
@@ -125,29 +132,30 @@ class _ProfilePageState extends State<ProfilePage> {
       children: <Widget>[
         ListTile(
           title: Text('生日'),
-          subtitle: Text('$birthday'),
+          subtitle: Text(userProfile['birthday']),
         ),
       ],
     );
   }
 
-Widget departmentField() {
+  Widget departmentField() {
     return ListTile(
-      title: Text('姓名'),
-      subtitle: Text('$name'),
+      title: Text('學系'),
+      subtitle: Text(userProfile['department']),
     );
   }
+
   Widget carNumField() {
     return ListTile(
       title: Text('登記車輛'),
-      subtitle: Text('$carNum'),
+      subtitle: Text(userProfile['carNum']),
     );
   }
 
   Widget emailField() {
     return ListTile(
       title: Text('E-mail'),
-      subtitle: Text('$email'),
+      subtitle: Text(userProfile['email']),
     );
   }
 }

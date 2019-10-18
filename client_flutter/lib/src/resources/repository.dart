@@ -46,6 +46,12 @@ class TargetSourceString {
   static const String role = 'role';
   static const String jwt = 'jwt';
   static const String pwd = 'pwd';
+  static const String uid = 'uid';
+  static const String name = 'name';
+  static const String gender = 'gender';
+  static const String birthday = 'birthday';
+  static const String carNum = 'carNum';
+  static const String department = 'department';
   static const String driverLat = 'driverLat';
   static const String driverLng = 'driverLng';
   static const String routeLatitude = 'routeLatitude';

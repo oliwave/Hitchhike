@@ -27,7 +27,7 @@ class _PasswordPageState extends State<PasswordPage> {
   }
 
   void _nextBtnClickListen() {
-    if (pwdController.text.length > 0 &&
+    if (pwdController.text.length > 5 &&
         pwdController.text == checkController.text) {
       isNextBtnEnable = true;
     } else {
@@ -84,7 +84,7 @@ class _PasswordPageState extends State<PasswordPage> {
                       ),
                     ),
                     data: Theme.of(context).copyWith(
-                      primaryColor: Colors.teal[400],
+                      primaryColor: Colors.teal[600],
                     ),
                   ),
                   Flexible(
@@ -96,7 +96,7 @@ class _PasswordPageState extends State<PasswordPage> {
                           height: 55.0,
                           child: FlatButton(
                             color:
-                                isNextBtnEnable ? Colors.teal : Colors.teal[50],
+                                isNextBtnEnable ? Colors.teal[600] : Colors.teal[50],
                             onPressed: () {
                               if (_formKey.currentState.validate() &&
                                   isNextBtnEnable) {
@@ -110,6 +110,15 @@ class _PasswordPageState extends State<PasswordPage> {
                                         arguments: user,
                                       ),
                                     ));
+                              } else if (pwdController != checkController) {
+                                Fluttertoast.showToast(
+                                    msg: "密碼不相符",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIos: 1,
+                                    backgroundColor: Colors.black,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
                               } else {
                                 return null;
                               }
@@ -143,10 +152,10 @@ class _PasswordPageState extends State<PasswordPage> {
       decoration: InputDecoration(
         icon: Icon(Icons.lock),
         labelText: '密碼',
-        hintText: 'Password',
+        hintText: '請輸入6-20位英數字',
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: Colors.teal,
+            color: Colors.teal[600],
             width: 2.0,
           ),
         ),
@@ -161,9 +170,11 @@ class _PasswordPageState extends State<PasswordPage> {
       onChanged: (term) {
         _nextBtnClickListen();
       },
-      // validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
+      // autovalidate: true,
+      validator: (value) => value.length < 6 ? '密碼不能小於六位數' : null,
       inputFormatters: <TextInputFormatter>[
-        LengthLimitingTextInputFormatter(40) //限制長度
+        WhitelistingTextInputFormatter(RegExp("[a-zA-Z]|[0-9]")), // 只能輸入字母或數字
+        LengthLimitingTextInputFormatter(20), //限制長度
       ],
       onSaved: (String value) {
         user['password'] = value;
@@ -181,7 +192,7 @@ class _PasswordPageState extends State<PasswordPage> {
         hintText: '請再次輸入密碼',
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: Colors.teal,
+            color: Colors.teal[600],
             width: 2.0,
           ),
         ),
@@ -198,7 +209,8 @@ class _PasswordPageState extends State<PasswordPage> {
       ],
       onChanged: (term) {
         _nextBtnClickListen();
-        if (pwdController.text.length <= checkController.text.length && pwdController.text != checkController.text) {
+        if (pwdController.text.length <= checkController.text.length &&
+            pwdController.text != checkController.text) {
           Fluttertoast.showToast(
               msg: "密碼不相符",
               toastLength: Toast.LENGTH_SHORT,

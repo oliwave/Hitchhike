@@ -12,3 +12,4 @@ export './local/favorite_routes_provider.dart';
 export './local/chatting_provider.dart';
 export './local/friend_list_provider.dart';
 export './local/menu_provider.dart';
+export './local/profile_provider.dart';

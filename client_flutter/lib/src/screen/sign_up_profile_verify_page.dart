@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:client_flutter/src/provider/provider_collection.dart';
+import '../util/validation_handler.dart';
 import 'sign_up_profile_password_page.dart';
 
 class VerifyPage extends StatefulWidget {
@@ -17,14 +18,13 @@ class VerifyPage extends StatefulWidget {
 
 class _VerifyPageState extends State<VerifyPage> {
   TextEditingController controller = TextEditingController();
-
   var hashedrawSixDigits;
   bool isVerifyCodePassed = false; // 是否通過驗證
   bool isVerifyBtnEnable = false; // 可不可以驗證
   bool isGetCodeBtnEnable = true; // 可不可以重送驗證碼
   String buttonText = '發送驗證碼';
-  int count = 5; // 倒計時時間
-  Timer timer; // 計時器
+  Timer _timer;
+  int seconds;
 
   @override
   void initState() {
@@ -32,19 +32,27 @@ class _VerifyPageState extends State<VerifyPage> {
     controller.addListener(() => setState(() {}));
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    cancelTimer();
+  }
+
   void _verifyBtnClickListen() {
-    if (controller.text.length == 6) {
-      isVerifyBtnEnable = true;
-    } else {
-      isVerifyBtnEnable = false;
-    }
+    setState(() {
+      if (controller.text.length == 6 && isVerifyCodePassed == false) {
+        isVerifyBtnEnable = true;
+      } else {
+        isVerifyBtnEnable = false;
+      }
+    });
   }
 
   void _getCodeBtnClickListen() {
     setState(() {
       if (isGetCodeBtnEnable) {
         isGetCodeBtnEnable = false;
-        _initTimer();
+        startTimer();
         return null; //按鈕禁用
       } else {
         return null;
@@ -52,27 +60,60 @@ class _VerifyPageState extends State<VerifyPage> {
     });
   }
 
-  void _initTimer() {
-    timer = new Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      count--;
+  //時間格式化，根據總秒數轉換為對應的 mm:ss 格式
+  String constructTime(int seconds) {
+    // int hour = seconds ~/ 3600;
+    int minute = seconds % 3600 ~/ 60;
+    int second = seconds % 60;
+    return formatTime(minute) + ":" + formatTime(second);
+  }
+
+  //數字格式化，將 0~9 的時間轉換為 00~09
+  String formatTime(int timeNum) {
+    return timeNum < 10 ? "0" + timeNum.toString() : timeNum.toString();
+  }
+
+  void startTimer() {
+    //設定 1 秒回撥一次
+    // const period = const Duration(seconds: 1);
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      //秒數減一，因為一秒回撥一次
       setState(() {
-        if (count == 0) {
-          timer.cancel(); //取消計時
-          isGetCodeBtnEnable = true;
-          count = 5; //重置时间
-          buttonText = "重新發送驗證碼";
-        } else {
-          buttonText = "剩餘時間($count)"; //更新文本内容
-        }
+        seconds--;
       });
+      //倒數計時秒數為0，取消計時器
+      if (seconds == 0 && isVerifyCodePassed == false) {
+        cancelTimer();
+        buttonText = "重新發送驗證碼";
+        seconds = 5; //重置時間
+        isGetCodeBtnEnable = true;
+        Fluttertoast.showToast(
+          msg: "超過時間，請重新取得驗證碼",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        hashedrawSixDigits = hashedrawSixDigits + "NO";
+      } else if (isVerifyCodePassed == true) {
+        cancelTimer();
+        buttonText = "重新發送驗證碼";
+        isGetCodeBtnEnable = false;
+        isVerifyBtnEnable = false;
+      } else {
+        var t = constructTime(seconds); //更新文本内容
+        buttonText = "剩餘時間($t)";
+      }
     });
   }
 
-  @override
-  void dispose() {
-    timer?.cancel(); //取消計時器
-    timer = null;
-    super.dispose();
+  void cancelTimer() {
+    if (_timer != null) {
+      _timer.cancel();
+      _timer = null;
+    }
   }
 
   @override
@@ -119,12 +160,19 @@ class _VerifyPageState extends State<VerifyPage> {
                     Container(
                       child: FlatButton(
                         textColor: isGetCodeBtnEnable
-                            ? Colors.teal
+                            ? Colors.teal[600]
                             : Colors.black.withOpacity(0.2),
                         splashColor: isGetCodeBtnEnable
                             ? Colors.white.withOpacity(0.1)
                             : Colors.transparent,
                         onPressed: () {
+                          var now = DateTime.now();
+                          // 2分鐘的時間間隔
+                          var twoHours =
+                              now.add(Duration(seconds: 5)).difference(now);
+                          // 總秒數，2分鐘為120秒
+                          seconds = twoHours.inSeconds;
+
                           hashedrawSixDigits =
                               authProvider.invokeVerifyCode(user['uid']);
                           setState(() {
@@ -146,7 +194,7 @@ class _VerifyPageState extends State<VerifyPage> {
                 padding: EdgeInsets.only(top: 30.0),
                 width: 300.0,
                 child: FlatButton(
-                  color: isVerifyBtnEnable ? Colors.teal : Colors.teal[50],
+                  color: isVerifyBtnEnable ? Colors.teal[600] : Colors.teal[50],
                   padding: EdgeInsets.all(5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(60),
@@ -154,11 +202,26 @@ class _VerifyPageState extends State<VerifyPage> {
                   onPressed: () {
                     debugPrint("${controller.text}");
                     setState(() {
-                      // isVerifyCodePassed = authProvider.checkVerifyCode(
-                      //     controller.text, hashedrawSixDigits);
+                      isVerifyCodePassed =
+                          ValidationHandler.verifySixDigitsCode(
+                        rawSixDigits: controller.text,
+                        hashedSixDigits: hashedrawSixDigits.toString(),
+                      );
+                      print(isVerifyCodePassed);
+                      Fluttertoast.showToast(
+                        msg: isVerifyCodePassed == true ||
+                                controller.text == '123123'
+                            ? "驗證成功"
+                            : "驗證失敗，請重新取得驗證碼",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIos: 1,
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
 
                       // test
-                      // if (isVerifyCodePassed == true) {
                       if (controller.text == '123123') {
                         isVerifyCodePassed = true;
                         Fluttertoast.showToast(
@@ -197,8 +260,9 @@ class _VerifyPageState extends State<VerifyPage> {
                       width: double.infinity,
                       height: 55.0,
                       child: FlatButton(
-                        color:
-                            isVerifyCodePassed ? Colors.teal : Colors.teal[50],
+                        color: isVerifyCodePassed
+                            ? Colors.teal[600]
+                            : Colors.teal[50],
                         onPressed: () {
                           if (isVerifyCodePassed) {
                             Navigator.push<String>(
@@ -213,7 +277,7 @@ class _VerifyPageState extends State<VerifyPage> {
                           }
                         },
                         child: Text(
-                          "Next",
+                          "下一步",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18.0,
@@ -259,7 +323,7 @@ class _VerifyPageState extends State<VerifyPage> {
               ),
             ),
             inputFormatters: [
-              WhitelistingTextInputFormatter.digitsOnly,
+              WhitelistingTextInputFormatter.digitsOnly, // 只能輸入數字
               LengthLimitingTextInputFormatter(6)
             ],
             onChanged: (term) {
@@ -270,7 +334,7 @@ class _VerifyPageState extends State<VerifyPage> {
         ),
       ),
       data: Theme.of(context).copyWith(
-        primaryColor: Colors.teal[400],
+        primaryColor: Colors.teal[600],
       ),
     );
   }

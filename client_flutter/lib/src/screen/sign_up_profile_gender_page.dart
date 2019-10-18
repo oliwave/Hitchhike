@@ -46,7 +46,7 @@ class _GenderPageState extends State<GenderPage> {
                     children: <Widget>[
                       Icon(
                         Icons.star_half,
-                        color: Colors.teal,
+                        color: Colors.teal[600],
                       ),
                       Text(
                         "生理性別",
@@ -66,7 +66,7 @@ class _GenderPageState extends State<GenderPage> {
                         height: 55.0,
                         child: FlatButton(
                           color:
-                              isNextBtnEnable ? Colors.teal : Colors.teal[50],
+                              isNextBtnEnable ? Colors.teal[600] : Colors.teal[50],
                           onPressed: () {
                             if (_formKey.currentState.validate() &&
                                 isNextBtnEnable) {
@@ -117,7 +117,7 @@ class _GenderPageState extends State<GenderPage> {
               FlatButton(
                 shape: CircleBorder(side: BorderSide(color: Colors.grey[400])),
                 child: Text('男'),
-                color: pressAttention == 'M' ? Colors.teal : Colors.white,
+                color: pressAttention == 'M' ? Colors.teal[600] : Colors.white,
                 onPressed: () {
                   setState(() {
                     _gender = 'Male';
@@ -130,7 +130,7 @@ class _GenderPageState extends State<GenderPage> {
               FlatButton(
                 shape: CircleBorder(side: BorderSide(color: Colors.grey[400])),
                 child: Text('女'),
-                color: pressAttention == 'F' ? Colors.teal : Colors.white,
+                color: pressAttention == 'F' ? Colors.teal[600] : Colors.white,
                 onPressed: () {
                   setState(() {
                     _gender = 'Female';

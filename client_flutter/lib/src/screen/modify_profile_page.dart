@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import '../provider/provider_collection.dart' show AuthProvider;
+import '../provider/provider_collection.dart'
+    show AuthProvider, ProfileProvider;
+import '../util/image_handler.dart';
 import 'page_collection.dart';
 import 'modify_carNum_page.dart';
 
@@ -22,34 +24,32 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController genderController = TextEditingController();
   TextEditingController birthdayController = TextEditingController();
+  TextEditingController departmentController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController carNumController = TextEditingController();
 
-  String name = 'test1';
-  String gender = '男';
-  String birthday = '2019-12-01';
-  String email = 'test4@ncnu.edu.tw';
-  String carNum = 'test5';
   String _date = '';
-  String dropdownValue = 'One';
+
   @override
   void initState() {
     super.initState();
     nameController.addListener(() => setState(() {}));
     genderController.addListener(() => setState(() {}));
     birthdayController.addListener(() => setState(() {}));
+    departmentController.addListener(() => setState(() {}));
     emailController.addListener(() => setState(() {}));
     carNumController.addListener(() => setState(() {}));
-
-    final authProivder = Provider.of<AuthProvider>(context, listen: false);
-    final jwtToken = authProivder.jwt;
   }
 
   File _image;
-
+  // Future getProfilePicture() async {
+  //   var image = await ImageHandler.getImage();
+  //   setState(() {
+  //     _image = image;
+  //   });
+  // }
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
-
     setState(() {
       _image = image;
     });
@@ -57,9 +57,15 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final profileProivder =
+        Provider.of<ProfileProvider>(context, listen: false);
+    final authProivder = Provider.of<AuthProvider>(context, listen: false);
+    final jwtToken = authProivder.jwt;
+
+    Map userProfile = Map.of(ModalRoute.of(context).settings.arguments);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal[400],
+        backgroundColor: Colors.teal[600],
         centerTitle: true,
         title: Text('編輯個人資訊'),
         actions: <Widget>[
@@ -68,7 +74,9 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
             onPressed: () {
               if (formKey.currentState.validate()) {
                 formKey.currentState.save();
-                print('$name,$gender,$birthday,$email,$carNum');
+                print(userProfile);
+                profileProivder.invokeModifyName(userProfile['name'], jwtToken);
+                profileProivder.name= userProfile['name'];
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   ProfilePage.routeName,
@@ -84,7 +92,6 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           ),
         ],
         leading: IconButton(
-          // textColor: Colors.white,
           icon: Icon(Icons.clear),
           onPressed: () {
             showDialog(
@@ -127,15 +134,16 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                     Theme(
                       child: Column(
                         children: <Widget>[
-                          nameField(),
-                          genderField(),
-                          birthdayField(),
-                          emailField(),
-                          carNumField(),
+                          nameField(userProfile),
+                          genderField(userProfile),
+                          birthdayField(userProfile),
+                          departmentField(userProfile),
+                          emailField(userProfile),
+                          carNumField(userProfile),
                         ],
                       ),
                       data: Theme.of(context).copyWith(
-                        primaryColor: Colors.teal[400],
+                        primaryColor: Colors.teal[600],
                       ),
                     ),
                   ],
@@ -160,7 +168,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
               color: Colors.grey[50],
               shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.teal[400],
+                color: Colors.teal[600],
               ),
             ),
           ),
@@ -176,7 +184,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
             tooltip: 'Pick Image',
-            backgroundColor: Colors.teal[400],
+            backgroundColor: Colors.teal[600],
             child: Icon(Icons.add_a_photo),
             onPressed: getImage,
           ),
@@ -217,7 +225,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
             tooltip: 'Pick Image',
-            backgroundColor: Colors.teal[400],
+            backgroundColor: Colors.teal[600],
             child: Icon(Icons.add_a_photo),
             onPressed: getImage,
           ),
@@ -226,13 +234,13 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     );
   }
 
-  Widget nameField() {
+  Widget nameField(Map userProfile) {
     return ListTile(
       title: Text('姓名'),
       subtitle: TextFormField(
         controller: nameController,
         decoration: InputDecoration(
-          hintText: "$name",
+          hintText: userProfile['name'],
           suffixIcon: GestureDetector(
             onTap: () {
               nameController.clear();
@@ -241,13 +249,13 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           ),
         ),
         onSaved: (String value) {
-          name = value;
+          userProfile['name'] = value;
         },
       ),
     );
   }
 
-  Widget genderField() {
+  Widget genderField(Map userProfile) {
     return ListTile(
       title: Text('性別'),
       subtitle: Theme(
@@ -255,7 +263,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           canvasColor: Colors.white,
         ),
         child: DropdownButton<String>(
-          value: gender,
+          value: userProfile['gender'],
           icon: Icon(Icons.arrow_drop_down),
           iconSize: 24,
           elevation: 16,
@@ -266,7 +274,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           ),
           onChanged: (String newValue) {
             setState(() {
-              gender = newValue;
+              userProfile['gender'] = newValue;
             });
           },
           items:
@@ -278,31 +286,16 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           }).toList(),
         ),
       ),
-      // TextFormField(
-      //   controller: genderController,
-      //   decoration: InputDecoration(
-      //     hintText: '$gender',
-      //     suffixIcon: GestureDetector(
-      //       onTap: () {
-      //         genderController.clear();
-      //       },
-      //       child: Icon(genderController.text.length > 0 ? Icons.clear : null),
-      //     ),
-      //   ),
-      //   onSaved: (String value) {
-      //     gender = value;
-      //   },
-      // ),
     );
   }
 
   var _time;
-  Widget birthdayField() {
+  Widget birthdayField(Map userProfile) {
     var textFormField = TextFormField(
       controller: birthdayController,
       keyboardType: TextInputType.datetime, // 鍵盤樣式
       decoration: InputDecoration(
-        hintText: '$birthday',
+        hintText: userProfile['birthday'],
         suffixIcon: GestureDetector(
           onTap: () {
             birthdayController.clear();
@@ -314,7 +307,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         birthdayController.text = '$_date';
       },
       onSaved: (String value) {
-        birthday = value;
+        userProfile['birthday'] = value;
       },
     );
     return Column(
@@ -342,14 +335,36 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     );
   }
 
-  Widget carNumField() {
+  Widget departmentField(Map userProfile) {
+    return ListTile(
+      title: Text('學系'),
+      subtitle: TextFormField(
+        controller: departmentController,
+        decoration: InputDecoration(
+          hintText: userProfile['department'],
+          suffixIcon: GestureDetector(
+            onTap: () {
+              departmentController.clear();
+            },
+            child:
+                Icon(departmentController.text.length > 0 ? Icons.clear : null),
+          ),
+        ),
+        onSaved: (String value) {
+          userProfile['department'] = value;
+        },
+      ),
+    );
+  }
+
+  Widget carNumField(Map userProfile) {
     return ListTile(
       title: Text('登記車輛'),
       subtitle: TextFormField(
         controller: carNumController,
         enabled: false,
         decoration: InputDecoration(
-          hintText: '$carNum',
+          hintText: userProfile['carNum'],
           suffixIcon: GestureDetector(
             onTap: () {
               carNumController.clear();
@@ -358,7 +373,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           ),
         ),
         onSaved: (String value) {
-          carNum = value;
+          userProfile['carNum'] = value;
         },
       ),
       trailing: Icon(Icons.keyboard_arrow_right),
@@ -367,13 +382,13 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
             context,
             MaterialPageRoute(
               builder: (BuildContext context) => ModifyCarNumPage(),
-              settings: RouteSettings(arguments: carNum),
+              settings: RouteSettings(arguments: userProfile['carNum']),
             ));
       },
     );
   }
 
-  Widget emailField() {
+  Widget emailField(Map userProfile) {
     return ListTile(
       title: Text('E-mail'),
       subtitle: TextFormField(
@@ -381,7 +396,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         enabled: false,
         keyboardType: TextInputType.emailAddress, // 鍵盤樣式
         decoration: InputDecoration(
-          hintText: '$email',
+          hintText: userProfile['email'],
           suffixIcon: GestureDetector(
             onTap: () {
               emailController.clear();
@@ -390,7 +405,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           ),
         ),
         onSaved: (String value) {
-          email = value;
+          userProfile['email'] = value;
         },
       ),
     );

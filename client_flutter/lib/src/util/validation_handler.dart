@@ -63,4 +63,23 @@ class HashValidationCode {
   String getHashCodeTime() {
     return _getHashCodeTime.toString();
   }
+
+  static bool verifySixDigitsCode({
+    @required String rawSixDigits,
+    @required String hashedSixDigits,
+  }) {
+    if (rawSixDigits.length != 6) {
+      return false;
+    }
+
+    List<int> bytes = utf8.encode(rawSixDigits); 
+    final digest = sha256.convert(bytes);
+
+    print(bytes);
+    print(digest);
+
+    
+    // print(base64.encode(digest.bytes));
+    return digest.toString() == hashedSixDigits;
+  }
 }

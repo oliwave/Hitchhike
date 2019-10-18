@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../resources/repository.dart';
 
 import '../../resources/restful/request_method.dart';
-import '../../util/validation_handler.dart';
 
 class AuthProvider with ChangeNotifier {
   AuthProvider._();
@@ -15,29 +14,28 @@ class AuthProvider with ChangeNotifier {
   static final _auth = AuthProvider._();
 
   static final _secure = Repository.getSecureStorage;
-  static final _api = Repository.getApi;
   static final _prefs = Repository.getSimpleStorage;
+  static final _api = Repository.getApi;
 
   // get hash verification code
-  Future<void> invokeVerifyCode(String uid) async {
+  Future<String> invokeVerifyCode(String uid) async {
     final response = await _api.sendHttpRequest(VerifyUserIdRequest(
       userId: uid,
     ));
-    return response.statusCode;
+    if (response.body == 'fail') {
+      return null;
+    } else {
+      return response.body;
+    }
   }
 
-  // check if the verification code is correct
-  bool checkVerifyCode(String rawSixDigits, final hashedrawSixDigits) {
-    return ValidationHandler.verifySixDigitsCode(
-        rawSixDigits: rawSixDigits,
-        hashedSixDigits: hashedrawSixDigits.toString());
-  }
-
-  // 判斷帳號是否已存在
-  bool checkAccountExist(String uid) {
-    // test, unfinished
+  Future<bool> identifyRegisteredId(String uid) async {
+    // final response = await _api.sendHttpRequest(Request(
+    //   userId: uid,
+    // ));
+    // if (response.body == 'fail') {
     if (uid == '123') {
-      return true;
+      return true; // 已註冊過
     } else {
       return false;
     }
@@ -52,9 +50,18 @@ class AuthProvider with ChangeNotifier {
       birthday: user['birthday'],
     ));
 
-    print(response.statusCode);
+    // 儲存資料
+    // if (response.body == 'success') {
+    _secure.storeSecret(TargetSourceString.pwd, user['password']);
+    _prefs.setString(TargetSourceString.uid, user['id']);
+    _prefs.setString(TargetSourceString.name, user['name']);
+    _prefs.setString(TargetSourceString.gender, user['gender']);
+    _prefs.setString(TargetSourceString.birthday, user['birthday']);
+    // }
+
+    print(response.body);
   }
-  
+
   String jwt;
 
   Future<void> invokeLogin(String id, String pwd) async {

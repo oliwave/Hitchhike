@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +40,10 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
 
   bool _isAccountExisted(String account) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    accountExisted = authProvider.checkAccountExist(controller.text);
+    authProvider.identifyRegisteredId(account).then((connectionResult) {
+      connectionResult == true ? accountExisted = true : accountExisted = false;
+    });
+    print(accountExisted);
     return accountExisted;
   }
 
@@ -85,7 +90,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
                       Theme(
                         child: uidField(),
                         data: Theme.of(context).copyWith(
-                          primaryColor: Colors.teal[400],
+                          primaryColor: Colors.teal[600],
                         ),
                       ),
                     ],
@@ -99,11 +104,12 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
                         width: double.infinity,
                         height: 55.0,
                         child: FlatButton(
-                          color:
-                              isNextBtnEnable ? Colors.teal : Colors.teal[50],
+                          color: isNextBtnEnable
+                              ? Colors.teal[600]
+                              : Colors.teal[50],
                           onPressed: () {
                             if (_formKey.currentState.validate() &&
-                                isNextBtnEnable) {
+                                accountExisted == false) {
                               _formKey.currentState.save();
                               Navigator.push<String>(
                                   context,
@@ -147,13 +153,6 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
         icon: Icon(Icons.email),
         labelText: '帳號',
         hintText: '學校信箱',
-        // 點擊輸入框時底線樣式
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.teal,
-            width: 2.0,
-          ),
-        ),
         suffixText: '@ncnu.edu.tw',
         suffixStyle: TextStyle(color: Colors.black),
         suffixIcon: GestureDetector(
@@ -168,7 +167,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
       validator: (String value) {
         if (value.contains('@')) {
           return '';
-        } else if (_isAccountExisted(value)) {
+        } else if (_isAccountExisted(value) == true) {
           return 'Email address has already existed.';
         } else {
           return null;

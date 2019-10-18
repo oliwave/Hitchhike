@@ -26,9 +26,9 @@ class _NamePageState extends State<NamePage> {
   }
 
   void _nextBtnClickListen() {
-    if (nameController.text.length > 0 ) {
+    if (nameController.text.length > 0) {
       isNextBtnEnable = true;
-    }else{
+    } else {
       isNextBtnEnable = false;
     }
   }
@@ -73,7 +73,7 @@ class _NamePageState extends State<NamePage> {
                       ),
                     ),
                     data: Theme.of(context).copyWith(
-                      primaryColor: Colors.teal[400],
+                      primaryColor: Colors.teal[600],
                     ),
                   ),
                   Flexible(
@@ -85,7 +85,7 @@ class _NamePageState extends State<NamePage> {
                           height: 55.0,
                           child: FlatButton(
                             color:
-                                isNextBtnEnable ? Colors.teal : Colors.teal[50],
+                                isNextBtnEnable ? Colors.teal[600] : Colors.teal[50],
                             onPressed: () {
                               if (_formKey.currentState.validate() &&
                                   isNextBtnEnable) {
@@ -135,7 +135,7 @@ class _NamePageState extends State<NamePage> {
         hintText: '請輸入中文姓名',
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: Colors.teal,
+            color: Colors.teal[600],
             width: 2.0,
           ),
         ),
@@ -149,7 +149,9 @@ class _NamePageState extends State<NamePage> {
       ),
       // validator: (value) => value.isEmpty ? 'Can not be empty.' : null,
       inputFormatters: <TextInputFormatter>[
-        LengthLimitingTextInputFormatter(40) //限制長度
+        // WhitelistingTextInputFormatter(RegExp("[\u4e00-\u9fa5]|")), // 限制輸入中文
+        WhitelistingTextInputFormatter(RegExp("[a-zA-Z]|[\u4e00-\u9fa5]|")),
+        LengthLimitingTextInputFormatter(40), //限制長度
       ],
       onChanged: (term) {
         _nextBtnClickListen();
@@ -159,5 +161,4 @@ class _NamePageState extends State<NamePage> {
       },
     );
   }
-
 }

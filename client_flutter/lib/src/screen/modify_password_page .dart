@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'modify_profile_page.dart';
 
-class ModifyCarNumPage extends StatefulWidget {
+class ModifyPasswordPage extends StatefulWidget {
   @override
-  _ModifyCarNumPageState createState() => _ModifyCarNumPageState();
+  _ModifyPasswordPageState createState() => _ModifyPasswordPageState();
 }
 
-class _ModifyCarNumPageState extends State<ModifyCarNumPage> {
+class _ModifyPasswordPageState extends State<ModifyPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -67,7 +67,7 @@ class _BirthdayPage extends State<BirthdayPage> {
                         children: <Widget>[
                           Icon(
                             Icons.date_range,
-                            color: Colors.teal,
+                            color: Colors.teal[600],
                           ),
                           Text(
                             "你的生日",
@@ -117,21 +117,17 @@ class _BirthdayPage extends State<BirthdayPage> {
                             height: 55.0,
                             child: FlatButton(
                               color: isNextBtnEnable
-                                  ? Colors.teal
+                                  ? Colors.teal[600]
                                   : Colors.teal[50],
                               onPressed: () {
-                                // if (isNextBtnEnable) {
                                 user['birthday'] = _date;
                                 print(user);
                                 authProivder.invokeSignUp(user);
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,
-                                  ProfilePage.routeName,
+                                  Homepage.routeName,
                                   (Route<dynamic> route) => false,
                                 );
-                                // } else {
-                                //   return null;
-                                // }
                               },
                               child: Text(
                                 isNextBtnEnable ? '完成' : '略過(完成)',
