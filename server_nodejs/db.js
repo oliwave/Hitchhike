@@ -2,8 +2,7 @@ var mysql = require('mysql');
 const db = mysql.createConnection({
     user: 'ncnuim',
     password: 'hitchhike105213',
-    server: '127.0.0.1',
-    port: '3306',
+    host: 'localhost',
     database: 'hitchhike'
 });
 
