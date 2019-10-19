@@ -13,7 +13,9 @@ router.post('/signUp', jsonParser,function (req, res) {
     var uid = req.body.uid;
     var pwd = req.body.pwd;
     var name = req.body.name;
-    const sql = `INSERT INTO user (uid, pwd, name) VALUES ('${uid}', '${pwd}', '${name}')`;
+    var gender = req.body.gender;
+    var birthday = req.body.birthday;
+    const sql = `INSERT INTO user (uid, pwd, name, gender, birthday) VALUES ('${uid}', '${pwd}', '${name}', '${gender}', '${birthday}')`;
     db.query(sql, function (err, result) {
         if (err) {
             res.send({"status": "fail"});
