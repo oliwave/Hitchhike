@@ -89,7 +89,7 @@ class OrderManager extends NotifyManager {
             ),
     );
 
-    if (response.statusCode != 200) {
+    if (response['statusCode'] != 200) {
       bulletinProvider.showBulletin(
         text: '伺服器無回應，請稍後重新嘗試！',
         textColor: Colors.red[400],

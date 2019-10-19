@@ -32,7 +32,7 @@ class PlacesHandler {
     }
 
     _requestPlacesApiKey().then((response) {
-      print('response.body : ${response.statusCode}');
+      print('response.body : ${response['statusCode']}');
 
       // final Map<String, dynamic> parsedJson = json.decode(response.body);
 
@@ -47,7 +47,7 @@ class PlacesHandler {
   /// the client has a jwt token locally. Return null value if not.
 
   /// Call the [_requestPlacesApiKey] to access places api key from server.
-  Future<Response> _requestPlacesApiKey() {
+  Future<Map<String, dynamic>> _requestPlacesApiKey() {
     final response = _api.sendHttpRequest(
       PlacesApiKeyRequest(
         // AuthProvider().jwtToken

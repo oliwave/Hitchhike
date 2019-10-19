@@ -18,7 +18,8 @@ class VerifyPage extends StatefulWidget {
 
 class _VerifyPageState extends State<VerifyPage> {
   TextEditingController controller = TextEditingController();
-  var hashedrawSixDigits;
+  // var hashedrawSixDigits;
+  String hashedrawSixDigits;
   bool isVerifyCodePassed = false; // 是否通過驗證
   bool isVerifyBtnEnable = false; // 可不可以驗證
   bool isGetCodeBtnEnable = true; // 可不可以重送驗證碼
@@ -165,7 +166,7 @@ class _VerifyPageState extends State<VerifyPage> {
                         splashColor: isGetCodeBtnEnable
                             ? Colors.white.withOpacity(0.1)
                             : Colors.transparent,
-                        onPressed: () {
+                        onPressed: () async {
                           var now = DateTime.now();
                           // 2分鐘的時間間隔
                           var twoHours =
@@ -174,7 +175,8 @@ class _VerifyPageState extends State<VerifyPage> {
                           seconds = twoHours.inSeconds;
 
                           hashedrawSixDigits =
-                              authProvider.invokeVerifyCode(user['uid']);
+                              await authProvider.invokeVerifyCode(user['uid']);
+
                           setState(() {
                             _getCodeBtnClickListen();
                           });
@@ -205,7 +207,7 @@ class _VerifyPageState extends State<VerifyPage> {
                       isVerifyCodePassed =
                           ValidationHandler.verifySixDigitsCode(
                         rawSixDigits: controller.text,
-                        hashedSixDigits: hashedrawSixDigits.toString(),
+                        hashedSixDigits: hashedrawSixDigits,
                       );
                       Fluttertoast.showToast(
                         msg: isVerifyCodePassed == true

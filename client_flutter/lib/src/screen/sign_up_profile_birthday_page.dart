@@ -119,10 +119,10 @@ class _BirthdayPage extends State<BirthdayPage> {
                               color: isNextBtnEnable
                                   ? Colors.teal[600]
                                   : Colors.teal[50],
-                              onPressed: () {
+                              onPressed: () async {
                                 user['birthday'] = _date;
                                 print(user);
-                                authProivder.invokeSignUp(user);
+                                await authProivder.invokeSignUp(user);
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Homepage.routeName,

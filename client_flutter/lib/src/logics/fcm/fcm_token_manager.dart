@@ -57,10 +57,10 @@ class FcmTokenManager extends NotifyManager {
         'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
         'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
         'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
-        'fcm response : ${response.statusCode}');
+        'fcm response : ${response['statusCode']}');
 
     // Record the runtime _hasSentFcmToken.
-    _hasSentFcmToken = response.statusCode == 200;
+    _hasSentFcmToken = response['statusCode'] == 200;
 
     /// Write the data to simple storage.
     await _prefs.setBool(

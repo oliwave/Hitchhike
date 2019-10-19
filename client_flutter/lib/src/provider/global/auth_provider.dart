@@ -24,12 +24,14 @@ class AuthProvider with ChangeNotifier {
       userId: uid,
     ));
 
-    Map<String, dynamic> obj = json.decode(response.body);
+    // Map<String, dynamic> obj = json.decode(response.body);
 
-    if (obj['status'] == 'fail') {
+    print('hash value : ' + response['hash']);
+
+    if (response['status'] == 'fail') {
       return null;
     } else {
-      return obj['hash'];
+      return response['hash'];
     }
   }
 
@@ -38,7 +40,7 @@ class AuthProvider with ChangeNotifier {
       final response = await _api.sendHttpRequest(IdentifyRegisteredIDRequest(
         userId: uid,
       ));
-      if (response.body == 'fail') {
+      if (response['status'] == 'fail') {
         return true; // 已註冊過
       } else {
         return false;
@@ -64,15 +66,17 @@ class AuthProvider with ChangeNotifier {
       gender = '女';
     }
     // 儲存資料
-    if (response.body == 'success') {
-      _secure.storeSecret(TargetSourceString.pwd, user['password']);
-      _prefs.setString(TargetSourceString.uid, user['id']);
-      _prefs.setString(TargetSourceString.name, user['name']);
-      _prefs.setString(TargetSourceString.gender, gender);
-      _prefs.setString(TargetSourceString.birthday, user['birthday']);
+    if (response['status'] == 'success') {
+      await Future.wait([
+        _secure.storeSecret(TargetSourceString.pwd, user['password']),
+        _prefs.setString(TargetSourceString.uid, user['id']),
+        _prefs.setString(TargetSourceString.name, user['name']),
+        _prefs.setString(TargetSourceString.gender, gender),
+        _prefs.setString(TargetSourceString.birthday, user['birthday']),
+      ]);
     }
 
-    print(response.body);
+    print(response['status']);
   }
 
   String jwt;
@@ -82,13 +86,13 @@ class AuthProvider with ChangeNotifier {
       userId: id,
       password: pwd,
     ));
-    print(response.statusCode);
+    print(response['statusCode']);
 
-    if (response.statusCode == 200) {
-      _secure.storeSecret(TargetSourceString.jwt, response.body);
+    if (response['statusCode'] == 200) {
+      _secure.storeSecret(TargetSourceString.jwt, response['jwt']);
     }
 
-    jwt = response.body;
+    jwt = response['jwt'];
 
     // if()
     _prefs.setString(

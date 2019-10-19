@@ -112,9 +112,9 @@ class SignUpRequest extends BasePost {
     @required int gender,
     @required String birthday,
   }) : super(body: {
-          'userId': userId,
-          'password': password,
-          'username': username,
+          'uid': userId,
+          'pwd': password,
+          'name': username,
           'gender': gender,
           'birthday': birthday,
         });
@@ -138,8 +138,8 @@ class LoginRequest extends BasePost {
     @required String userId,
     @required String password,
   }) : super(body: {
-          'userId': userId,
-          'password': password,
+          'uid': userId,
+          'pwd': password,
         });
 
   @override
