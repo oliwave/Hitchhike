@@ -1,13 +1,15 @@
-import 'package:client_flutter/src/util/platform_info.dart';
+// import 'package:client_flutter/src/util/platform_info.dart';
 import 'package:flutter/material.dart';
 
 import '../notify_manager.dart';
 import '../../provider/provider_collection.dart'
-    show RoleProvider, LocationProvider;
+    show RoleProvider, LocationProvider, FriendListProvider;
 import '../../resources/restful/request_method.dart'
     show OrderConfirmationRequest;
+import '../../util/util_collection.dart' show SizeConfig;
 import '../../resources/repository.dart';
 import '../../widgets/customized_alert_dialog.dart';
+import '../../model/friend_item.dart';
 
 class FcmActionManager extends NotifyManager {
   FcmActionManager(notifyListeners) : super(notifyListeners);
@@ -16,6 +18,7 @@ class FcmActionManager extends NotifyManager {
 
   final RoleProvider _roleProvider = RoleProvider();
   final LocationProvider _locationProvider = LocationProvider();
+  final FriendListProvider _friendListProvider = FriendListProvider();
   final _api = Repository.getApi;
   final _fs = Repository.getJsonFileHandler;
 
@@ -77,6 +80,9 @@ class FcmActionManager extends NotifyManager {
       } else if (type == FcmEventType.paired) {
         // Assign fcm pairedData to field.
         final Map<String, dynamic> pairedData = message['data'];
+
+        ///TODO : the fcm api should reconsider.
+        // _friendListProvider.addFriend(FriendItem());
 
         customizedAlertDialog(
           context: context,

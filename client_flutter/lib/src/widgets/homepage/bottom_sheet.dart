@@ -31,7 +31,7 @@ class _HomepageBottomSheetState extends State<HomepageBottomSheet>
     );
 
     _bottomSheetHeightByMenuController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
 

@@ -8,12 +8,7 @@ class ChatItem {
     @required this.text,
   });
 
-  ChatItem.fromInstance(Map<String, dynamic> parsedJson)
-      : this._mapType(parsedJson);
-
-  ChatItem.fromDB(Map<String, dynamic> parsedJson) : this._mapType(parsedJson);
-
-  ChatItem._mapType(Map<String, dynamic> parsedJson)
+  ChatItem.fromDB(Map<String, dynamic> parsedJson)
       : room = parsedJson['room'],
         time = DateTime.fromMillisecondsSinceEpoch(parsedJson['time']),
         character = parsedJson['character'],
@@ -28,6 +23,7 @@ class ChatItem {
     };
   }
 
+  /// [room] stands for room id that corresponds to a unique friend.
   final String room;
   final DateTime time;
   final String character;
