@@ -12,9 +12,9 @@ class CloudMessageHandler {
   static final _cloudMessageHandler = CloudMessageHandler._();
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
-  final _fcmEventController = StreamController<Map<String, dynamic>>();
+  static final _fcmEventController = StreamController<Map<String, dynamic>>();
 
-  set _fcmEvent(Map<String, dynamic> fcmEvent) {
+  static set _fcmEvent(Map<String, dynamic> fcmEvent) {
     _fcmEventController.sink.add(fcmEvent);
     print('Add a fcm event to Sink!');
   }
@@ -39,6 +39,7 @@ class CloudMessageHandler {
         _fcmEvent = message;
         print('Message received onLaunch : $message');
       },
+      onBackgroundMessage: _backgroundMessage,
     );
   }
 
@@ -53,5 +54,9 @@ class CloudMessageHandler {
 
   dispose() {
     _fcmEventController.close();
+  }
+
+  static Future<void> _backgroundMessage(Map<String, dynamic> message) {
+    _fcmEvent = message;
   }
 }
