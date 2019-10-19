@@ -31,7 +31,8 @@ class DatabaseHandler {
       CREATE TABLE $friends (
         room TEXT PRIMARY_KEY,
         name TEXT,
-        avatar TEXT
+        avatar TEXT,
+        hasNewMessage INTEGER
       )
     """,
     chatRecords: """ 
