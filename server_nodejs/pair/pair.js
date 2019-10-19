@@ -153,7 +153,8 @@ router.post('/orderConfirmation', auth.auth, jsonParser, function (req, res) {
                             },
                             "token": [registrationDriverToken, registrationPassengerToken]
                         };
-                        
+                        passengerList.filter( passengerList => passengerList.uid !== uid );
+                        pairMapDone.filter( pairMapDone => pairMapDone.passenger != uid );
                         admin.messaging().send(message);
                     }
                 });
