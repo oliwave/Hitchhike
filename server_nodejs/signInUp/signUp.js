@@ -36,9 +36,9 @@ router.post('/verify', jsonParser,function (req, res) {
         if (err) {
             console.log(err);
         }
-        if (result.length > 0) {
-            res.send({"status": "fail"});
-        }
+        // if (result.length > 0) {
+        //     res.send({"status": "fail"});
+        // }
         else{
             //sent mail
             mailer.mail(email);
@@ -49,5 +49,23 @@ router.post('/verify', jsonParser,function (req, res) {
         }
     });
 });
+
+//if email is not enroll
+router.post('/IdentifyRegisteredIDRequest', jsonParser,function (req, res) {
+    var uid = req.body.uid;
+    const sql = `select * from user where uid = '${uid}'`;
+    db.query(sql, function (err, result) {
+        if (err) {
+            console.log(err);
+        }
+        if (result.length > 0) {
+            res.send({"status": "fail"});
+        }
+        else{
+            res.send({"status": "success"});
+        }
+    });
+});
+
 //exports router
 module.exports = router;
