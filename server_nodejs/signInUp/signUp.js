@@ -33,7 +33,7 @@ router.post('/verify', jsonParser,function (req, res) {
     email = "s" + uid +"@mail1.ncnu.edu.tw";
     const sql = `select * from user where uid = '${uid}'`;
     db.query(sql, function (err, result) {
-        if (err) {
+        if (err) { 
             console.log(err);
         }
         // if (result.length > 0) {
@@ -44,7 +44,7 @@ router.post('/verify', jsonParser,function (req, res) {
             mailer.mail(email);
             // hash sixNum
             let hashedSixNum = crypto.createHash('sha256').update(mailer.sixNum)
-            .digest('hex');
+            .digest('hex'); 
             res.send({"hash": hashedSixNum});
         }
     });
