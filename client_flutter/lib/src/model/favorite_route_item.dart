@@ -4,21 +4,15 @@ import 'package:google_maps_webservice/geolocation.dart';
 
 class FavoriteRouteItem {
   FavoriteRouteItem({
-    @required Location geoStart,
-    @required Location geoEnd,
-    @required String nameStart,
-    @required String nameEnd,
-    @required String addressStart,
-    @required String addressEnd,
+    @required this.geoStart,
+    @required this.geoEnd,
+    @required this.nameStart,
+    @required this.nameEnd,
+    @required this.addressStart,
+    @required this.addressEnd,
   })  : id = '$nameStart,$nameEnd',
         isDefaultRoute = false,
-        isExpanded = false,
-        geoStart = geoStart,
-        geoEnd = geoEnd,
-        nameStart = nameStart,
-        nameEnd = nameEnd,
-        addressStart = addressStart,
-        addressEnd = addressEnd;
+        isExpanded = false;
 
   FavoriteRouteItem.fromInstance({@required OrderInfo order})
       : id = '${order.nameStart},${order.nameEnd}',
