@@ -58,7 +58,8 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     print(image);
     setState(() {
       _image = image;
-      // _photo = image.toString();
+      String _photo = image.toString();
+      print(_photo);
     });
   }
 
@@ -81,16 +82,16 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
             onPressed: () async {
               if (formKey.currentState.validate()) {
                 formKey.currentState.save();
-                if (newname.length > 0) { 
-                  print(newname);
-                  profileProvider.invokeModifyName(newname, jwtToken);
+                if (newname.length > 0) {
+                  await profileProvider.invokeModifyName(newname, jwtToken);
                 }
                 // profileProvider.invokeModifyPhoto(_photo, jwtToken);
                 if (department.length > 0) {
-                  profileProvider.invokeModifyDepartment(department, jwtToken);
+                  await profileProvider.invokeModifyDepartment(
+                      department, jwtToken);
                 }
                 if (carNum.length > 0) {
-                  profileProvider.invokeModifyCarNum(carNum, jwtToken);
+                  await profileProvider.invokeModifyCarNum(carNum, jwtToken);
                 }
                 Navigator.pushNamedAndRemoveUntil(
                   context,
@@ -308,6 +309,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   Widget birthdayField(Map userProfile) {
     var textFormField = TextFormField(
       controller: birthdayController,
+      enabled: false,
       keyboardType: TextInputType.datetime, // 鍵盤樣式
       decoration: InputDecoration(
         hintText: userProfile['birthday'],
@@ -330,21 +332,21 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         ListTile(
           title: Text('生日'),
           subtitle: textFormField,
-          trailing: Icon(Icons.arrow_drop_down),
-          onTap: () {
-            DatePicker.showDatePicker(context,
-                theme: DatePickerTheme(
-                  containerHeight: 210.0,
-                ),
-                showTitleActions: true,
-                minTime: DateTime(1870, 1, 1),
-                maxTime: DateTime.now(), onConfirm: (date) {
-              print('confirm $date');
-              _date = '${date.year}-${date.month}-${date.day}';
-              birthdayController.text = '$_date';
-              setState(() {});
-            }, currentTime: DateTime.now(), locale: LocaleType.en);
-          },
+          // trailing: Icon(Icons.arrow_drop_down),
+          // onTap: () {
+          //   DatePicker.showDatePicker(context,
+          //       theme: DatePickerTheme(
+          //         containerHeight: 210.0,
+          //       ),
+          //       showTitleActions: true,
+          //       minTime: DateTime(1870, 1, 1),
+          //       maxTime: DateTime.now(), onConfirm: (date) {
+          //     print('confirm $date');
+          //     _date = '${date.year}-${date.month}-${date.day}';
+          //     birthdayController.text = '$_date';
+          //     setState(() {});
+          //   }, currentTime: DateTime.now(), locale: LocaleType.en);
+          // },
         ),
       ],
     );

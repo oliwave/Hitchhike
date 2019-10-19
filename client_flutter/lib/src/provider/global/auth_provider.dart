@@ -31,11 +31,10 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> identifyRegisteredId(String uid) async {
     if (uid.length == 9) {
-      // final response = await _api.sendHttpRequest(Request(
-      //   userId: uid,
-      // ));
-      // if (response.body == 'fail') {
-      if (uid == '123456789') {
+      final response = await _api.sendHttpRequest(IdentifyRegisteredIDRequest(
+        userId: uid,
+      ));
+      if (response.body == 'fail') {
         return true; // 已註冊過
       } else {
         return false;
@@ -61,13 +60,13 @@ class AuthProvider with ChangeNotifier {
       gender = '女';
     }
     // 儲存資料
-    // if (response.body == 'success') {
+    if (response.body == 'success') {
       _secure.storeSecret(TargetSourceString.pwd, user['password']);
       _prefs.setString(TargetSourceString.uid, user['id']);
       _prefs.setString(TargetSourceString.name, user['name']);
       _prefs.setString(TargetSourceString.gender, gender);
       _prefs.setString(TargetSourceString.birthday, user['birthday']);
-    // }
+    }
 
     print(response.body);
   }

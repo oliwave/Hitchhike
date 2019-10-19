@@ -16,10 +16,12 @@ class ProfileProvider with ChangeNotifier {
   static final _prefs = Repository.getSimpleStorage;
   static final _api = Repository.getApi;
 
+  String _uid;
   String _name;
   String _pwd;
   String _photo;
   String _gender;
+  String _birthday;
   String _department;
   String _carNum;
 
@@ -31,22 +33,30 @@ class ProfileProvider with ChangeNotifier {
   //   if (name != null && name.isNotEmpty) {
   //   }
   // }
+  String getUserId() {
+    _uid = _prefs.getString(TargetSourceString.uid);
+    print('test : ' + _uid);
+    String email = 's'+_uid;
+    // if (_uid == null) {
+    //   return '';
+    // } else {
+    //   return _uid;
+    // }
+    return email;
+  }
 
   Future<void> invokeModifyName(String newname, String jwt) async {
-    final response = await _api.sendHttpRequest(ProfileNameRequest(
+    _api.sendHttpRequest(ProfileNameRequest(
       name: newname,
       jwtToken: jwt,
     ));
-    print(newname);
-
     await _prefs.setString(TargetSourceString.name, newname);
-    print(response.body);
+
     notifyListeners();
   }
 
   String getName() {
     _name = _prefs.getString(TargetSourceString.name);
-    print('test : ' + _name);
     return _name;
   }
 
@@ -60,23 +70,33 @@ class ProfileProvider with ChangeNotifier {
   //   print(response.body);
   // }
 
-  // String getGender() {
-  //   _gender = _prefs.getString(TargetSourceString.gender);
-  //   if (_gender == null) {
-  //     return '';
-  //   } else {
-  //     return _gender;
-  //   }
-  // }
+  String getGender() {
+    _gender = _prefs.getString(TargetSourceString.gender);
+    if (_gender == null) {
+      return '';
+    } else {
+      return _gender;
+    }
+  }
+
+  String getBirthday() {
+    _birthday = _prefs.getString(TargetSourceString.birthday);
+    if (_birthday == null) {
+      return '';
+    } else {
+      return _birthday;
+    }
+  }
 
   Future<void> invokeModifyDepartment(String newdepartment, String jwt) async {
-    final response = await _api.sendHttpRequest(ProfileDepartmentRequest(
+    _api.sendHttpRequest(ProfileDepartmentRequest(
       department: newdepartment,
       jwtToken: jwt,
     ));
 
-    _prefs.setString(TargetSourceString.department, newdepartment);
-    print(response.body);
+    await _prefs.setString(TargetSourceString.department, newdepartment);
+    notifyListeners();
+
   }
 
   String getDepartment() {
@@ -90,13 +110,14 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> invokeModifyCarNum(String newcarNum, String jwt) async {
-    final response = await _api.sendHttpRequest(ProfileCarNumRequest(
+    _api.sendHttpRequest(ProfileCarNumRequest(
       carNum: newcarNum,
       jwtToken: jwt,
     ));
 
-    _prefs.setString(TargetSourceString.department, newcarNum);
-    print(response.body);
+    await _prefs.setString(TargetSourceString.department, newcarNum);
+    notifyListeners();
+
   }
 
   String getCarNum() {
@@ -110,12 +131,12 @@ class ProfileProvider with ChangeNotifier {
   }
 
   // Future<void> invokeModifyPhoto(String newphoto, String jwt) async {
-  //   final response = await _api.sendHttpRequest(ProfilePhotoRequest(
+  //   _api.sendHttpRequest(ProfilePhotoRequest(
   //     photo: newphoto,
   //     jwtToken: jwt,
   //   ));
 
-  //   _prefs.setString(TargetSourceString.photo, newphoto);
+  //   await _prefs.setString(TargetSourceString.photo, newphoto);
   //   print(response.body);
   // }
 

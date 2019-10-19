@@ -58,6 +58,25 @@ abstract class BasePost extends RequestMethod {
   Future<Response> request();
 }
 
+class IdentifyRegisteredIDRequest extends BasePost {
+  IdentifyRegisteredIDRequest({
+    @required String userId,
+  }) : super(body: {
+          'uid': userId,
+        });
+
+  @override
+  Future<Response> request() async {
+    final response = await _client.post(
+      '$_rootUrl/identify',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+
 /// To verify whether the [userId] is one of the ncnu members.
 ///
 /// Return the hash validation code in hex.

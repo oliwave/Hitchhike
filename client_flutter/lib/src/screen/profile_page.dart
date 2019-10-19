@@ -17,14 +17,13 @@ class _ProfilePageState extends State<ProfilePage> {
   final formKey = GlobalKey<FormState>(); // GlobalKey: to access form
 
   Map userProfile = {
-    'uid': 'tes1',
+    'uid': '',
     'password': 'aa',
-    'name': '',
-    'gender': '女',
-    'birthday': '1911-01-01',
-    'department': '資管系',
-    'carNum': 'aa123',
-    'email': 'test4@ncnu.edu.tw'
+    // 'name': '',
+    // 'gender': '',
+    // 'birthday': '',
+    // 'department': '資管系',
+    // 'carNum': 'aa123',
   };
 
   @override
@@ -36,10 +35,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final profileProvider =
-        Provider.of<ProfileProvider>(context);
+    final profileProvider = Provider.of<ProfileProvider>(context);
+    // userProfile['uid'] = profileProvider.getUserId();
     userProfile['name'] = profileProvider.getName();
-    // userProfile['gender'] = profileProvider.getGender();
+    userProfile['gender'] = profileProvider.getGender();
+    userProfile['birthday'] = profileProvider.getBirthday();
     userProfile['department'] = profileProvider.getDepartment();
     userProfile['carNum'] = profileProvider.getCarNum();
     return Scaffold(
@@ -173,7 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget emailField() {
     return ListTile(
       title: Text('E-mail'),
-      subtitle: Text(userProfile['email']),
+      subtitle: Text('s' + userProfile['uid'] + '@ncnu.edu.tw'),
     );
   }
 }
