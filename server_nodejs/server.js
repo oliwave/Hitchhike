@@ -15,6 +15,6 @@ app.use(pair);
 app.use(userInfo);
 
 //server port :8080   local port :3000
-app.listen(8080, function () {
+app.listen(3000, function () {
     console.log('Server is running!');
 });
