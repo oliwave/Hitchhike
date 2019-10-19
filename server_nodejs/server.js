@@ -7,7 +7,7 @@ var userInfo = require('./profile/userInfo.js');
 var socket = require('./chat/socket.js');
 var app = express();
 
-app.user(socket);
+app.use(socket);
 app.use(login);
 app.use(signUp);
 app.use(profile);
