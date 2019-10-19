@@ -1,6 +1,7 @@
 var db = require('../db.js');
 const express = require('express');
 const app = express();
+const auth = require('../auth.js');
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
