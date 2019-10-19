@@ -1,8 +1,8 @@
 var mysql = require('mysql');
 const db = mysql.createConnection({
     user: 'root',
-    password: '',
-    server: '127.0.0.1',
+    password: '123',
+    host: 'localhost',
     database: 'hitchhike'
 });
 
@@ -11,6 +11,8 @@ db.connect((err) => {
     if(err){
         console.log(err);
     }
-    console.log("Mysql Connected...");
+    else{
+        console.log("Mysql Connected...");
+    }
 });
 module.exports = db;

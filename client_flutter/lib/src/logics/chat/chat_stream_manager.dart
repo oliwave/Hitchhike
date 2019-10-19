@@ -35,10 +35,9 @@ class ChatStreamManager extends NotifyManager {
   }
 
   void _messageProcessor(Map<String, dynamic> message) {
-    message['character'] = Character.otherSide;
-
     _chattingProvider.chatRecordManager.storeRecord(
-      message,
+      message: message,
+      character: Character.otherSide,
     );
 
     notifyListeners();

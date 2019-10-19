@@ -33,7 +33,7 @@ class RoleProvider with ChangeNotifier {
 
   set isMatched(bool isMatched) {
     _isMatched = isMatched;
-    _chatingProvider.toggleChattingButtonVisibility(_isMatched);
+    _chatingProvider.isVisible = _isMatched;
   }
 
   bool get isMatched => _isMatched;

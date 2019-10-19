@@ -54,7 +54,7 @@ class ChatListView extends StatelessWidget {
                     );
                   },
                 ),
-                onNotification: provider.reachTheTopOfListLisnter(),
+                onNotification: provider.reachTheTopOfListListener(),
               );
             },
           );

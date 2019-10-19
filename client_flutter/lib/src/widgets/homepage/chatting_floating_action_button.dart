@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../screen/page_collection.dart' show ChattingPage;
-import '../../provider/provider_collection.dart' show ChattingProvider;
+import '../../provider/provider_collection.dart'
+    show ChattingProvider, RoleProvider;
 
 class ChatingFloatingActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final chatinProvider = Provider.of<ChattingProvider>(context);
+    final chatProvider = Provider.of<ChattingProvider>(context);
+    final roleProvider = Provider.of<RoleProvider>(
+      context,
+      listen: false,
+    );
 
     return Visibility(
-      visible: chatinProvider.isVisible,
+      visible: chatProvider.isVisible && roleProvider.isMatched,
       child: Hero(
         tag: 'chat',
         child: Material(
@@ -33,10 +38,14 @@ class ChatingFloatingActionButton extends StatelessWidget {
                 Icons.chat,
                 color: Colors.black54,
               ),
-              onPressed: () => Navigator.pushNamed(
-                context,
-                ChattingPage.routeName,
-              ),
+              onPressed: () {
+                chatProvider.initializeCacheData('testRoom');
+
+                return Navigator.pushNamed(
+                  context,
+                  ChattingPage.routeName,
+                );
+              },
             ),
           ),
         ),

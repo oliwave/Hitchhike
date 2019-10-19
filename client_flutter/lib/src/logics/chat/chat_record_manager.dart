@@ -5,8 +5,9 @@ import 'package:sqflite/sql.dart';
 import '../../resources/repository.dart';
 import '../../logics/notify_manager.dart';
 import '../../model/chat_item.dart';
-import '../../provider/provider_collection.dart' show ChattingProvider;
 import '../../resources/source_collection.dart' show DatabaseHandler;
+import '../../provider/provider_collection.dart'
+    show ChattingProvider, FriendListProvider;
 
 class ChatRecordManager extends NotifyManager {
   ChatRecordManager({
@@ -18,25 +19,54 @@ class ChatRecordManager extends NotifyManager {
   final ChattingProvider _chattingProvider;
   final _handler = Repository.getDatabaseHandler;
 
+  FriendListProvider _friendListProvider = FriendListProvider();
+
   List<ChatItem> _messages = [];
   int _startIndex = -25;
   bool _hasMoreMessages = true;
+
+  /// This [room] id is cached for the user.
   String room = 'testRoom';
 
   Future<List<ChatItem>> get messages async => await _getMoreMessages();
 
-  void storeRecord(
-    Map<String, dynamic> message,
-  ) {
-    message['room'] = room;
+  void storeRecord({
+    @required Map<String, dynamic> message,
+    @required String character,
+  }) {
+    message['character'] = character;
 
-    // 1. add new message to chatItems
-    _messages.insert(0, ChatItem.fromInstance(message));
+    // Don't cache the message to the runtime list
+    // when the message comes from different room.
+    if (room == message['room']) {
+      // 1. add new message to chatItems
+      _messages.insert(
+        0,
+        ChatItem(
+          character: message['character'],
+          room: message['room'],
+          text: message['text'],
+          time: message['time'],
+        ),
+      );
 
-    // When you insert a new message, sort the ChatItem list again.
-    // (Sort the list from closer to a long time from now)
-    _messages.sort((pre, cur) => cur.time.millisecondsSinceEpoch
-        .compareTo(pre.time.millisecondsSinceEpoch));
+      // When you insert a new message, sort the ChatItem list again.
+      // (Sort the list from closer to a long time from now)
+      _messages.sort((pre, cur) => cur.time.millisecondsSinceEpoch
+          .compareTo(pre.time.millisecondsSinceEpoch));
+    } else {
+      // Mark [hasNewMessage] as true in db.
+      final unread = _friendListProvider.friendIsUnread(message['room']);
+
+      if (unread) {
+        _friendListProvider.updateHasNewMessage(
+          room: message['room'],
+          hasNewMessage: true,
+        );
+
+        _friendListProvider.addUnreadFriend = message['room'];
+      }
+    }
 
     print(message);
 
@@ -46,6 +76,13 @@ class ChatRecordManager extends NotifyManager {
       message,
       conflictAlgorithm: ConflictAlgorithm.ignore,
     );
+  }
+
+  void releaseCacheData() {
+    _messages = [];
+    _startIndex = -25;
+    room = null;
+    _hasMoreMessages = true;
   }
 
   Future<List<ChatItem>> _getMoreMessages() async {
@@ -95,12 +132,5 @@ class ChatRecordManager extends NotifyManager {
         rawRecords.map((record) => ChatItem.fromDB(record)).toList();
 
     return chatItems;
-  }
-
-  releaseCacheData() {
-    _messages = [];
-    room = null;
-    _startIndex = -25;
-    _hasMoreMessages = true;
   }
 }

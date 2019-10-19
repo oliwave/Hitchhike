@@ -41,7 +41,7 @@ class InitSetting {
     _fcmHandler.iOSPermissionRequest();
 
     final permissions = await PermissionHandler()
-        .requestPermissions([PermissionGroup.locationWhenInUse]);
+        .requestPermissions([PermissionGroup.locationAlways]);
 
     print('show the location permission status : '
         '${permissions[PermissionGroup.locationWhenInUse]}');

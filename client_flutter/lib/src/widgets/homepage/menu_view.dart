@@ -20,17 +20,15 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
   void initState() {
     _menuHeightController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 250),
     );
 
-    _heightAnimation = CurvedAnimation(
-      parent: _menuHeightController,
-      curve: Curves.easeIn,
-      reverseCurve: Curves.easeOut,
-    ).drive(Tween<double>(
-      begin: SizeConfig.screenAwareHeight(0),
-      end: SizeConfig.screenAwareHeight(40),
-    ));
+    _heightAnimation = _menuHeightController.drive(
+      Tween<double>(
+        begin: SizeConfig.screenAwareHeight(0),
+        end: SizeConfig.screenAwareHeight(40),
+      ),
+    );
 
     final menuProvider = Provider.of<MenuProvider>(
       context,
@@ -60,8 +58,8 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
             color: Colors.white,
             // color: Colors.teal[400],
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(SizeConfig.screenAwareWidth(7)),
-              bottomRight: Radius.circular(SizeConfig.screenAwareWidth(7)),
+              bottomLeft: Radius.circular(SizeConfig.screenAwareWidth(50)),
+              bottomRight: Radius.circular(SizeConfig.screenAwareWidth(50)),
             ),
             boxShadow: [
               BoxShadow(
