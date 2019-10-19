@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:client_flutter/src/provider/provider_collection.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'page_collection.dart';
 
 class BirthdayPage extends StatefulWidget {
@@ -9,28 +9,26 @@ class BirthdayPage extends StatefulWidget {
   BirthdayPage({this.title});
 
   @override
-  State<StatefulWidget> createState() {
-    return new _BirthdayPage();
-  }
+  _BirthdayPage createState() => _BirthdayPage();
 }
 
 class _BirthdayPage extends State<BirthdayPage> {
-  final _formKey = GlobalKey<FormState>(); // GlobalKey: to access form
-
-  TextEditingController controller;
+  TextEditingController controller = TextEditingController();
 
   String _date = '';
+  bool isNextBtnEnable = false;
 
   @override
   void initState() {
-    controller = TextEditingController();
     super.initState();
+    controller.addListener(() => setState(() {}));
   }
 
   @override
   Widget build(BuildContext context) {
     final authProivder = Provider.of<AuthProvider>(context, listen: false);
     Map user = Map.of(ModalRoute.of(context).settings.arguments);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -49,12 +47,14 @@ class _BirthdayPage extends State<BirthdayPage> {
         onTap: () {
           // 點空白收起鍵盤
           FocusScope.of(context).requestFocus(FocusNode());
+          if (controller.text.length > 0) {
+            isNextBtnEnable = true;
+          }
         },
         child: Container(
           color: Colors.white,
           padding: EdgeInsets.only(top: 50.0),
           child: Form(
-            key: _formKey,
             child: Center(
               child: Container(
                 alignment: Alignment.topCenter,
@@ -69,7 +69,10 @@ class _BirthdayPage extends State<BirthdayPage> {
                             Icons.date_range,
                             color: Colors.teal,
                           ),
-                          Text("Select Your Birthday."),
+                          Text(
+                            "你的生日",
+                            style: TextStyle(fontSize: 18.0),
+                          ),
                           SizedBox(
                             height: 30.0,
                           ),
@@ -88,7 +91,7 @@ class _BirthdayPage extends State<BirthdayPage> {
                     ),
                     SizedBox(height: 20.0),
                     RaisedButton(
-                      child: Text('Select'),
+                      child: Text('選擇日期'),
                       onPressed: () {
                         DatePicker.showDatePicker(context,
                             theme: DatePickerTheme(
@@ -99,7 +102,9 @@ class _BirthdayPage extends State<BirthdayPage> {
                             maxTime: DateTime.now(), onConfirm: (date) {
                           print('confirm $date');
                           _date = '${date.year}-${date.month}-${date.day}';
-                          setState(() {});
+                          setState(() {
+                            isNextBtnEnable = true;
+                          });
                         }, currentTime: DateTime.now(), locale: LocaleType.en);
                       },
                     ),
@@ -111,21 +116,31 @@ class _BirthdayPage extends State<BirthdayPage> {
                             width: double.infinity,
                             height: 55.0,
                             child: FlatButton(
-                                disabledTextColor: Colors.teal[50],
-                                color: Colors.teal,
-                                onPressed: () {
-                                  user['birthday'] = _date;
-                                  print(user);
-                                  authProivder.invokeSignUp(user);
-                                  String targetRoute;
-                                  targetRoute = LoginPage.routeName;
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    targetRoute,
-                                    (Route<dynamic> route) => false,
-                                  );
-                                },
-                                child: Text("Finish")),
+                              color: isNextBtnEnable
+                                  ? Colors.teal
+                                  : Colors.teal[50],
+                              onPressed: () {
+                                // if (isNextBtnEnable) {
+                                user['birthday'] = _date;
+                                print(user);
+                                authProivder.invokeSignUp(user);
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  ProfilePage.routeName,
+                                  (Route<dynamic> route) => false,
+                                );
+                                // } else {
+                                //   return null;
+                                // }
+                              },
+                              child: Text(
+                                isNextBtnEnable ? '完成' : '略過(完成)',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),

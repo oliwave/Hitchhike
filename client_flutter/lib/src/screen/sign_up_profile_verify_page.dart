@@ -3,148 +3,47 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'sign_up_profile_name_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:client_flutter/src/provider/provider_collection.dart';
+import 'sign_up_profile_password_page.dart';
 
 class VerifyPage extends StatefulWidget {
   VerifyPage({Key key, this.title}) : super(key: key);
   final title;
+
+  @override
   _VerifyPageState createState() => _VerifyPageState();
 }
 
-// class _VerifyPageState extends State<VerifyPage> {
-//   final _formKey = GlobalKey<FormState>(); // GlobalKey: to access form
-
-//   var rawSixDigits = '';
-//   var verifyPassed = false;
-
-//   TextEditingController controller;
-
-//   @override
-//   void initState() {
-//     controller = TextEditingController();
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     Map user = Map.of(ModalRoute.of(context).settings.arguments);
-//     final authProivder = Provider.of<AuthProvider>(context, listen: false);
-//     final hashedrawSixDigits = authProivder.invokeVerifyCode(user['uid']);
-//     return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: Colors.teal[400],
-//         title: Text(widget.title),
-//       ),
-//       body: GestureDetector(
-//         behavior: HitTestBehavior.translucent,
-//         onTap: () {
-//           // 點空白收起鍵盤
-//           FocusScope.of(context).requestFocus(FocusNode());
-//         },
-//         child: Container(
-//           color: Colors.white,
-//           child: Form(
-//             key: _formKey,
-//             child: Center(
-//               child: Column(
-//                 children: <Widget>[
-//                   Container(
-//                     padding:
-//                         EdgeInsets.only(top: 50.0, right: 50.0, left: 50.0),
-//                     child: verifyField(),
-//                   ),
-//                   FlatButton(
-//                     child: Text('驗證'),
-//                     onPressed: () {
-//                       if (_formKey.currentState.validate()) {
-//                         _formKey.currentState.save();
-//                         print(rawSixDigits);
-//                         verifyPassed = authProivder.checkVerifyCode(
-//                             rawSixDigits, hashedrawSixDigits);
-//                       } else {
-//                         return null;
-//                       }
-//                     },
-//                   ),
-//                   Flexible(
-//                     child: Column(
-//                       verticalDirection: VerticalDirection.up,
-//                       children: <Widget>[
-//                         Container(
-//                           width: double.infinity,
-//                           height: 55.0,
-//                           child: FlatButton(
-//                               disabledTextColor: Colors.teal[50], // 按鈕禁用時顏色
-//                               color: Colors.teal,
-//                               onPressed: () {
-//                                 // if (verifyPassed == true) {
-//                                   Navigator.push<String>(
-//                                       context,
-//                                       MaterialPageRoute(
-//                                         builder: (BuildContext context) =>
-//                                             NamePage(title: "Sign Up"),
-//                                         settings:
-//                                             RouteSettings(arguments: user),
-//                                       ));
-//                                 // } else {
-//                                 //   return null;
-//                                 // }
-//                               },
-//                               child: Text("Next")),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget verifyField() {
-//     return TextFormField(
-//       keyboardType: TextInputType.number,
-//       controller: controller,
-//       textAlign: TextAlign.center,
-//       decoration: InputDecoration(
-//         hintText: '請輸入驗證碼',
-//         focusedBorder: UnderlineInputBorder(
-//           borderSide: BorderSide(
-//             color: Colors.teal,
-//             width: 2.0,
-//           ),
-//         ),
-//       ),
-//       inputFormatters: [
-//         WhitelistingTextInputFormatter.digitsOnly, //只能輸入數字
-//         LengthLimitingTextInputFormatter(6), //限制輸入長度
-//       ],
-//       onSaved: (String value) {
-//         rawSixDigits = value;
-//       },
-//     );
-//   }
-// }
 class _VerifyPageState extends State<VerifyPage> {
-  final _formKey = GlobalKey<FormState>(); // GlobalKey: to access form
   TextEditingController controller = TextEditingController();
 
-  bool isButtonEnable = true; // 按鈕是否可以點擊
+  var hashedrawSixDigits;
+  bool isVerifyCodePassed = false; // 是否通過驗證
+  bool isVerifyBtnEnable = false; // 可不可以驗證
+  bool isGetCodeBtnEnable = true; // 可不可以重送驗證碼
   String buttonText = '發送驗證碼';
   int count = 5; // 倒計時時間
-  Timer timer; // 倒計時計時器
+  Timer timer; // 計時器
 
-  var hashedrawSixDigits;
-  bool verifyPassed = false;
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(() => setState(() {}));
+  }
 
-  void _buttonClickListen() {
+  void _verifyBtnClickListen() {
+    if (controller.text.length == 6) {
+      isVerifyBtnEnable = true;
+    } else {
+      isVerifyBtnEnable = false;
+    }
+  }
+
+  void _getCodeBtnClickListen() {
     setState(() {
-      if (isButtonEnable) {
-        isButtonEnable = false;
+      if (isGetCodeBtnEnable) {
+        isGetCodeBtnEnable = false;
         _initTimer();
         return null; //按鈕禁用
       } else {
@@ -159,11 +58,11 @@ class _VerifyPageState extends State<VerifyPage> {
       setState(() {
         if (count == 0) {
           timer.cancel(); //取消計時
-          isButtonEnable = true;
+          isGetCodeBtnEnable = true;
           count = 5; //重置时间
-          buttonText = '發送驗證碼';
+          buttonText = "重新發送驗證碼";
         } else {
-          buttonText = '剩餘時間($count)'; //更新文本内容
+          buttonText = "剩餘時間($count)"; //更新文本内容
         }
       });
     });
@@ -180,6 +79,7 @@ class _VerifyPageState extends State<VerifyPage> {
   Widget build(BuildContext context) {
     Map user = Map.of(ModalRoute.of(context).settings.arguments);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -205,71 +105,34 @@ class _VerifyPageState extends State<VerifyPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(top: 50.0, left: 10, right: 10),
+                padding: EdgeInsets.only(top: 40.0),
+                child: Text(
+                  "學校信箱驗證",
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(20.0),
                 child: Row(
                   children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 15, right: 15, top: 15),
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          maxLines: 1,
-                          onSaved: (value) {},
-                          controller: controller,
-                          textAlign: TextAlign.center,
-                          inputFormatters: [
-                            WhitelistingTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(6)
-                          ],
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            fillColor: Colors.grey[50],
-                            filled: true,
-                            alignLabelWithHint: true,
-                            hintText: ('請輸入驗證碼'),
-                            hintStyle: TextStyle(
-                              fontSize: 14,
-                            ),
-                            suffixIcon: GestureDetector(
-                              onTap: () {
-                                controller.clear();
-                              },
-                              child: Icon(controller.text.length > 0
-                                  ? Icons.clear
-                                  : null),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    verifyCodeField(),
                     Container(
-                      width: 120,
                       child: FlatButton(
-                        textColor: isButtonEnable // 文字顏色
+                        textColor: isGetCodeBtnEnable
                             ? Colors.teal
                             : Colors.black.withOpacity(0.2),
-                        color: isButtonEnable // 按鈕顏色
-                            ? Colors.white
-                            : Colors.grey.withOpacity(0.1),
-                        splashColor: isButtonEnable
+                        splashColor: isGetCodeBtnEnable
                             ? Colors.white.withOpacity(0.1)
                             : Colors.transparent,
-                        shape: StadiumBorder(
-                          side: BorderSide(
-                            color: isButtonEnable
-                                ? Colors.teal[400]
-                                : Colors.transparent,
-                          ),
-                        ),
                         onPressed: () {
                           hashedrawSixDigits =
                               authProvider.invokeVerifyCode(user['uid']);
                           setState(() {
-                            _buttonClickListen();
+                            _getCodeBtnClickListen();
                           });
                         },
                         child: Text(
-                          '$buttonText',
+                          "$buttonText",
                           style: TextStyle(
                             fontSize: 13,
                           ),
@@ -283,25 +146,43 @@ class _VerifyPageState extends State<VerifyPage> {
                 padding: EdgeInsets.only(top: 30.0),
                 width: 300.0,
                 child: FlatButton(
-                  color: Colors.teal[400],
+                  color: isVerifyBtnEnable ? Colors.teal : Colors.teal[50],
                   padding: EdgeInsets.all(5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(60),
                   ),
                   onPressed: () {
-                    debugPrint('${controller.text}');
-                    if (hashedrawSixDigits != null) {
-                      if (_formKey.currentState.validate()) {
-                        verifyPassed = authProvider.checkVerifyCode(
-                            controller.text, hashedrawSixDigits);
+                    debugPrint("${controller.text}");
+                    setState(() {
+                      // isVerifyCodePassed = authProvider.checkVerifyCode(
+                      //     controller.text, hashedrawSixDigits);
+
+                      // test
+                      // if (isVerifyCodePassed == true) {
+                      if (controller.text == '123123') {
+                        isVerifyCodePassed = true;
+                        Fluttertoast.showToast(
+                            msg: "驗證成功",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIos: 1,
+                            backgroundColor: Colors.black,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
                       } else {
-                        return null;
+                        isVerifyCodePassed = false;
+                        Fluttertoast.showToast(
+                            msg: "驗證失敗，請重新取得驗證碼",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIos: 1,
+                            backgroundColor: Colors.black,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
                       }
-                    } else {
-                      return null;
-                    }
+                    });
                   },
-                  child: Text('驗  證',
+                  child: Text("驗  證",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.0,
@@ -316,23 +197,29 @@ class _VerifyPageState extends State<VerifyPage> {
                       width: double.infinity,
                       height: 55.0,
                       child: FlatButton(
-                          disabledTextColor: Colors.teal[50], // 按鈕禁用時顏色
-                          color: verifyPassed ? Colors.teal : Colors.teal[50],
-                          onPressed: () {
-                            // if (verifyPassed == false) {
-                            //   return null;
-                            // } else {
-
+                        color:
+                            isVerifyCodePassed ? Colors.teal : Colors.teal[50],
+                        onPressed: () {
+                          if (isVerifyCodePassed) {
                             Navigator.push<String>(
                                 context,
                                 MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      NamePage(title: "Sign Up"),
+                                      PasswordPage(title: widget.title),
                                   settings: RouteSettings(arguments: user),
                                 ));
-                            // }
-                          },
-                          child: Text("Next")),
+                          } else {
+                            return null;
+                          }
+                        },
+                        child: Text(
+                          "Next",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -340,6 +227,50 @@ class _VerifyPageState extends State<VerifyPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget verifyCodeField() {
+    return Theme(
+      child: Expanded(
+        child: Padding(
+          padding: EdgeInsets.only(left: 15, right: 15),
+          child: TextFormField(
+            controller: controller,
+            autofocus: true,
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            decoration: InputDecoration(
+              fillColor: Colors.grey[50],
+              filled: true,
+              border: InputBorder.none,
+              alignLabelWithHint: true,
+              hintText: ("請輸入六位數驗證碼"),
+              hintStyle: TextStyle(
+                fontSize: 14,
+              ),
+              suffixIcon: GestureDetector(
+                onTap: () {
+                  controller.clear();
+                  _verifyBtnClickListen();
+                },
+                child: Icon(controller.text.length > 0 ? Icons.clear : null),
+              ),
+            ),
+            inputFormatters: [
+              WhitelistingTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(6)
+            ],
+            onChanged: (term) {
+              _verifyBtnClickListen();
+            },
+            onSaved: (value) {},
+          ),
+        ),
+      ),
+      data: Theme.of(context).copyWith(
+        primaryColor: Colors.teal[400],
       ),
     );
   }
