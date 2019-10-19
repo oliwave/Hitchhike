@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 import '../../resources/repository.dart';
 
@@ -22,10 +23,13 @@ class AuthProvider with ChangeNotifier {
     final response = await _api.sendHttpRequest(VerifyUserIdRequest(
       userId: uid,
     ));
-    if (response.body == 'fail') {
+
+    Map<String, dynamic> obj = json.decode(response.body);
+
+    if (obj['status'] == 'fail') {
       return null;
     } else {
-      return response.body;
+      return obj['hash'];
     }
   }
 
