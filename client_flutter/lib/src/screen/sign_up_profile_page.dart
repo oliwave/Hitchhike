@@ -23,7 +23,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
     'uid': '',
     'password': '',
     'name': '',
-    'gender': '',
+    'gender': 0,
     'birthday': '',
   };
 
@@ -48,7 +48,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
   }
 
   void _nextBtnClickListen() {
-    if (controller.text.length > 0 &&
+    if (controller.text.length == 9 &&
         _isAccountExisted(controller.text) == false) {
       isNextBtnEnable = true;
     } else {

@@ -15,7 +15,7 @@ class _GenderPageState extends State<GenderPage> {
 
   var pressAttention = '';
   bool isNextBtnEnable = false;
-  String _gender = '';
+  int _gender;
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +72,7 @@ class _GenderPageState extends State<GenderPage> {
                                 isNextBtnEnable) {
                               _formKey.currentState.save();
                               user['gender'] = _gender;
+                              print(user['gender']);
                               Navigator.push<String>(
                                   context,
                                   MaterialPageRoute(
@@ -120,7 +121,7 @@ class _GenderPageState extends State<GenderPage> {
                 color: pressAttention == 'M' ? Colors.teal[600] : Colors.white,
                 onPressed: () {
                   setState(() {
-                    _gender = 'Male';
+                    _gender = 1;
                     pressAttention = 'M';
                     isNextBtnEnable = true;
                   });
@@ -133,7 +134,7 @@ class _GenderPageState extends State<GenderPage> {
                 color: pressAttention == 'F' ? Colors.teal[600] : Colors.white,
                 onPressed: () {
                   setState(() {
-                    _gender = 'Female';
+                    _gender = 2;
                     pressAttention = 'F';
                     isNextBtnEnable = true;
                   });

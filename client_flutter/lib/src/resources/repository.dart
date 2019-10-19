@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import './source_collection.dart';
 
 /// Gather all of the request of resources to the [Repository].

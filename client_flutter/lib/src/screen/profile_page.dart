@@ -1,4 +1,5 @@
 // get jwt
+import 'package:client_flutter/src/screen/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,16 +15,16 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final formKey = GlobalKey<FormState>(); // GlobalKey: to access form
-  
+
   Map userProfile = {
     'uid': 'tes1',
-    'password':'aa',
-    'name': 'sss',
+    'password': 'aa',
+    'name': '',
     'gender': '女',
     'birthday': '1911-01-01',
     'department': '資管系',
     'carNum': 'aa123',
-    'email' : 'test4@ncnu.edu.tw'
+    'email': 'test4@ncnu.edu.tw'
   };
 
   @override
@@ -35,6 +36,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider =
+        Provider.of<ProfileProvider>(context);
+    userProfile['name'] = profileProvider.getName();
+    // userProfile['gender'] = profileProvider.getGender();
+    userProfile['department'] = profileProvider.getDepartment();
+    userProfile['carNum'] = profileProvider.getCarNum();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal[600],
@@ -60,6 +67,16 @@ class _ProfilePageState extends State<ProfilePage> {
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
           ),
         ],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Homepage.routeName,
+              (Route<dynamic> route) => false,
+            );
+          },
+        ),
       ),
       body: Container(
           color: Colors.white,
@@ -81,7 +98,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         image: DecorationImage(
                           image: AssetImage(
-                            'https://github.com/flutter/assets-for-api-docs/tree/master/assets/widgets/owl.jpg',
+                            '',
+                            // 'https://github.com/flutter/assets-for-api-docs/tree/master/assets/widgets/owl.jpg',
                           ),
                         ),
                       ),

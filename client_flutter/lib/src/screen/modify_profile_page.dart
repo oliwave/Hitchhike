@@ -41,6 +41,11 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     carNumController.addListener(() => setState(() {}));
   }
 
+  String newname = '';
+  String department = '';
+  // String _photo = '';
+  String carNum = '';
+
   File _image;
   // Future getProfilePicture() async {
   //   var image = await ImageHandler.getImage();
@@ -50,14 +55,16 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   // }
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    print(image);
     setState(() {
       _image = image;
+      // _photo = image.toString();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final profileProivder =
+    final profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
     final authProivder = Provider.of<AuthProvider>(context, listen: false);
     final jwtToken = authProivder.jwt;
@@ -71,12 +78,20 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
-            onPressed: () {
+            onPressed: () async {
               if (formKey.currentState.validate()) {
                 formKey.currentState.save();
-                print(userProfile);
-                profileProivder.invokeModifyName(userProfile['name'], jwtToken);
-                profileProivder.name= userProfile['name'];
+                if (newname.length > 0) { 
+                  print(newname);
+                  profileProvider.invokeModifyName(newname, jwtToken);
+                }
+                // profileProvider.invokeModifyPhoto(_photo, jwtToken);
+                if (department.length > 0) {
+                  profileProvider.invokeModifyDepartment(department, jwtToken);
+                }
+                if (carNum.length > 0) {
+                  profileProvider.invokeModifyCarNum(carNum, jwtToken);
+                }
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   ProfilePage.routeName,
@@ -249,7 +264,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           ),
         ),
         onSaved: (String value) {
-          userProfile['name'] = value;
+          newname = value;
         },
       ),
     );
@@ -351,7 +366,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           ),
         ),
         onSaved: (String value) {
-          userProfile['department'] = value;
+          department = value;
         },
       ),
     );
@@ -373,7 +388,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           ),
         ),
         onSaved: (String value) {
-          userProfile['carNum'] = value;
+          carNum = value;
         },
       ),
       trailing: Icon(Icons.keyboard_arrow_right),

@@ -90,7 +90,6 @@ class _NamePageState extends State<NamePage> {
                               if (_formKey.currentState.validate() &&
                                   isNextBtnEnable) {
                                 _formKey.currentState.save();
-                                print(user);
                                 Navigator.push<String>(
                                     context,
                                     MaterialPageRoute(

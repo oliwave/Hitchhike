@@ -18,6 +18,9 @@ final localProviders = <SingleChildCloneableWidget>[
   ChangeNotifierProvider.value(
     value: FriendListProvider(),
   ),
+  ChangeNotifierProvider.value(
+    value: ProfileProvider(),
+  ),
 ];
 
 final globalProviders = <SingleChildCloneableWidget>[

@@ -30,12 +30,16 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> identifyRegisteredId(String uid) async {
-    // final response = await _api.sendHttpRequest(Request(
-    //   userId: uid,
-    // ));
-    // if (response.body == 'fail') {
-    if (uid == '123') {
-      return true; // 已註冊過
+    if (uid.length == 9) {
+      // final response = await _api.sendHttpRequest(Request(
+      //   userId: uid,
+      // ));
+      // if (response.body == 'fail') {
+      if (uid == '123456789') {
+        return true; // 已註冊過
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -50,13 +54,19 @@ class AuthProvider with ChangeNotifier {
       birthday: user['birthday'],
     ));
 
+    String gender = '';
+    if (user['gender'] == 1) {
+      gender = '男';
+    } else if (user['gender'] == 2) {
+      gender = '女';
+    }
     // 儲存資料
     // if (response.body == 'success') {
-    _secure.storeSecret(TargetSourceString.pwd, user['password']);
-    _prefs.setString(TargetSourceString.uid, user['id']);
-    _prefs.setString(TargetSourceString.name, user['name']);
-    _prefs.setString(TargetSourceString.gender, user['gender']);
-    _prefs.setString(TargetSourceString.birthday, user['birthday']);
+      _secure.storeSecret(TargetSourceString.pwd, user['password']);
+      _prefs.setString(TargetSourceString.uid, user['id']);
+      _prefs.setString(TargetSourceString.name, user['name']);
+      _prefs.setString(TargetSourceString.gender, gender);
+      _prefs.setString(TargetSourceString.birthday, user['birthday']);
     // }
 
     print(response.body);

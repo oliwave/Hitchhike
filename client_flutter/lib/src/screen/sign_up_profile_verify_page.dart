@@ -207,7 +207,6 @@ class _VerifyPageState extends State<VerifyPage> {
                         rawSixDigits: controller.text,
                         hashedSixDigits: hashedrawSixDigits.toString(),
                       );
-                      print(isVerifyCodePassed);
                       Fluttertoast.showToast(
                         msg: isVerifyCodePassed == true ||
                                 controller.text == '123123'
