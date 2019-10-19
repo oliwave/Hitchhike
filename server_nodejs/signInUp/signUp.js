@@ -51,7 +51,7 @@ router.post('/verify', jsonParser,function (req, res) {
 });
 
 //if email is not enroll
-router.post('/IdentifyRegisteredIDRequest', jsonParser,function (req, res) {
+router.post('/identify', jsonParser,function (req, res) {
     var uid = req.body.uid;
     const sql = `select * from user where uid = '${uid}'`;
     db.query(sql, function (err, result) {
