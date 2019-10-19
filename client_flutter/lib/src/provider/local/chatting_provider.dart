@@ -39,6 +39,11 @@ class ChattingProvider with ChangeNotifier {
   /// be displayed on the screen.
   bool get isVisible => _isVisible;
 
+  set isVisible(bool visible) {
+    _isVisible = visible;
+    notifyListeners();
+  }
+
   /// [sendMessage] is a field that used to handle the message which
   /// user input in `TextField`.
   set sendMessage(String newText) {
@@ -57,9 +62,10 @@ class ChattingProvider with ChangeNotifier {
       content: json.encode(message),
     );
 
-    message['character'] = Character.me;
-
-    chatRecordManager.storeRecord(message);
+    chatRecordManager.storeRecord(
+      message: message,
+      character: Character.me,
+    );
 
     _listController.animateTo(
       0,
@@ -71,15 +77,9 @@ class ChattingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Invoke this method when the state of [isMatched] has been modified.
-  void toggleChattingButtonVisibility(bool isMatched) {
-    _isVisible = isMatched;
-    notifyListeners();
-  }
-
   /// Tigger the callback function to load more chat messages
   /// on screen.
-  reachTheTopOfListLisnter() {
+  reachTheTopOfListListener() {
     return (notification) {
       if (notification is ScrollEndNotification &&
           _listController.offset == _listController.position.maxScrollExtent &&
@@ -90,6 +90,11 @@ class ChattingProvider with ChangeNotifier {
         print('You reach the end of chat room! ${touchDown++}');
       }
     };
+  }
+
+  void initializeCacheData(String room) {
+    chatRecordManager.room = room;
+    notifyListeners();
   }
 
   bool _textFilter(String newText) {
