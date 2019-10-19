@@ -9,12 +9,12 @@ const router = new express.Router();
 
 let onlineUserMap = {};
 // 當有新建立的 socket 連線
-router.socketConnection = function(){
+router.socketConnection = function () {
     io.on('connection', auth.auth, (socket) => {
         var uid = auth.uid;
         // 對 onlineUserMap 新增一筆上線紀錄
         onlineUserMap[uid] = socket.id;
-    
+
         const sql = `SELECT hasNewMessage from user where uid=${uid}`
         db.query(sql, (err, result) => {
             if (err) {
@@ -27,7 +27,7 @@ router.socketConnection = function(){
                 };
             };
         });
-    
+
         // 接收 sendMessage 事件
         socket.on('sendMessage', auth.auth, (roomId, content) => {
             var uid = auth.uid;
@@ -44,7 +44,7 @@ router.socketConnection = function(){
                     } else {
                         other = result[0].user1Id;
                     };
-    
+
                     setMessages(uid, roomId, content);
                     // 對方在線 => 直接將收到的訊息放在 newMessage 事件中 發送
                     if (onlineUserMap[other] != null) {
@@ -107,5 +107,5 @@ function setMessages(uid, roomId, content) {
         };
     });
 }
-module.export = router;
+module.exports = router;
 // location event
