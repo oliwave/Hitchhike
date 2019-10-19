@@ -1,5 +1,7 @@
-import 'package:client_flutter/src/provider/local/homepage_provider.dart';
 import 'package:flutter/material.dart';
+
+import '../../provider/provider_collection.dart'
+    show ChattingProvider, HomepageProvider;
 
 class MenuProvider with ChangeNotifier {
   AnimationController menuHeightController;
@@ -7,6 +9,8 @@ class MenuProvider with ChangeNotifier {
   bool _menuVisible = false;
 
   double _menuOpacity = 0.0;
+
+  ChattingProvider _chattingProvider = ChattingProvider();
 
   // final _menuListData = <Map<IconData, String>>[
   //   {Icons.chat_bubble_outline: '聊天'},
@@ -29,16 +33,21 @@ class MenuProvider with ChangeNotifier {
     _menuVisible = visible;
 
     notifyListeners();
-    
+
     if (_menuVisible) {
+      _chattingProvider.isVisible = !_menuVisible;
+
       await Future.wait([
         menuHeightController.forward(),
         homeProvider.animationManager.bottomSheetOpacityController.forward()
       ]);
 
+
       menuOpacity = 1;
       homeProvider.animationManager.bottomSheetHeightByMenuController.forward();
     } else {
+      _chattingProvider.isVisible = !_menuVisible;
+      
       menuOpacity = 0;
       menuHeightController.reverse();
 
@@ -48,6 +57,5 @@ class MenuProvider with ChangeNotifier {
     }
 
     homeProvider.animationManager.menuTriggered = true;
-
   }
 }
