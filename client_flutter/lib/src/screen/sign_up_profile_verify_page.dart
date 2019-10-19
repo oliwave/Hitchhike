@@ -85,7 +85,7 @@ class _VerifyPageState extends State<VerifyPage> {
       if (seconds == 0 && isVerifyCodePassed == false) {
         cancelTimer();
         buttonText = "重新發送驗證碼";
-        seconds = 5; //重置時間
+        seconds = 120; //重置時間
         isGetCodeBtnEnable = true;
         Fluttertoast.showToast(
           msg: "超過時間，請重新取得驗證碼",
@@ -169,7 +169,7 @@ class _VerifyPageState extends State<VerifyPage> {
                           var now = DateTime.now();
                           // 2分鐘的時間間隔
                           var twoHours =
-                              now.add(Duration(seconds: 5)).difference(now);
+                              now.add(Duration(minutes: 2)).difference(now);
                           // 總秒數，2分鐘為120秒
                           seconds = twoHours.inSeconds;
 
