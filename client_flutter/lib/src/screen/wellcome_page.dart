@@ -23,7 +23,7 @@ class WellcomePage extends StatelessWidget {
       print('Finished initial setup!\n');
       final authProivder = Provider.of<AuthProvider>(context, listen: false);
       String targetRoute;
-      if (authProivder.jwt == null) {
+      if (authProivder.jwt == 'logout') {
         targetRoute = LoginPage.routeName;
       } else {
         targetRoute = Homepage.routeName;

@@ -37,9 +37,13 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> identifyRegisteredId(String uid) async {
     if (uid.length == 9) {
+      print(uid);
       final response = await _api.sendHttpRequest(IdentifyRegisteredIDRequest(
         userId: uid,
       ));
+
+      print(response['status']);
+
       if (response['status'] == 'fail') {
         return true; // 已註冊過
       } else {
@@ -94,11 +98,16 @@ class AuthProvider with ChangeNotifier {
 
     jwt = response['jwt'];
 
-    // if()
     _prefs.setString(
         TargetSourceString.lastLoginTime, DateTime.now().toString());
+  }
 
-    // notifyListeners();
+  void invokeLogout() {
+    print('jwt is $jwt');
+    jwt = null;
+
+    _secure.storeSecret(TargetSourceString.jwt, 'logout');
+    print('jwt is $jwt');
   }
 
   Future<void> init() async {
@@ -106,14 +115,17 @@ class AuthProvider with ChangeNotifier {
     print('The value of jwt token is $jwt');
     final lastLoginTime = _prefs.getString(TargetSourceString.lastLoginTime);
 
-    ///TODO
+    // The app is launched for the first time.
+    if (jwt == null) return jwt = 'logout';
+
+    // The app has been loged in before
     if (lastLoginTime != null) {
       final lastDateTime = DateTime.parse(lastLoginTime);
 
       final duration = lastDateTime.difference(DateTime.now()).inDays;
 
       if (duration > 30) {
-        jwt = null;
+        jwt = 'logout';
       }
     }
   }
