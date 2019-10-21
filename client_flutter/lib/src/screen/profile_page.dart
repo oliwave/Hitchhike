@@ -16,7 +16,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final formKey = GlobalKey<FormState>(); // GlobalKey: to access form
 
-  Map userProfile = {
+  Map userProfile = <String, dynamic>{
     'uid': '',
     'password': 'aa',
     // 'name': '',
@@ -29,8 +29,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    final authProivder = Provider.of<AuthProvider>(context, listen: false);
-    final jwtToken = authProivder.jwt;
+    // final authProivder = Provider.of<AuthProvider>(context, listen: false);
+    // final jwtToken = authProivder.jwt;
   }
 
   @override
@@ -109,15 +109,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     Theme(
                       child: Column(
-                        children:
-                            ListTile.divideTiles(context: context, tiles: [
-                          nameField(),
-                          genderField(),
-                          birthdayField(),
-                          departmentField(),
-                          emailField(),
-                          carNumField(),
-                        ]).toList(),
+                        children: ListTile.divideTiles(
+                          context: context,
+                          tiles: [
+                            nameField(),
+                            genderField(),
+                            birthdayField(),
+                            departmentField(),
+                            emailField(),
+                            carNumField(),
+                          ],
+                        ).toList(),
                       ),
                       data: Theme.of(context).copyWith(
                         primaryColor: Colors.teal[600],

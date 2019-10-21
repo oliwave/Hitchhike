@@ -57,7 +57,11 @@ class ProfileProvider with ChangeNotifier {
 
   String getName() {
     _name = _prefs.getString(TargetSourceString.name);
-    return _name;
+    if (_name == null) {
+      return '';
+    } else {
+      return _name;
+    }
   }
 
   // Future<void> invokeModifyGender(String newgender, String jwt) async {

@@ -30,9 +30,11 @@ class Api {
 
     final response = await action.request();
 
+    print('the response body is ' + response.body);
+    print('statusCode' + '${response.statusCode}');
+    
     Map<String, dynamic> parsedJson = json.decode(response.body);
     parsedJson['statusCode'] = response.statusCode;
-
     return parsedJson;
   }
 }
