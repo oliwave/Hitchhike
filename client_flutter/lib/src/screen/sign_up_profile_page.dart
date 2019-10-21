@@ -29,7 +29,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
 
   TextEditingController controller = TextEditingController();
   bool isNextBtnEnable = false;
-  bool accountExisted = true;
+  bool accountExisted = false;
   String title = "註冊";
 
   @override
@@ -38,22 +38,25 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
     controller.addListener(() => setState(() {}));
   }
 
-  bool _isAccountExisted(String account) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    authProvider.identifyRegisteredId(account).then((connectionResult) {
-      connectionResult == true ? accountExisted = true : accountExisted = false;
-    });
+  Future<bool> _isAccountExisted(String account) async {
+    final authProvider = Provider.of<AuthProvider>(
+      context,
+      listen: false,
+    );
+
+    accountExisted = await authProvider.identifyRegisteredId(account);
+
+    setState(() {});
+
     print(accountExisted);
     return accountExisted;
   }
 
-  void _nextBtnClickListen() {
-    if (controller.text.length == 9 &&
-        _isAccountExisted(controller.text) == false) {
-      isNextBtnEnable = true;
-    } else {
-      isNextBtnEnable = false;
-    }
+  Future<void> _nextBtnClickListen(String account) async {
+    print('onChange is called');
+
+    /// TODO : add comment.
+    isNextBtnEnable = !await _isAccountExisted(account);
   }
 
   @override
@@ -155,6 +158,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
         hintText: '學校信箱',
         suffixText: '@ncnu.edu.tw',
         suffixStyle: TextStyle(color: Colors.black),
+        errorText: accountExisted ? 'Email address has already existed.' : null,
         suffixIcon: GestureDetector(
           onTap: () {
             controller.clear();
@@ -164,21 +168,18 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
         ),
       ),
       autovalidate: true,
-      validator: (String value) {
-        if (value.contains('@')) {
-          return '';
-        } else if (_isAccountExisted(value) == true) {
-          return 'Email address has already existed.';
-        } else {
-          return null;
-        }
-      },
       inputFormatters: [
         WhitelistingTextInputFormatter(RegExp("[a-z,A-Z,0-9]")), //只能輸入數字,字母
         LengthLimitingTextInputFormatter(25), //長度不能超過25
       ],
       onChanged: (term) {
-        _nextBtnClickListen();
+        if (term.length == 9) {
+          _nextBtnClickListen(term);
+        } else {
+          isNextBtnEnable = false;
+          accountExisted = false;
+          setState(() {});
+        }
       },
       onSaved: (String value) {
         user['uid'] = value;
