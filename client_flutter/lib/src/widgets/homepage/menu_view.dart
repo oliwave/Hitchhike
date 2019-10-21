@@ -1,10 +1,11 @@
-import 'package:client_flutter/src/screen/page_collection.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
 import '../../provider/provider_collection.dart'
-    show MenuProvider, HomepageProvider;
+    show AuthProvider, HomepageProvider, MenuProvider;
+import '../../screen/page_collection.dart'
+    show FriendListPage, ProfilePage, LoginPage;
 import '../../util/util_collection.dart' show SizeConfig;
 
 class MenuView extends StatefulWidget {
@@ -180,7 +181,30 @@ class OptionFlatbutton extends StatelessWidget {
           )
         ],
       ),
-      onPressed: () => Navigator.pushNamed(context, routeName),
+      onPressed: () {
+        if (text == '登出') {
+          Provider.of<AuthProvider>(
+            context,
+            listen: false,
+          ).invokeLogout();
+
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            routeName,
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          Navigator.pushNamed(context, routeName);
+        }
+
+        Provider.of<MenuProvider>(
+          context,
+          listen: false,
+        ).setMenuVisible(
+          false,
+          Provider.of<HomepageProvider>(context, listen: false),
+        );
+      },
     );
   }
 }
