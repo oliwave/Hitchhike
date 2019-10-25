@@ -31,7 +31,7 @@ class ProfileProvider with ChangeNotifier {
 
   Uint8List getPhoto() {
     _photo = _prefs.getString(TargetSourceString.photo);
-    print('photo:' + _photo);
+    print('photo: $_photo');
     if (_photo == null) {
       return null;
     } else {

@@ -248,7 +248,7 @@ class _VerifyPageState extends State<VerifyPage> {
                                   builder: (BuildContext context) =>
                                       PasswordPage(title: widget.title),
                                   settings: RouteSettings(arguments: user),
-                                ));
+                                ),);
                           } else {
                             return null;
                           }
