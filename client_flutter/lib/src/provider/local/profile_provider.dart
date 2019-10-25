@@ -35,7 +35,8 @@ class ProfileProvider with ChangeNotifier {
     if (_photo == null) {
       return null;
     } else {
-      Uint8List bytes = Base64Decoder().convert(_photo);
+      // Uint8List bytes = Base64Decoder().convert(_photo);
+      Uint8List bytes = base64.decode(_photo);
       return bytes;
     }
   }

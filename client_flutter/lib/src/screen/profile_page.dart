@@ -89,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Container(
                       width: 150.0,
                       height: 155.0,
-                      child: userProfile['photo'] == null
+                      child: photo == null
                           ? defaultImage()
                           : ovalImage(),
                     ),
