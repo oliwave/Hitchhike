@@ -43,7 +43,6 @@ class _ModifyPasswordPageState extends State<ModifyPasswordPage> {
               if (_formKey.currentState.validate()) {
                 _formKey.currentState.save();
                 oldPwd = await profileProvider.getPassword();
-                print('$oldPwd');
                 if (pwdController.text != oldPwd) {
                   Fluttertoast.showToast(
                     msg: "舊密碼錯誤",
@@ -64,7 +63,6 @@ class _ModifyPasswordPageState extends State<ModifyPasswordPage> {
                       textColor: Colors.white,
                       fontSize: 16.0);
                 } else {
-                  print("$newPassword");
                   await profileProvider.invokeModifyPassword(newPassword, jwtToken);
                   Navigator.pop(context);
                 }

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../provider/provider_collection.dart';
 import 'modify_profile_page.dart';
+import 'modify_password_page .dart';
 
 class ProfilePage extends StatefulWidget {
   static const String routeName = '/profile_page';
@@ -76,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: Container(
           color: Colors.white,
-          padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 50.0),
+          padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 20.0),
           child: ListView(
             children: <Widget>[
               Form(
@@ -105,9 +106,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             Divider(
                               height: 10.0,
                               indent: 0.0,
-                              color: Colors.red,
+                              color: Colors.grey,
                             ),
-                            passwordField(),
+                            editPwdField(),
                           ],
                         ).toList(),
                       ),
@@ -211,9 +212,22 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget passwordField() {
+  Widget editPwdField() {
     return ListTile(
       title: Text('修改密碼'),
+      subtitle: TextFormField(
+        enabled: false,
+        decoration: InputDecoration(
+        ),
+      ),
+      trailing: Icon(Icons.keyboard_arrow_right),
+      onTap: () {
+        Navigator.push<String>(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => ModifyPasswordPage(),
+            ));
+      },
     );
   }
 }

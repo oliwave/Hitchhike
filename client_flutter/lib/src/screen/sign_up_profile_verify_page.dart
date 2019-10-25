@@ -185,6 +185,7 @@ class _VerifyPageState extends State<VerifyPage> {
                           "$buttonText",
                           style: TextStyle(
                             fontSize: 13,
+                            color: Colors.redAccent,
                           ),
                         ),
                       ),

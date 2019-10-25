@@ -10,7 +10,6 @@ import '../provider/provider_collection.dart'
     show AuthProvider, ProfileProvider;
 import '../util/image_handler.dart';
 import 'page_collection.dart';
-import 'modify_password_page .dart';
 import 'modify_carNum_page.dart';
 
 class ModifyProfilePage extends StatefulWidget {
@@ -139,7 +138,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         },
         child: Container(
           color: Colors.white,
-          padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 50.0),
+          padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 20.0),
           child: ListView(
             children: <Widget>[
               Form(
@@ -170,8 +169,6 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                           departmentField(userProfile),
                           emailField(userProfile),
                           carNumField(userProfile),
-                          Divider(height:10.0,indent:0.0,color: Colors.red,),
-                          editPwdField(),
                         ],
                       ),
                       data: Theme.of(context).copyWith(
@@ -265,6 +262,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
       subtitle: TextFormField(
         controller: nameController,
         decoration: InputDecoration(
+          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[300])),
           hintText: userProfile['name'],
           suffixIcon: GestureDetector(
             onTap: () {
@@ -323,15 +321,10 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   Widget birthdayField(Map userProfile) {
     var textFormField = TextFormField(
       controller: birthdayController,
+      enabled: false,
       keyboardType: TextInputType.datetime, // 鍵盤樣式
       decoration: InputDecoration(
         hintText: userProfile['birthday'],
-        suffixIcon: GestureDetector(
-          onTap: () {
-            birthdayController.clear();
-          },
-          child: Icon(birthdayController.text.length > 0 ? Icons.clear : null),
-        ),
       ),
       onEditingComplete: () {
         birthdayController.text = '$_date';
@@ -371,6 +364,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
       subtitle: TextFormField(
         controller: departmentController,
         decoration: InputDecoration(
+          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[300])),
           hintText: userProfile['department'],
           suffixIcon: GestureDetector(
             onTap: () {
@@ -463,34 +457,6 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           },
         ),
       ],
-    );
-  }
-  Widget editPwdField() {
-    return ListTile(
-      title: Text('修改密碼'),
-      subtitle: TextFormField(
-        controller: carNumController,
-        enabled: false,
-        decoration: InputDecoration(
-          suffixIcon: GestureDetector(
-            onTap: () {
-              carNumController.clear();
-            },
-            child: Icon(carNumController.text.length > 0 ? Icons.clear : null),
-          ),
-        ),
-        onSaved: (String value) {
-          carNum = value;
-        },
-      ),
-      trailing: Icon(Icons.keyboard_arrow_right),
-      onTap: () {
-        Navigator.push<String>(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => ModifyPasswordPage(),
-            ));
-      },
     );
   }
 }

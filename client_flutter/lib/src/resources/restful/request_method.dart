@@ -163,7 +163,7 @@ class ProfilePwdRequest extends BasePost {
     @required String jwtToken,
   }) : super(
           body: {
-            'password': password,
+            'pwd': password,
           },
           jwtToken: jwtToken,
         );

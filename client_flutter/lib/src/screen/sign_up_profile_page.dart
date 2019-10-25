@@ -155,8 +155,8 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
       decoration: InputDecoration(
         icon: Icon(Icons.email),
         labelText: '帳號',
-        hintText: '學校信箱',
-        suffixText: '@ncnu.edu.tw',
+        hintText: '請輸入學號',
+        // suffixText: '@ncnu.edu.tw',
         suffixStyle: TextStyle(color: Colors.black),
         errorText: accountExisted ? 'Email address has already existed.' : null,
         suffixIcon: GestureDetector(
