@@ -1,6 +1,7 @@
 import 'package:client_flutter/src/provider/provider_collection.dart';
 import 'package:client_flutter/src/screen/page_collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'page_collection.dart';
 
@@ -59,12 +60,18 @@ class _LoginPageState extends State<LoginPage> {
                         controller: _idController,
                         decoration: InputDecoration(
                             labelText: "帳號",
-                            hintText: "學校信箱",
+                            hintText: "學號",
+                            suffixStyle: TextStyle(color: Colors.black),
                             icon: Icon(Icons.person)),
                         // 驗證id
                         validator: (v) {
                           return v.trim().length > 0 ? null : "請輸入帳號";
                         },
+                        inputFormatters: [
+                          WhitelistingTextInputFormatter(
+                              RegExp("[a-z,A-Z,0-9]")), //只能輸入數字,字母
+                          LengthLimitingTextInputFormatter(10), //長度不能超過9
+                        ],
                       ),
                       data: Theme.of(context).copyWith(
                         primaryColor: Colors.teal[400],
@@ -72,18 +79,22 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Theme(
                       child: TextFormField(
-                        controller: _pwdController,
-                        decoration: InputDecoration(
-                            labelText: "密碼",
-                            hintText: "請輸入密碼",
-                            icon: Icon(Icons.lock)),
-                        obscureText: true,
-                        //驗證pwd
-                        validator: (v) {
-                          print(v);
-                          return v.trim().length > 5 ? null : "密碼不能少於六位";
-                        },
-                      ),
+                          controller: _pwdController,
+                          decoration: InputDecoration(
+                              labelText: "密碼",
+                              hintText: "請輸入密碼",
+                              icon: Icon(Icons.lock)),
+                          obscureText: true,
+                          // 驗證pwd
+                          validator: (v) {
+                            print(v);
+                            return v.trim().length > 5 ? null : "密碼不能少於六位";
+                          },
+                          inputFormatters: [
+                            WhitelistingTextInputFormatter(
+                                RegExp("[a-z,A-Z,0-9]")), //只能輸入數字,字母
+                            LengthLimitingTextInputFormatter(10), //長度不能超過9
+                          ]),
                       data: Theme.of(context).copyWith(
                         primaryColor: Colors.teal[400],
                       ),

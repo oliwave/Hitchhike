@@ -32,8 +32,11 @@ class Api {
 
     print('the response body is ' + response.body);
     print('statusCode' + '${response.statusCode}');
-    
-    Map<String, dynamic> parsedJson = json.decode(response.body);
+
+    Map<String, dynamic> parsedJson = {};
+    if (response.statusCode == 200) {
+      parsedJson = json.decode(response.body);
+    }
     parsedJson['statusCode'] = response.statusCode;
     return parsedJson;
   }
