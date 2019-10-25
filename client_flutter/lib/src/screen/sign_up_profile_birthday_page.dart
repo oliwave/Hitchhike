@@ -125,7 +125,7 @@ class _BirthdayPage extends State<BirthdayPage> {
                                 await authProivder.invokeSignUp(user);
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,
-                                  Homepage.routeName,
+                                  LoginPage.routeName,
                                   (Route<dynamic> route) => false,
                                 );
                               },

@@ -13,7 +13,7 @@ class GenderPage extends StatefulWidget {
 class _GenderPageState extends State<GenderPage> {
   final _formKey = GlobalKey<FormState>(); // GlobalKey: to access form
 
-  var pressAttention = '';
+  String pressAttention = '';
   bool isNextBtnEnable = false;
   int _gender;
 
@@ -72,7 +72,6 @@ class _GenderPageState extends State<GenderPage> {
                                 isNextBtnEnable) {
                               _formKey.currentState.save();
                               user['gender'] = _gender;
-                              print(user['gender']);
                               Navigator.push<String>(
                                   context,
                                   MaterialPageRoute(
@@ -125,7 +124,6 @@ class _GenderPageState extends State<GenderPage> {
                     pressAttention = 'M';
                     isNextBtnEnable = true;
                   });
-                  print(_gender);
                 },
               ),
               FlatButton(
@@ -138,7 +136,6 @@ class _GenderPageState extends State<GenderPage> {
                     pressAttention = 'F';
                     isNextBtnEnable = true;
                   });
-                  print(_gender);
                 },
               ),
             ],

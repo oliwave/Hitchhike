@@ -95,8 +95,9 @@ class _PasswordPageState extends State<PasswordPage> {
                           width: double.infinity,
                           height: 55.0,
                           child: FlatButton(
-                            color:
-                                isNextBtnEnable ? Colors.teal[600] : Colors.teal[50],
+                            color: isNextBtnEnable
+                                ? Colors.teal[600]
+                                : Colors.teal[50],
                             onPressed: () {
                               if (_formKey.currentState.validate() &&
                                   isNextBtnEnable) {
@@ -205,6 +206,7 @@ class _PasswordPageState extends State<PasswordPage> {
         ),
       ),
       inputFormatters: <TextInputFormatter>[
+        WhitelistingTextInputFormatter(RegExp("[a-zA-Z]|[0-9]")), // 只能輸入字母或數字
         LengthLimitingTextInputFormatter(40) //限制長度
       ],
       onChanged: (term) {

@@ -73,7 +73,7 @@ class AuthProvider with ChangeNotifier {
     if (response['status'] == 'success') {
       await Future.wait([
         _secure.storeSecret(TargetSourceString.pwd, user['password']),
-        _prefs.setString(TargetSourceString.uid, user['id']),
+        _prefs.setString(TargetSourceString.uid, user['uid']),
         _prefs.setString(TargetSourceString.name, user['name']),
         _prefs.setString(TargetSourceString.gender, gender),
         _prefs.setString(TargetSourceString.birthday, user['birthday']),

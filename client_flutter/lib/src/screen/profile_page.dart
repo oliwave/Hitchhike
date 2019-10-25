@@ -1,4 +1,8 @@
 // get jwt
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:client_flutter/src/screen/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,32 +20,27 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final formKey = GlobalKey<FormState>(); // GlobalKey: to access form
 
-  Map userProfile = <String, dynamic>{
-    'uid': '',
-    'password': 'aa',
-    // 'name': '',
-    // 'gender': '',
-    // 'birthday': '',
-    // 'department': '資管系',
-    // 'carNum': 'aa123',
-  };
+  Map userProfile = <String, dynamic>{};
+  Uint8List photo;
 
   @override
   void initState() {
     super.initState();
-    // final authProivder = Provider.of<AuthProvider>(context, listen: false);
-    // final jwtToken = authProivder.jwt;
   }
 
   @override
   Widget build(BuildContext context) {
     final profileProvider = Provider.of<ProfileProvider>(context);
-    // userProfile['uid'] = profileProvider.getUserId();
+    photo = profileProvider.getPhoto();
+    print('get photo:            $photo');
+
     userProfile['name'] = profileProvider.getName();
     userProfile['gender'] = profileProvider.getGender();
     userProfile['birthday'] = profileProvider.getBirthday();
+    userProfile['email'] = profileProvider.getEmail() + '@mail1.nanu.edu.tw';
     userProfile['department'] = profileProvider.getDepartment();
     userProfile['carNum'] = profileProvider.getCarNum();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal[600],
@@ -89,20 +88,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: <Widget>[
                     Container(
                       width: 150.0,
-                      height: 150.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        // color: Colors.teal[600],
-                        border: Border.all(
-                          color: Colors.teal[600],
-                        ),
-                        image: DecorationImage(
-                          image: AssetImage(
-                            '',
-                            // 'https://github.com/flutter/assets-for-api-docs/tree/master/assets/widgets/owl.jpg',
-                          ),
-                        ),
-                      ),
+                      height: 155.0,
+                      child: userProfile['photo'] == null
+                          ? defaultImage()
+                          : ovalImage(),
                     ),
                     SizedBox(
                       height: 20.0,
@@ -130,6 +119,48 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
           )),
+    );
+  }
+
+// 預設圖片
+  Widget defaultImage() {
+    return Stack(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.topLeft,
+          child: Image.asset(
+            "assets/icons/profile/icon_head_default.png",
+            fit: BoxFit.contain,
+            height: 150.0,
+            width: 155.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget ovalImage() {
+    return Stack(
+      children: <Widget>[
+        Align(
+          child: Stack(
+            children: <Widget>[
+              Container(
+                // 使圖對齊邊框
+                padding: EdgeInsets.fromLTRB(9.0, 10.5, 0.0, 0.0),
+                child: ClipOval(
+                  child: Image.memory(
+                    photo,
+                    fit: BoxFit.cover,
+                    height: 150.0,
+                    width: 150.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -175,7 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget emailField() {
     return ListTile(
       title: Text('E-mail'),
-      subtitle: Text('s' + userProfile['uid'] + '@ncnu.edu.tw'),
+      subtitle: Text(userProfile['email']),
     );
   }
 }
