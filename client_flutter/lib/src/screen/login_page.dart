@@ -55,33 +55,35 @@ class _LoginPageState extends State<LoginPage> {
                   children: <Widget>[
                     Theme(
                       child: TextFormField(
-                          autofocus: false,
-                          controller: _idController,
-                          decoration: InputDecoration(
-                              labelText: "帳號",
-                              hintText: "學校信箱",
-                              icon: Icon(Icons.person)),
-                          // 驗證id
-                          validator: (v) {
-                            return v.trim().length > 0 ? null : "請輸入帳號";
-                          }),
+                        autofocus: false,
+                        controller: _idController,
+                        decoration: InputDecoration(
+                            labelText: "帳號",
+                            hintText: "學校信箱",
+                            icon: Icon(Icons.person)),
+                        // 驗證id
+                        validator: (v) {
+                          return v.trim().length > 0 ? null : "請輸入帳號";
+                        },
+                      ),
                       data: Theme.of(context).copyWith(
                         primaryColor: Colors.teal[400],
                       ),
                     ),
                     Theme(
                       child: TextFormField(
-                          controller: _pwdController,
-                          decoration: InputDecoration(
-                              labelText: "密碼",
-                              hintText: "請輸入密碼",
-                              icon: Icon(Icons.lock)),
-                          obscureText: true,
-                          //驗證pwd
-                          validator: (v) {
-                            print(v);
-                            return v.trim().length > 5 ? null : "密碼不能少於六位";
-                          }),
+                        controller: _pwdController,
+                        decoration: InputDecoration(
+                            labelText: "密碼",
+                            hintText: "請輸入密碼",
+                            icon: Icon(Icons.lock)),
+                        obscureText: true,
+                        //驗證pwd
+                        validator: (v) {
+                          print(v);
+                          return v.trim().length > 5 ? null : "密碼不能少於六位";
+                        },
+                      ),
                       data: Theme.of(context).copyWith(
                         primaryColor: Colors.teal[400],
                       ),
@@ -95,19 +97,20 @@ class _LoginPageState extends State<LoginPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(60),
                             ),
-                            onPressed: () {
-                              //TODO
-                              authProivder.invokeLogin(
-                                  _idController.text, _pwdController.text);
+                            onPressed: () async {
+                              final authenticated =
+                                  await authProivder.invokeLogin(
+                                _idController.text,
+                                _pwdController.text,
+                              );
 
-                              if ((_formKey.currentState as FormState)
-                                  .validate()) {
-                                Navigator.push<String>(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          Homepage(),
-                                    ));
+                              if (authenticated &&
+                                  (_formKey.currentState as FormState)
+                                      .validate()) {
+                                Navigator.pushNamed(
+                                  context,
+                                  Homepage.routeName,
+                                );
                               }
                             },
                             padding: EdgeInsets.all(10),

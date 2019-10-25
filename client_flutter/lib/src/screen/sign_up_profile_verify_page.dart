@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:client_flutter/src/provider/provider_collection.dart';
+import '../provider/provider_collection.dart' show AuthProvider;
 import '../util/validation_handler.dart';
 import 'sign_up_profile_password_page.dart';
 
