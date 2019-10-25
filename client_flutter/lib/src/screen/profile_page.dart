@@ -1,6 +1,4 @@
 // get jwt
-import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:client_flutter/src/screen/homepage.dart';
@@ -32,12 +30,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final profileProvider = Provider.of<ProfileProvider>(context);
     photo = profileProvider.getPhoto();
-    print('get photo:            $photo');
 
     userProfile['name'] = profileProvider.getName();
     userProfile['gender'] = profileProvider.getGender();
     userProfile['birthday'] = profileProvider.getBirthday();
-    userProfile['email'] = profileProvider.getEmail() + '@mail1.nanu.edu.tw';
+    userProfile['email'] = profileProvider.getEmail() + '@mail1.ncnu.edu.tw';
     userProfile['department'] = profileProvider.getDepartment();
     userProfile['carNum'] = profileProvider.getCarNum();
 
@@ -89,9 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Container(
                       width: 150.0,
                       height: 155.0,
-                      child: photo == null
-                          ? defaultImage()
-                          : ovalImage(),
+                      child: photo == null ? defaultImage() : ovalImage(),
                     ),
                     SizedBox(
                       height: 20.0,
@@ -107,6 +102,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             departmentField(),
                             emailField(),
                             carNumField(),
+                            Divider(
+                              height: 10.0,
+                              indent: 0.0,
+                              color: Colors.red,
+                            ),
+                            passwordField(),
                           ],
                         ).toList(),
                       ),
@@ -153,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     photo,
                     fit: BoxFit.cover,
                     height: 150.0,
-                    width: 150.0,
+                    width: 155.0,
                   ),
                 ),
               ),
@@ -207,6 +208,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return ListTile(
       title: Text('E-mail'),
       subtitle: Text(userProfile['email']),
+    );
+  }
+
+  Widget passwordField() {
+    return ListTile(
+      title: Text('修改密碼'),
     );
   }
 }
