@@ -108,18 +108,20 @@ class _LoginPageState extends State<LoginPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(60),
                             ),
-                            onPressed: () {
-                              authProivder.invokeLogin(
-                                  _idController.text, _pwdController.text);
+                            onPressed: () async {
+                              final authenticated =
+                                  await authProivder.invokeLogin(
+                                _idController.text,
+                                _pwdController.text,
+                              );
 
-                              if ((_formKey.currentState as FormState)
-                                  .validate()) {
-                                Navigator.push<String>(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          Homepage(),
-                                    ));
+                              if (authenticated &&
+                                  (_formKey.currentState as FormState)
+                                      .validate()) {
+                                Navigator.pushNamed(
+                                  context,
+                                  Homepage.routeName,
+                                );
                               }
                             },
                             padding: EdgeInsets.all(10),

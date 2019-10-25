@@ -38,11 +38,13 @@ class FriendListPage extends StatelessWidget {
             return FutureBuilder(
               future: provider.fetchFriendList(),
               builder: (context, AsyncSnapshot<List<FriendItem>> snapshot) {
-                if (!snapshot.hasData) LoadingContainer();
+                if (!snapshot.hasData) return LoadingContainer();
 
                 final friends = snapshot.data;
 
-                return friends != null
+                print('My friend is : $friends');
+
+                return friends.isNotEmpty
                     ? ListView.builder(
                         itemCount: friends?.length,
                         itemBuilder: (BuildContext context, int index) {

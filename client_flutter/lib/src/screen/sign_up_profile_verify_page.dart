@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:client_flutter/src/provider/provider_collection.dart';
+import '../provider/provider_collection.dart' show AuthProvider;
 import '../util/validation_handler.dart';
 import 'sign_up_profile_password_page.dart';
 
@@ -220,29 +220,6 @@ class _VerifyPageState extends State<VerifyPage> {
                         textColor: Colors.white,
                         fontSize: 16.0,
                       );
-
-                      // // test
-                      // if (controller.text == '123123') {
-                      //   isVerifyCodePassed = true;
-                      //   Fluttertoast.showToast(
-                      //       msg: "驗證成功",
-                      //       toastLength: Toast.LENGTH_SHORT,
-                      //       gravity: ToastGravity.CENTER,
-                      //       timeInSecForIos: 1,
-                      //       backgroundColor: Colors.black,
-                      //       textColor: Colors.white,
-                      //       fontSize: 16.0);
-                      // } else {
-                      //   isVerifyCodePassed = false;
-                      //   Fluttertoast.showToast(
-                      //       msg: "驗證失敗，請重新取得驗證碼",
-                      //       toastLength: Toast.LENGTH_SHORT,
-                      //       gravity: ToastGravity.CENTER,
-                      //       timeInSecForIos: 1,
-                      //       backgroundColor: Colors.black,
-                      //       textColor: Colors.white,
-                      //       fontSize: 16.0);
-                      // }
                     });
                   },
                   child: Text("驗  證",
@@ -271,7 +248,7 @@ class _VerifyPageState extends State<VerifyPage> {
                                   builder: (BuildContext context) =>
                                       PasswordPage(title: widget.title),
                                   settings: RouteSettings(arguments: user),
-                                ));
+                                ),);
                           } else {
                             return null;
                           }

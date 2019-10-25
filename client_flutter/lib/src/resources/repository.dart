@@ -48,6 +48,7 @@ class TargetSourceString {
   static const String role = 'role';
   static const String jwt = 'jwt';
   static const String pwd = 'pwd';
+  static const String photo = 'photo';
   static const String uid = 'uid';
   static const String name = 'name';
   static const String gender = 'gender';

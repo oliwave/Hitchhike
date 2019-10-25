@@ -1,4 +1,8 @@
 // import 'package:client_flutter/src/logics/notify_manager.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../../resources/repository.dart';
@@ -16,43 +20,52 @@ class ProfileProvider with ChangeNotifier {
   static final _prefs = Repository.getSimpleStorage;
   static final _api = Repository.getApi;
 
+  String _photo;
   String _uid;
   String _name;
   String _pwd;
-  String _photo;
   String _gender;
   String _birthday;
   String _department;
   String _carNum;
 
-  // String get name => _name; // _name : walker
-
-  // // name : kim
-  // // _name : walker
-  // set name(String name) {
-  //   if (name != null && name.isNotEmpty) {
-  //   }
-  // }
-  String getUserId() {
-    _uid = _prefs.getString(TargetSourceString.uid);
-    print('test : ' + _uid);
-    String email = 's'+_uid;
-    // if (_uid == null) {
-    //   return '';
-    // } else {
-    //   return _uid;
-    // }
-    return email;
+  Uint8List getPhoto() {
+    _photo = _prefs.getString(TargetSourceString.photo);
+    if (_photo == null) {
+      return null;
+    } else {
+      // Uint8List bytes = Base64Decoder().convert(_photo);
+      Uint8List bytes = base64.decode(_photo);
+      return bytes;
+    }
   }
 
-  Future<void> invokeModifyName(String newname, String jwt) async {
-    _api.sendHttpRequest(ProfileNameRequest(
-      name: newname,
-      jwtToken: jwt,
-    ));
-    await _prefs.setString(TargetSourceString.name, newname);
+  String getUserId() {
+    _uid = _prefs.getString(TargetSourceString.uid);
+    if (_uid == null) {
+      return '';
+    } else {
+      return _uid;
+    }
+  }
 
-    notifyListeners();
+  Future<String> getPassword() async {
+    _pwd = await _secure.getSecret(TargetSourceString.pwd);
+    if (_pwd == null) {
+      return '';
+    } else {
+      return _pwd;
+    }
+  }
+
+  String getEmail() {
+    _uid = _prefs.getString(TargetSourceString.uid);
+    if (_uid == null) {
+      return '';
+    } else {
+      String email = 's' + _uid;
+      return email;
+    }
   }
 
   String getName() {
@@ -63,16 +76,6 @@ class ProfileProvider with ChangeNotifier {
       return _name;
     }
   }
-
-  // Future<void> invokeModifyGender(String newgender, String jwt) async {
-  //   final response = await _api.sendHttpRequest(ProfileGenderRequest(
-  //     name: newgender,
-  //     jwtToken: jwt,
-  //   ));
-
-  //   _prefs.setString(TargetSourceString.gender, newgender);
-  //   print(response.body);
-  // }
 
   String getGender() {
     _gender = _prefs.getString(TargetSourceString.gender);
@@ -92,17 +95,6 @@ class ProfileProvider with ChangeNotifier {
     }
   }
 
-  Future<void> invokeModifyDepartment(String newdepartment, String jwt) async {
-    _api.sendHttpRequest(ProfileDepartmentRequest(
-      department: newdepartment,
-      jwtToken: jwt,
-    ));
-
-    await _prefs.setString(TargetSourceString.department, newdepartment);
-    notifyListeners();
-
-  }
-
   String getDepartment() {
     _department = _prefs.getString(TargetSourceString.department);
 
@@ -111,17 +103,6 @@ class ProfileProvider with ChangeNotifier {
     } else {
       return _department;
     }
-  }
-
-  Future<void> invokeModifyCarNum(String newcarNum, String jwt) async {
-    _api.sendHttpRequest(ProfileCarNumRequest(
-      carNum: newcarNum,
-      jwtToken: jwt,
-    ));
-
-    await _prefs.setString(TargetSourceString.department, newcarNum);
-    notifyListeners();
-
   }
 
   String getCarNum() {
@@ -134,22 +115,72 @@ class ProfileProvider with ChangeNotifier {
     }
   }
 
-  // Future<void> invokeModifyPhoto(String newphoto, String jwt) async {
-  //   _api.sendHttpRequest(ProfilePhotoRequest(
-  //     photo: newphoto,
+  Future<void> invokeModifyPhoto(File newImage, String jwt) async {
+    Uint8List imageBytes = await newImage.readAsBytes();
+    // _api.sendHttpRequest(ProfilePhotoRequest(
+    //   photo: base64Encode(imageBytes),
+    //   jwtToken: jwt,
+    // ));
+    await _prefs.setString(TargetSourceString.photo, base64Encode(imageBytes));
+
+    notifyListeners();
+  }
+
+  Future<void> invokeModifyName(String newname, String jwt) async {
+    _api.sendHttpRequest(ProfileNameRequest(
+      name: newname,
+      jwtToken: jwt,
+    ));
+    await _prefs.setString(TargetSourceString.name, newname);
+
+    notifyListeners();
+  }
+
+  Future<void> invokeModifyPassword(String newpwd, String jwt) async {
+    _api.sendHttpRequest(ProfilePwdRequest(
+      password: newpwd,
+      jwtToken: jwt,
+    ));
+    await _secure.storeSecret(TargetSourceString.pwd, newpwd);
+
+    notifyListeners();
+  }
+  // Future<void> invokeModifyGender(String newgender, String jwt) async {
+  //   final response = await _api.sendHttpRequest(ProfileGenderRequest(
+  //     name: newgender,
   //     jwtToken: jwt,
   //   ));
 
-  //   await _prefs.setString(TargetSourceString.photo, newphoto);
-  //   print(response.body);
+  //   _prefs.setString(TargetSourceString.gender, newgender);
   // }
 
-  // String getPhoto() {
-  //   _photo = _prefs.getString(TargetSourceString.photo);
-  //   if (_photo == null) {
-  //     return '';
-  //   } else {
-  //     return _photo;
-  //   }
-  // }
+  Future<void> invokeModifyBirthday(String newbirthday, String jwt) async {
+    // _api.sendHttpRequest(ProfileBirthdayRequest(
+    //   birthday: newbirthday,
+    //   jwtToken: jwt,
+    // ));
+
+    await _prefs.setString(TargetSourceString.birthday, newbirthday);
+    notifyListeners();
+  }
+
+  Future<void> invokeModifyDepartment(String newdepartment, String jwt) async {
+    _api.sendHttpRequest(ProfileDepartmentRequest(
+      department: newdepartment,
+      jwtToken: jwt,
+    ));
+
+    await _prefs.setString(TargetSourceString.department, newdepartment);
+    notifyListeners();
+  }
+
+  Future<void> invokeModifyCarNum(String newcarNum, String jwt) async {
+    _api.sendHttpRequest(ProfileCarNumRequest(
+      carNum: newcarNum,
+      jwtToken: jwt,
+    ));
+
+    await _prefs.setString(TargetSourceString.carNum, newcarNum);
+    notifyListeners();
+  }
 }

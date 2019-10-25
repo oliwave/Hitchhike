@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 
 import '../../resources/repository.dart';
@@ -73,7 +74,7 @@ class AuthProvider with ChangeNotifier {
     if (response['status'] == 'success') {
       await Future.wait([
         _secure.storeSecret(TargetSourceString.pwd, user['password']),
-        _prefs.setString(TargetSourceString.uid, user['id']),
+        _prefs.setString(TargetSourceString.uid, user['uid']),
         _prefs.setString(TargetSourceString.name, user['name']),
         _prefs.setString(TargetSourceString.gender, gender),
         _prefs.setString(TargetSourceString.birthday, user['birthday']),
@@ -85,7 +86,7 @@ class AuthProvider with ChangeNotifier {
 
   String jwt;
 
-  Future<void> invokeLogin(String id, String pwd) async {
+  Future<bool> invokeLogin(String id, String pwd) async {
     final response = await _api.sendHttpRequest(LoginRequest(
       userId: id,
       password: pwd,
@@ -94,17 +95,30 @@ class AuthProvider with ChangeNotifier {
 
     if (response['statusCode'] == 200) {
       _secure.storeSecret(TargetSourceString.jwt, response['jwt']);
+
+      jwt = response['jwt'];
+
+      _prefs.setString(
+          TargetSourceString.lastLoginTime, DateTime.now().toString());
+
+      return true;
+    } else {
+      Fluttertoast.showToast(
+        msg: '登入失敗',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.red[400].withOpacity(0.8),
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      return false;
     }
-
-    jwt = response['jwt'];
-
-    _prefs.setString(
-        TargetSourceString.lastLoginTime, DateTime.now().toString());
   }
 
   void invokeLogout() {
     print('jwt is $jwt');
-    jwt = null;
+    jwt = 'logout';
 
     _secure.storeSecret(TargetSourceString.jwt, 'logout');
     print('jwt is $jwt');
