@@ -220,29 +220,6 @@ class _VerifyPageState extends State<VerifyPage> {
                         textColor: Colors.white,
                         fontSize: 16.0,
                       );
-
-                      // // test
-                      // if (controller.text == '123123') {
-                      //   isVerifyCodePassed = true;
-                      //   Fluttertoast.showToast(
-                      //       msg: "驗證成功",
-                      //       toastLength: Toast.LENGTH_SHORT,
-                      //       gravity: ToastGravity.CENTER,
-                      //       timeInSecForIos: 1,
-                      //       backgroundColor: Colors.black,
-                      //       textColor: Colors.white,
-                      //       fontSize: 16.0);
-                      // } else {
-                      //   isVerifyCodePassed = false;
-                      //   Fluttertoast.showToast(
-                      //       msg: "驗證失敗，請重新取得驗證碼",
-                      //       toastLength: Toast.LENGTH_SHORT,
-                      //       gravity: ToastGravity.CENTER,
-                      //       timeInSecForIos: 1,
-                      //       backgroundColor: Colors.black,
-                      //       textColor: Colors.white,
-                      //       fontSize: 16.0);
-                      // }
                     });
                   },
                   child: Text("驗  證",

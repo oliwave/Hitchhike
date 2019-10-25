@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import '../provider/provider_collection.dart'
     show AuthProvider, ProfileProvider;
@@ -22,7 +22,6 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   final formKey = GlobalKey<FormState>(); // GlobalKey: to access form
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController genderController = TextEditingController();
   TextEditingController birthdayController = TextEditingController();
   TextEditingController departmentController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -34,32 +33,38 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   void initState() {
     super.initState();
     nameController.addListener(() => setState(() {}));
-    genderController.addListener(() => setState(() {}));
     birthdayController.addListener(() => setState(() {}));
     departmentController.addListener(() => setState(() {}));
     emailController.addListener(() => setState(() {}));
     carNumController.addListener(() => setState(() {}));
+    var permission =
+        PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+    print("permission status is " + permission.toString());
+    PermissionHandler().requestPermissions(<PermissionGroup>[
+      PermissionGroup.storage, // 在這裏添加需要的權限
+    ]);
   }
 
   String newname = '';
+  String birthday = '';
   String department = '';
   // String _photo = '';
   String carNum = '';
 
   File _image;
-  // Future getProfilePicture() async {
-  //   var image = await ImageHandler.getImage();
-  //   setState(() {
-  //     _image = image;
-  //   });
-  // }
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+  Future getCameraImage() async {
+    var image = await ImageHandler.getCameraImage();
     print(image);
     setState(() {
       _image = image;
-      String _photo = image.toString();
-      print(_photo);
+    });
+  }
+
+  Future getGalleryImage() async {
+    var image = await ImageHandler.getGalleryImage();
+    print(image);
+    setState(() {
+      _image = image;
     });
   }
 
@@ -85,14 +90,17 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                 if (newname.length > 0) {
                   await profileProvider.invokeModifyName(newname, jwtToken);
                 }
-                // profileProvider.invokeModifyPhoto(_photo, jwtToken);
+                profileProvider.invokeModifyPhoto(_image, jwtToken);
+                if (birthday.length > 0) {
+                  await profileProvider.invokeModifyBirthday(
+                      birthday, jwtToken);
+                }
                 if (department.length > 0) {
                   await profileProvider.invokeModifyDepartment(
                       department, jwtToken);
                 }
-                if (carNum.length > 0) {
-                  await profileProvider.invokeModifyCarNum(carNum, jwtToken);
-                }
+                await profileProvider.invokeModifyPhoto(_image, jwtToken);
+                await ImageHandler.testSaveImg(_image);
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   ProfilePage.routeName,
@@ -136,7 +144,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: getImage,
+                          onTap: getCameraImage,
                           child: Container(
                             width: 150.0,
                             height: 155.0,
@@ -177,23 +185,13 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     return Stack(
       children: <Widget>[
         Align(
-          // 預設圖片放在左上方
           alignment: Alignment.topLeft,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.teal[600],
-              ),
-            ),
+          child: Image.asset(
+            "assets/icons/profile/icon_head_default.png",
+            fit: BoxFit.contain,
+            height: 150.0,
+            width: 155.0,
           ),
-          // Image.asset(
-          //   'assets/icon_head_default.png',
-          //   fit: BoxFit.contain,
-          //   height: 150.0,
-          //   width: 155.0,
-          // ),
         ),
         Align(
           // 編輯圖示放在右下方
@@ -202,7 +200,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
             tooltip: 'Pick Image',
             backgroundColor: Colors.teal[600],
             child: Icon(Icons.add_a_photo),
-            onPressed: getImage,
+            onPressed: getCameraImage,
           ),
         ),
       ],
@@ -227,12 +225,6 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                   ),
                 ),
               ),
-              Image.asset(
-                'assets/icon_head_default_null.png',
-                fit: BoxFit.contain,
-                height: 150.0,
-                width: 155.0,
-              ),
             ],
           ),
         ),
@@ -243,7 +235,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
             tooltip: 'Pick Image',
             backgroundColor: Colors.teal[600],
             child: Icon(Icons.add_a_photo),
-            onPressed: getImage,
+            onPressed: getCameraImage,
           ),
         ),
       ],
@@ -274,42 +266,46 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   Widget genderField(Map userProfile) {
     return ListTile(
       title: Text('性別'),
-      subtitle: Theme(
-        data: Theme.of(context).copyWith(
-          canvasColor: Colors.white,
-        ),
-        child: DropdownButton<String>(
-          value: userProfile['gender'],
-          icon: Icon(Icons.arrow_drop_down),
-          iconSize: 24,
-          elevation: 16,
-          style: TextStyle(color: Colors.black),
-          underline: Container(
-            height: 1.0,
-            color: Colors.grey,
-          ),
-          onChanged: (String newValue) {
-            setState(() {
-              userProfile['gender'] = newValue;
-            });
-          },
-          items:
-              <String>['男', '女'].map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
+      subtitle: TextFormField(
+        enabled: false,
+        decoration: InputDecoration(
+          hintText: userProfile['gender'],
         ),
       ),
+      // Theme(
+      //   data: Theme.of(context).copyWith(
+      //     canvasColor: Colors.white,
+      //   ),
+      //   child: DropdownButton<String>(
+      //     value: userProfile['gender'],
+      //     icon: Icon(Icons.arrow_drop_down),
+      //     iconSize: 24,
+      //     elevation: 16,
+      //     style: TextStyle(color: Colors.black),
+      //     underline: Container(
+      //       height: 1.0,
+      //       color: Colors.grey,
+      //     ),
+      //     onChanged: (String newValue) {
+      //       setState(() {
+      //         userProfile['gender'] = newValue;
+      //       });
+      //     },
+      // items:
+      //     <String>['男', '女'].map<DropdownMenuItem<String>>((String value) {
+      //   return DropdownMenuItem<String>(
+      //     value: value,
+      //     child: Text(value),
+      //   );
+      // }).toList(),
+      //   ),
+      // ),
     );
   }
 
-  var _time;
   Widget birthdayField(Map userProfile) {
     var textFormField = TextFormField(
       controller: birthdayController,
-      enabled: false,
       keyboardType: TextInputType.datetime, // 鍵盤樣式
       decoration: InputDecoration(
         hintText: userProfile['birthday'],
@@ -324,7 +320,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         birthdayController.text = '$_date';
       },
       onSaved: (String value) {
-        userProfile['birthday'] = value;
+        birthday = value;
       },
     );
     return Column(
@@ -332,21 +328,21 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         ListTile(
           title: Text('生日'),
           subtitle: textFormField,
-          // trailing: Icon(Icons.arrow_drop_down),
-          // onTap: () {
-          //   DatePicker.showDatePicker(context,
-          //       theme: DatePickerTheme(
-          //         containerHeight: 210.0,
-          //       ),
-          //       showTitleActions: true,
-          //       minTime: DateTime(1870, 1, 1),
-          //       maxTime: DateTime.now(), onConfirm: (date) {
-          //     print('confirm $date');
-          //     _date = '${date.year}-${date.month}-${date.day}';
-          //     birthdayController.text = '$_date';
-          //     setState(() {});
-          //   }, currentTime: DateTime.now(), locale: LocaleType.en);
-          // },
+          trailing: Icon(Icons.arrow_drop_down),
+          onTap: () {
+            DatePicker.showDatePicker(context,
+                theme: DatePickerTheme(
+                  containerHeight: 210.0,
+                ),
+                showTitleActions: true,
+                minTime: DateTime(1870, 1, 1),
+                maxTime: DateTime.now(), onConfirm: (date) {
+              print('confirm $date');
+              _date = '${date.year}-${date.month}-${date.day}';
+              birthdayController.text = '$_date';
+              setState(() {});
+            }, currentTime: DateTime.now(), locale: LocaleType.en);
+          },
         ),
       ],
     );
