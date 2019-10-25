@@ -8,7 +8,7 @@ class UserModel {
         department = json['department'] ?? '',
         birthday = json['birthday'] ?? '',
         star = json['star'] ?? '',
-        scor = json['scor'] ?? 0,
+        score = json['score'] ?? 0,
         driverRank = json['driverRank'] ?? 0,
         passengerRank = json['passengerRank'] ?? 0,
         carNumber = json['carNumber'] ?? '',
@@ -26,7 +26,7 @@ class UserModel {
   String department;
   String birthday;
   String star;
-  int scor;
+  int score;
   int driverRank;
   int passengerRank;
   String carNumber;
@@ -43,7 +43,7 @@ class UserModel {
     data['department'] = this.department;
     data['birthday'] = this.birthday;
     data['star'] = this.star;
-    data['scor'] = this.scor;
+    data['score'] = this.score;
     data['driverRank'] = this.driverRank;
     data['passengerRank'] = this.passengerRank;
     data['carNumber'] = this.carNumber;
