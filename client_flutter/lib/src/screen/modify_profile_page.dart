@@ -1,6 +1,7 @@
 // get jwt
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,6 +10,7 @@ import '../provider/provider_collection.dart'
     show AuthProvider, ProfileProvider;
 import '../util/image_handler.dart';
 import 'page_collection.dart';
+import 'modify_password_page .dart';
 import 'modify_carNum_page.dart';
 
 class ModifyProfilePage extends StatefulWidget {
@@ -45,10 +47,10 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     ]);
   }
 
+  Uint8List photo;
   String newname = '';
   String birthday = '';
   String department = '';
-  // String _photo = '';
   String carNum = '';
 
   File _image;
@@ -72,6 +74,8 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   Widget build(BuildContext context) {
     final profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
+    photo = profileProvider.getPhoto();
+
     final authProivder = Provider.of<AuthProvider>(context, listen: false);
     final jwtToken = authProivder.jwt;
 
@@ -99,8 +103,10 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                   await profileProvider.invokeModifyDepartment(
                       department, jwtToken);
                 }
-                await profileProvider.invokeModifyPhoto(_image, jwtToken);
-                await ImageHandler.testSaveImg(_image);
+                if (_image != null) {
+                  await profileProvider.invokeModifyPhoto(_image, jwtToken);
+                  await ImageHandler.testSaveImg(_image);
+                }
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   ProfilePage.routeName,
@@ -164,6 +170,8 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                           departmentField(userProfile),
                           emailField(userProfile),
                           carNumField(userProfile),
+                          Divider(height:10.0,indent:0.0,color: Colors.red,),
+                          editPwdField(),
                         ],
                       ),
                       data: Theme.of(context).copyWith(
@@ -186,11 +194,20 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
       children: <Widget>[
         Align(
           alignment: Alignment.topLeft,
-          child: Image.asset(
-            "assets/icons/profile/icon_head_default.png",
-            fit: BoxFit.contain,
-            height: 150.0,
-            width: 155.0,
+          child: ClipOval(
+            child: photo == null
+                ? Image.asset(
+                    "assets/icons/profile/icon_head_default.png",
+                    fit: BoxFit.contain,
+                    height: 150.0,
+                    width: 155.0,
+                  )
+                : Image.memory(
+                    photo,
+                    fit: BoxFit.cover,
+                    height: 150.0,
+                    width: 155.0,
+                  ),
           ),
         ),
         Align(
@@ -446,6 +463,34 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           },
         ),
       ],
+    );
+  }
+  Widget editPwdField() {
+    return ListTile(
+      title: Text('修改密碼'),
+      subtitle: TextFormField(
+        controller: carNumController,
+        enabled: false,
+        decoration: InputDecoration(
+          suffixIcon: GestureDetector(
+            onTap: () {
+              carNumController.clear();
+            },
+            child: Icon(carNumController.text.length > 0 ? Icons.clear : null),
+          ),
+        ),
+        onSaved: (String value) {
+          carNum = value;
+        },
+      ),
+      trailing: Icon(Icons.keyboard_arrow_right),
+      onTap: () {
+        Navigator.push<String>(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => ModifyPasswordPage(),
+            ));
+      },
     );
   }
 }

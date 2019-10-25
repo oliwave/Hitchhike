@@ -31,7 +31,6 @@ class ProfileProvider with ChangeNotifier {
 
   Uint8List getPhoto() {
     _photo = _prefs.getString(TargetSourceString.photo);
-    print('photo:' + _photo);
     if (_photo == null) {
       return null;
     } else {
@@ -122,8 +121,6 @@ class ProfileProvider with ChangeNotifier {
     //   photo: base64Encode(imageBytes),
     //   jwtToken: jwt,
     // ));
-    print('imageBytes: $imageBytes');
-    print('base64EncodeimageBytes: ' + base64Encode(imageBytes));
     await _prefs.setString(TargetSourceString.photo, base64Encode(imageBytes));
 
     notifyListeners();
@@ -186,22 +183,4 @@ class ProfileProvider with ChangeNotifier {
     await _prefs.setString(TargetSourceString.carNum, newcarNum);
     notifyListeners();
   }
-
-  // Future<void> invokeModifyPhoto(String newphoto, String jwt) async {
-  //   _api.sendHttpRequest(ProfilePhotoRequest(
-  //     photo: newphoto,
-  //     jwtToken: jwt,
-  //   ));
-
-  //   await _prefs.setString(TargetSourceString.photo, newphoto);
-  // }
-
-  // String getPhoto() {
-  //   _photo = _prefs.getString(TargetSourceString.photo);
-  //   if (_photo == null) {
-  //     return '';
-  //   } else {
-  //     return _photo;
-  //   }
-  // }
 }
