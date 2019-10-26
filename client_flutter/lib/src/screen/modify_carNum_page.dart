@@ -50,7 +50,7 @@ class _ModifyCarNumPageState extends State<ModifyCarNumPage> {
               }
             },
             child: Text(
-              "完成",
+              "儲存",
               style: TextStyle(fontSize: 16.0),
             ),
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),

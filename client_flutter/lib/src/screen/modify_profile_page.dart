@@ -4,12 +4,13 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
 import '../provider/provider_collection.dart'
     show AuthProvider, ProfileProvider;
-import '../util/image_handler.dart';
 import 'page_collection.dart';
+import '../util/image_handler.dart';
 import 'modify_carNum_page.dart';
 
 class ModifyProfilePage extends StatefulWidget {
@@ -54,7 +55,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
 
   File _image;
   Future getCameraImage() async {
-    var image = await ImageHandler.getCameraImage();
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
     print(image);
     setState(() {
       _image = image;
@@ -62,11 +63,40 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   }
 
   Future getGalleryImage() async {
-    var image = await ImageHandler.getGalleryImage();
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     print(image);
     setState(() {
       _image = image;
     });
+  }
+
+  void getImage() {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        builder: (BuildContext context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.photo_camera),
+                title: Text("相機"),
+                onTap: () async {
+                  getCameraImage();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text("從相簿選取"),
+                onTap: () async {
+                  getGalleryImage();
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -149,7 +179,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: getCameraImage,
+                          onTap: getImage,
                           child: Container(
                             width: 150.0,
                             height: 155.0,
@@ -212,9 +242,9 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
             tooltip: 'Pick Image',
-            backgroundColor: Colors.teal[600],
-            child: Icon(Icons.add_a_photo),
-            onPressed: getCameraImage,
+            backgroundColor: Colors.teal,
+            child: Icon(Icons.edit),
+            onPressed: getImage,
           ),
         ),
       ],
@@ -247,9 +277,9 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
             tooltip: 'Pick Image',
-            backgroundColor: Colors.teal[600],
-            child: Icon(Icons.add_a_photo),
-            onPressed: getCameraImage,
+            backgroundColor: Colors.teal,
+            child: Icon(Icons.edit),
+            onPressed: getImage,
           ),
         ),
       ],
@@ -262,7 +292,8 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
       subtitle: TextFormField(
         controller: nameController,
         decoration: InputDecoration(
-          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[300])),
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey[300])),
           hintText: userProfile['name'],
           suffixIcon: GestureDetector(
             onTap: () {
@@ -364,7 +395,8 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
       subtitle: TextFormField(
         controller: departmentController,
         decoration: InputDecoration(
-          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[300])),
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey[300])),
           hintText: userProfile['department'],
           suffixIcon: GestureDetector(
             onTap: () {
