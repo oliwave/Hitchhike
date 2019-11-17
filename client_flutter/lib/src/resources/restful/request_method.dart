@@ -279,6 +279,30 @@ class ProfileCarNumRequest extends BasePost {
   }
 }
 
+class ProfileBirthdayRequest extends BasePost {
+  /// Create an intance of a concrete http request behavior that
+  /// inherits [RequestMethod].
+  ProfileBirthdayRequest({
+    @required String birthday,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            'birthday': birthday,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/profileBirthday',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
+    return response;
+  }
+}
+
 class PassengerRouteRequest extends BasePost {
   /// Create an intance of a concrete http request behavior that
   /// inherits [RequestMethod].
@@ -386,6 +410,89 @@ class FcmTokenRequest extends BasePost {
   Future<Response> request() {
     final response = _client.post(
       '$_rootUrl/fcm',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+
+class GetUserInfoRequest extends BasePost {
+  GetUserInfoRequest({
+    @required String jwtToken,
+  }) : super(
+          body: {},
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/userInfo',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+
+class GetUserDeviceRequest extends BasePost {
+  GetUserDeviceRequest({
+    @required String userID,
+  }) : super(
+          body: {
+            'uid': userID,
+          },
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/getDevice',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+class SetUserDeviceRequest extends BasePost {
+  SetUserDeviceRequest({
+    @required String currentDevice,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            'device': currentDevice,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/setDevice',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+class GetUserStateRequest extends BasePost {
+  GetUserStateRequest({
+    @required String userID,
+  }) : super(
+          body: {
+            'uid': userID,
+          },
+        );
+
+  @override
+  Future<Response> request() {
+    final response = _client.post(
+      '$_rootUrl/userState',
       body: json.encode(body),
       headers: getHeaders(),
     );

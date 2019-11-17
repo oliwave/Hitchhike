@@ -217,8 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: Text('修改密碼'),
       subtitle: TextFormField(
         enabled: false,
-        decoration: InputDecoration(
-        ),
+        decoration: InputDecoration(),
       ),
       trailing: Icon(Icons.keyboard_arrow_right),
       onTap: () {

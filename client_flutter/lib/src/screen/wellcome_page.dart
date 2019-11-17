@@ -5,11 +5,10 @@ import './page_collection.dart' show Homepage, FavoriteRoutesPage, LoginPage;
 import '../util/util_collection.dart' show SizeConfig;
 
 import '../../init_setting.dart';
-import '../provider/provider_collection.dart' show AuthProvider;
+import '../provider/provider_collection.dart' show AuthProvider, ProfileProvider;
 
 class WellcomePage extends StatelessWidget {
   static const String routeName = '/wellcome_page';
-
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
@@ -19,14 +18,22 @@ class WellcomePage extends StatelessWidget {
     print('Device width : ${MediaQuery.of(context).size.width}');
     print('Device heigth : ${MediaQuery.of(context).size.height}');
 
-    init.runInitSetting(context).then((_) {
+    init.runInitSetting(context).then((_) async {
       print('Finished initial setup!\n');
-      final authProivder = Provider.of<AuthProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final profileProivder = Provider.of<ProfileProvider>(context, listen: false);
+      String uid = profileProivder.getUserId();
       String targetRoute;
-      if (authProivder.jwt == 'logout') {
+      String currentDevice = await authProvider.getDeviceInfo();
+      if (authProvider.jwt == 'logout') {
         targetRoute = LoginPage.routeName;
       } else {
-        targetRoute = Homepage.routeName;
+        if(await authProvider.identifyDevice(uid, currentDevice) == 'true'){
+          targetRoute = Homepage.routeName;
+        }else{
+          targetRoute = LoginPage.routeName;
+          // 清除裝置所有資訊
+        }
       }
 
       Navigator.pushNamedAndRemoveUntil(

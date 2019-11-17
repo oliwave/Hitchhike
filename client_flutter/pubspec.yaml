@@ -75,6 +75,9 @@ dependencies:
   # 儲存圖片
   image_gallery_saver: ^1.2.2
 
+  #Get current device information from within the Flutter application.
+  device_info: ^0.4.1+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

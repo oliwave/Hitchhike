@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +13,7 @@ import '../provider/provider_collection.dart'
 import 'page_collection.dart';
 import '../util/image_handler.dart';
 import 'modify_carNum_page.dart';
+import '../widgets/profile_page/store_cancel_view.dart';
 
 class ModifyProfilePage extends StatefulWidget {
   static const String routeName = '/modifyprofile_page';
@@ -25,9 +27,6 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
 
   TextEditingController nameController = TextEditingController();
   TextEditingController birthdayController = TextEditingController();
-  TextEditingController departmentController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController carNumController = TextEditingController();
 
   String _date = '';
 
@@ -36,67 +35,112 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     super.initState();
     nameController.addListener(() => setState(() {}));
     birthdayController.addListener(() => setState(() {}));
-    departmentController.addListener(() => setState(() {}));
-    emailController.addListener(() => setState(() {}));
-    carNumController.addListener(() => setState(() {}));
     var permission =
         PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
     print("permission status is " + permission.toString());
     PermissionHandler().requestPermissions(<PermissionGroup>[
-      PermissionGroup.storage, // 在這裏添加需要的權限
+      PermissionGroup.storage, // 在這裡添加需要的權限
     ]);
   }
 
   Uint8List photo;
   String newname = '';
   String birthday = '';
-  String department = '';
+  String department;
+  String newDepart = '';
   String carNum = '';
 
-  File _image;
-  Future getCameraImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    print(image);
+  File image; // ImagePicker取得的相片
+  File _image; // 要設成大頭照的相片
+  getCameraImage() async {
+    image = await ImagePicker.pickImage(source: ImageSource.camera);
     setState(() {
       _image = image;
     });
   }
 
-  Future getGalleryImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    print(image);
+  getGalleryImage() async {
+    image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
     });
   }
 
-  void getImage() {
-    showModalBottomSheet(
+  void removePhoto() {
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final jwtToken = authProvider.jwt;
+    profileProvider.invokeModifyPhoto(null, jwtToken);
+  }
+
+  void _getImage() {
+    setState(() {
+      showGetImageActionSheet(
         context: context,
-        backgroundColor: Colors.white,
-        builder: (BuildContext context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.photo_camera),
-                title: Text("相機"),
-                onTap: () async {
-                  getCameraImage();
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text("從相簿選取"),
-                onTap: () async {
-                  getGalleryImage();
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        });
+        child: CupertinoActionSheet(
+          title: const Text(
+            '更換大頭貼照',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16.0,
+            ),
+          ),
+          actions: <Widget>[
+            CupertinoActionSheetAction(
+              child: const Text('相機'),
+              onPressed: () {
+                getCameraImage();
+                Navigator.pop(context);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: const Text('從相簿中選取'),
+              onPressed: () {
+                getGalleryImage();
+                Navigator.pop(context);
+              },
+            ),
+            CupertinoActionSheetAction(
+              isDestructiveAction: true,
+              child: const Text('移除大頭貼照'),
+              onPressed: () {
+                setState(() {
+                  photo = null;
+                  removePhoto();
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            child: const Text('取消'),
+            isDefaultAction: true, // 粗體
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      );
+    });
+  }
+
+  void showGetImageActionSheet({BuildContext context, Widget child}) {
+    showCupertinoModalPopup<String>(
+      context: context,
+      builder: (BuildContext context) => child,
+    ).then((String value) {
+      if (value != null) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _onCancelButtonClick() {
+    showDemoDialog(
+      context: context,
+      child: const CupertinoDessertDialog(),
+    );
   }
 
   @override
@@ -105,8 +149,8 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         Provider.of<ProfileProvider>(context, listen: false);
     photo = profileProvider.getPhoto();
 
-    final authProivder = Provider.of<AuthProvider>(context, listen: false);
-    final jwtToken = authProivder.jwt;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final jwtToken = authProvider.jwt;
 
     Map userProfile = Map.of(ModalRoute.of(context).settings.arguments);
     return Scaffold(
@@ -120,17 +164,18 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
             onPressed: () async {
               if (formKey.currentState.validate()) {
                 formKey.currentState.save();
-                if (newname.length > 0) {
+                if (newname.length > 0 && newname != userProfile['name']) {
                   await profileProvider.invokeModifyName(newname, jwtToken);
                 }
-                profileProvider.invokeModifyPhoto(_image, jwtToken);
-                if (birthday.length > 0) {
+                if (birthday.length > 0 &&
+                    birthday != userProfile['birthday']) {
                   await profileProvider.invokeModifyBirthday(
                       birthday, jwtToken);
                 }
-                if (department.length > 0) {
+                if (newDepart.length > 0 &&
+                    newDepart != userProfile['department']) {
                   await profileProvider.invokeModifyDepartment(
-                      department, jwtToken);
+                      newDepart, jwtToken);
                 }
                 if (_image != null) {
                   await profileProvider.invokeModifyPhoto(_image, jwtToken);
@@ -153,10 +198,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         leading: IconButton(
           icon: Icon(Icons.clear),
           onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => alert(),
-            );
+            _onCancelButtonClick();
           },
         ),
       ),
@@ -179,7 +221,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: getImage,
+                          onTap: _getImage,
                           child: Container(
                             width: 150.0,
                             height: 155.0,
@@ -190,20 +232,15 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                         ),
                       ],
                     ),
-                    Theme(
-                      child: Column(
-                        children: <Widget>[
-                          nameField(userProfile),
-                          genderField(userProfile),
-                          birthdayField(userProfile),
-                          departmentField(userProfile),
-                          emailField(userProfile),
-                          carNumField(userProfile),
-                        ],
-                      ),
-                      data: Theme.of(context).copyWith(
-                        primaryColor: Colors.teal[600],
-                      ),
+                    Column(
+                      children: <Widget>[
+                        nameField(userProfile),
+                        genderField(userProfile),
+                        birthdayField(userProfile),
+                        departmentField(userProfile),
+                        emailField(userProfile),
+                        carNumField(userProfile),
+                      ],
                     ),
                   ],
                 ),
@@ -244,7 +281,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
             tooltip: 'Pick Image',
             backgroundColor: Colors.teal,
             child: Icon(Icons.edit),
-            onPressed: getImage,
+            onPressed: _getImage,
           ),
         ),
       ],
@@ -279,7 +316,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
             tooltip: 'Pick Image',
             backgroundColor: Colors.teal,
             child: Icon(Icons.edit),
-            onPressed: getImage,
+            onPressed: _getImage,
           ),
         ),
       ],
@@ -293,7 +330,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         controller: nameController,
         decoration: InputDecoration(
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey[300])),
+              borderSide: BorderSide(color: Colors.grey[400])),
           hintText: userProfile['name'],
           suffixIcon: GestureDetector(
             onTap: () {
@@ -318,34 +355,6 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           hintText: userProfile['gender'],
         ),
       ),
-      // Theme(
-      //   data: Theme.of(context).copyWith(
-      //     canvasColor: Colors.white,
-      //   ),
-      //   child: DropdownButton<String>(
-      //     value: userProfile['gender'],
-      //     icon: Icon(Icons.arrow_drop_down),
-      //     iconSize: 24,
-      //     elevation: 16,
-      //     style: TextStyle(color: Colors.black),
-      //     underline: Container(
-      //       height: 1.0,
-      //       color: Colors.grey,
-      //     ),
-      //     onChanged: (String newValue) {
-      //       setState(() {
-      //         userProfile['gender'] = newValue;
-      //       });
-      //     },
-      // items:
-      //     <String>['男', '女'].map<DropdownMenuItem<String>>((String value) {
-      //   return DropdownMenuItem<String>(
-      //     value: value,
-      //     child: Text(value),
-      //   );
-      // }).toList(),
-      //   ),
-      // ),
     );
   }
 
@@ -353,9 +362,9 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     var textFormField = TextFormField(
       controller: birthdayController,
       enabled: false,
-      keyboardType: TextInputType.datetime, // 鍵盤樣式
       decoration: InputDecoration(
         hintText: userProfile['birthday'],
+        suffixIcon: Icon(Icons.arrow_drop_down),
       ),
       onEditingComplete: () {
         birthdayController.text = '$_date';
@@ -369,7 +378,6 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
         ListTile(
           title: Text('生日'),
           subtitle: textFormField,
-          trailing: Icon(Icons.arrow_drop_down),
           onTap: () {
             DatePicker.showDatePicker(context,
                 theme: DatePickerTheme(
@@ -392,23 +400,54 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
   Widget departmentField(Map userProfile) {
     return ListTile(
       title: Text('學系'),
-      subtitle: TextFormField(
-        controller: departmentController,
-        decoration: InputDecoration(
-          enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey[300])),
-          hintText: userProfile['department'],
-          suffixIcon: GestureDetector(
-            onTap: () {
-              departmentController.clear();
-            },
-            child:
-                Icon(departmentController.text.length > 0 ? Icons.clear : null),
-          ),
+      subtitle: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.white,
         ),
-        onSaved: (String value) {
-          department = value;
-        },
+        child: DropdownButton<String>(
+          hint: Text(userProfile['department']),
+          value: department,
+          icon: Icon(Icons.arrow_drop_down),
+          iconEnabledColor: Colors.grey,
+          style: TextStyle(color: Colors.black),
+          underline: Container(
+            height: 1.0,
+            color: Colors.grey[400],
+          ),
+          onChanged: (String newValue) {
+            setState(() {
+              department = newValue;
+              newDepart = newValue;
+            });
+          },
+          items: <String>[
+            '中文系',
+            '外文系',
+            '社工系',
+            '公行系',
+            '歷史系',
+            '東南亞系',
+            '原專班',
+            '國企系',
+            '經濟系',
+            '資管系',
+            '財金系',
+            '觀餐系',
+            '土木系',
+            '資工系',
+            '電機系',
+            '應化系',
+            '應光系',
+            '國比系',
+            '教政系',
+            '諮人系',
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -417,16 +456,11 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     return ListTile(
       title: Text('登記車輛'),
       subtitle: TextFormField(
-        controller: carNumController,
         enabled: false,
         decoration: InputDecoration(
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey[400])),
           hintText: userProfile['carNum'],
-          suffixIcon: GestureDetector(
-            onTap: () {
-              carNumController.clear();
-            },
-            child: Icon(carNumController.text.length > 0 ? Icons.clear : null),
-          ),
         ),
         onSaved: (String value) {
           carNum = value;
@@ -448,47 +482,12 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
     return ListTile(
       title: Text('E-mail'),
       subtitle: TextFormField(
-        controller: emailController,
         enabled: false,
         keyboardType: TextInputType.emailAddress, // 鍵盤樣式
         decoration: InputDecoration(
           hintText: userProfile['email'],
-          suffixIcon: GestureDetector(
-            onTap: () {
-              emailController.clear();
-            },
-            child: Icon(emailController.text.length > 0 ? Icons.clear : null),
-          ),
         ),
-        onSaved: (String value) {
-          userProfile['email'] = value;
-        },
       ),
-    );
-  }
-
-  Widget alert() {
-    return AlertDialog(
-      title: Text("提醒"),
-      content: Text("内容尚未儲存，確定要返回？"),
-      actions: <Widget>[
-        FlatButton(
-          child: Text("取消"),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        FlatButton(
-          child: Text("確定"),
-          onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              ProfilePage.routeName,
-              (Route<dynamic> route) => false,
-            );
-          },
-        ),
-      ],
     );
   }
 }

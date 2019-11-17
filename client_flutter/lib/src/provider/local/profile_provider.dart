@@ -31,10 +31,9 @@ class ProfileProvider with ChangeNotifier {
 
   Uint8List getPhoto() {
     _photo = _prefs.getString(TargetSourceString.photo);
-    if (_photo == null) {
+    if (_photo == null || _photo == ''|| _photo == 'null') {
       return null;
     } else {
-      // Uint8List bytes = Base64Decoder().convert(_photo);
       Uint8List bytes = base64.decode(_photo);
       return bytes;
     }
@@ -107,7 +106,6 @@ class ProfileProvider with ChangeNotifier {
 
   String getCarNum() {
     _carNum = _prefs.getString(TargetSourceString.carNum);
-
     if (_carNum == null) {
       return '';
     } else {
@@ -116,12 +114,21 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> invokeModifyPhoto(File newImage, String jwt) async {
-    Uint8List imageBytes = await newImage.readAsBytes();
-    // _api.sendHttpRequest(ProfilePhotoRequest(
-    //   photo: base64Encode(imageBytes),
-    //   jwtToken: jwt,
-    // ));
-    await _prefs.setString(TargetSourceString.photo, base64Encode(imageBytes));
+    if (newImage == null) {
+      await _prefs.setString(TargetSourceString.photo, null);
+      _api.sendHttpRequest(ProfilePhotoRequest(
+        photo: null,
+        jwtToken: jwt,
+      ));
+    } else {
+      Uint8List imageBytes = await newImage.readAsBytes();
+      _api.sendHttpRequest(ProfilePhotoRequest(
+        photo: base64Encode(imageBytes),
+        jwtToken: jwt,
+      ));
+      await _prefs.setString(
+          TargetSourceString.photo, base64Encode(imageBytes));
+    }
 
     notifyListeners();
   }
@@ -145,6 +152,7 @@ class ProfileProvider with ChangeNotifier {
 
     notifyListeners();
   }
+  
   // Future<void> invokeModifyGender(String newgender, String jwt) async {
   //   final response = await _api.sendHttpRequest(ProfileGenderRequest(
   //     name: newgender,
@@ -155,10 +163,10 @@ class ProfileProvider with ChangeNotifier {
   // }
 
   Future<void> invokeModifyBirthday(String newbirthday, String jwt) async {
-    // _api.sendHttpRequest(ProfileBirthdayRequest(
-    //   birthday: newbirthday,
-    //   jwtToken: jwt,
-    // ));
+    _api.sendHttpRequest(ProfileBirthdayRequest(
+      birthday: newbirthday,
+      jwtToken: jwt,
+    ));
 
     await _prefs.setString(TargetSourceString.birthday, newbirthday);
     notifyListeners();
