@@ -91,7 +91,7 @@ router.post('/driver_route', auth.auth, jsonParser, async function (req, res) {
                     "type": "orderConfirmation",
                     "totalTime": passengerList[0].time,
                     "passengerStartName": passengerList[0].originName,
-                    "passengerEndName": passengerList[0].destinationName
+                    "passengerEndName": passengerList[0].destinationName,
                 },
                 "token": registrationToken
             };
@@ -115,7 +115,7 @@ router.post('/orderConfirmation', auth.auth, jsonParser, function (req, res) {
     }
     if (status == "success") {
         var passengerUid = pairMapDone[uid].passenger;
-
+        
         // driver
         const sql = `SELECT * from user where uid=${uid}`
         db.query(sql, function (err, result) {
@@ -126,7 +126,7 @@ router.post('/orderConfirmation', auth.auth, jsonParser, function (req, res) {
             else {
                 registrationDriverToken = result[0].token;
                 carNum = result[0].car_num;
-
+                
                 const sql = `SELECT * from user where uid= ${passengerUid}`
                 db.query(sql, function (err, result) {
                     if (err) {
@@ -135,10 +135,12 @@ router.post('/orderConfirmation', auth.auth, jsonParser, function (req, res) {
                     }
                     else {
                         registrationPassengerToken = result[0].token;
-
+                        
                         var message = {
                             "data": {
                                 "type": "paired",
+                                // TODO : 需要後端傳回該配對的人是否為朋友
+                                "isFriend": false,
                                 "roomId": "testRoom",
                                 "carNum": carNum,
                                 "carDescripition": "notInDB",
