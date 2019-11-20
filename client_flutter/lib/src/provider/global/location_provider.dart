@@ -82,17 +82,23 @@ class LocationProvider extends ChangeNotifier {
   /// Initialize [Marker] and [Cicrle] to indicate the current location of user.
   Future<void> _initializeMapGadget() async {
     if (_roleProvider.isMatched) {
-      // Read data from json file.
-      final pairedData = await _fs.readFile(
-        fileName: FileName.pairedData,
-      );
+      // The current time is before the endTimeOfTrip
+      if (_roleProvider.endTimeOfTrip.isBefore(DateTime.now())) {
+        // Read data from json file.
+        final pairedData = await _fs.readFile(
+          fileName: FileName.pairedData,
+        );
 
-      _pairedDataManager.initPairingRoute(
-        pairedData,
-        // Specify initial position for driver marker.
-        _roleProvider.driverLat,
-        _roleProvider.driverLng,
-      );
+        _pairedDataManager.initPairingRoute(
+          pairedData,
+          // Specify initial position for driver marker.
+          _roleProvider.driverLat,
+          _roleProvider.driverLng,
+        );
+      } else {
+        // The current time is after the endTimeOfTrip
+        _roleProvider.isMatched = false;
+      }
     }
 
     mapComponent.createMarker(
