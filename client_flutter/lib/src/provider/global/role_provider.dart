@@ -28,6 +28,7 @@ class RoleProvider with ChangeNotifier {
   double driverLng;
   List<String> routeLatitude;
   List<String> routeLongitude;
+  DateTime endTimeOfTrip;
 
   bool _isFirst = true;
 
@@ -43,6 +44,8 @@ class RoleProvider with ChangeNotifier {
     if (_isFirst) {
       _prefs = Repository.getSimpleStorage;
       isMatched = _prefs.getBool(TargetSourceString.isMatched);
+      endTimeOfTrip = DateTime.fromMillisecondsSinceEpoch(
+          _prefs.getInt(TargetSourceString.endTimeOfTrip));
       hasRevokedDriverPosition =
           _prefs.getBool(TargetSourceString.hasRevokedDriverPosition);
       role = _prefs.getString(TargetSourceString.role);
@@ -67,6 +70,8 @@ class RoleProvider with ChangeNotifier {
       _prefs.setDouble(TargetSourceString.driverLng, driverLng);
       _prefs.setStringList(TargetSourceString.routeLatitude, routeLatitude);
       _prefs.setStringList(TargetSourceString.routeLongitude, routeLongitude);
+      _prefs.setInt(TargetSourceString.endTimeOfTrip,
+          endTimeOfTrip.millisecondsSinceEpoch);
     } else {
       _prefs.setString(TargetSourceString.role, null);
       _prefs.setBool(TargetSourceString.isMatched, false);
@@ -75,6 +80,7 @@ class RoleProvider with ChangeNotifier {
       _prefs.setDouble(TargetSourceString.driverLng, null);
       _prefs.setStringList(TargetSourceString.routeLatitude, null);
       _prefs.setStringList(TargetSourceString.routeLongitude, null);
+      _prefs.setInt(TargetSourceString.endTimeOfTrip, -1);
     }
     super.dispose();
   }

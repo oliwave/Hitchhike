@@ -44,7 +44,24 @@ class SimpleStorage {
     if (!_boolProperTarget(target)) {
       return false;
     }
+
     return await _prefs.setBool(target, value);
+  }
+
+
+
+  int getInt(String target) {
+    int value = _prefs.getInt(target);
+    
+
+    return value;
+  }
+
+  Future<bool> setInt(String target, int value) async {
+    if (!_boolProperTarget(target)) {
+      return false;
+    }
+    return await _prefs.setInt(target, value);
   }
 
   double getDouble(String target) {

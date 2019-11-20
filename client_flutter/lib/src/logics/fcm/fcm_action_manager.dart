@@ -23,7 +23,8 @@ class FcmActionManager extends NotifyManager {
   final _fs = Repository.getJsonFileHandler;
 
   /// It's a primary method of consuming fcm event.
-  void messageConsumer(Map<String, dynamic> message, BuildContext context) {
+  Future<void> messageConsumer(
+      Map<String, dynamic> message, BuildContext context) async {
     _context = context;
 
     /**
@@ -32,12 +33,12 @@ class FcmActionManager extends NotifyManager {
     // Data Message
     if (message.containsKey('data')) {
       final String type = message['data']['type'];
-      final duration =
-          Duration(seconds: int.parse(message['data']['duration']));
+      final roundTripTime =
+          Duration(seconds: int.parse(message['data']['totalTime']));
 
       /// TODO : Filter the following messages when user is in paired mode.
       if (type == FcmEventType.orderConfirmation) {
-        customizedAlertDialog(
+        final result = await customizedAlertDialog(
           context: context,
           barrierDismissible: false,
           title: const Text('乘客資訊'),
@@ -51,7 +52,7 @@ class FcmActionManager extends NotifyManager {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        message['data']['startName'],
+                        message['data']['passengerStartName'],
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Container(
@@ -61,13 +62,13 @@ class FcmActionManager extends NotifyManager {
                         width: 8,
                       ),
                       Text(
-                        message['data']['endName'],
+                        message['data']['passengerEndName'],
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 ),
-                Text('離乘客起點尚需 ${duration.inMinutes} 分鐘'),
+                Text('離乘客起點尚需 ${roundTripTime.inMinutes} 分鐘'),
               ],
             ),
           ),
@@ -76,13 +77,20 @@ class FcmActionManager extends NotifyManager {
           confirmCallback: _confirmCallback('success'),
           cancelCallback: _confirmCallback('fail'),
         );
+
+        // Store the end time of the trip
+        if (result) {
+          _roleProvider.endTimeOfTrip = DateTime.now().add(
+            Duration(
+              minutes: roundTripTime.inMinutes + 1,
+            ),
+          );
+        }
+
         return;
       } else if (type == FcmEventType.paired) {
         // Assign fcm pairedData to field.
-        final Map<String, dynamic> pairedData = message['data'];
-
-        ///TODO : the fcm api should reconsider.
-        // _friendListProvider.addFriend(FriendItem());
+        Map<String, dynamic> pairedData = message['data'];
 
         customizedAlertDialog(
           context: context,
@@ -93,9 +101,18 @@ class FcmActionManager extends NotifyManager {
           barrierDismissible: true,
         );
 
+        ///TODO : the fcm api should reconsider.
+        if (!message['data']['isFriend']) {
+          _addNewFriend(message);
+        }
+
+        // Remove redundent field.
+        pairedData = _removeRedundantField(message);
+
         // Assign the reference of pairedData to pairedDataManager in
         // LocationProvider.
-        _locationProvider.pairedDataManager.initPairingRoute(pairedData);
+        _locationProvider.pairedDataManager
+            .initPairingRoute(pairedData['data']);
 
         // Write pairedData to json file without waiting it.
         _fs.writeToFile(
@@ -120,15 +137,31 @@ class FcmActionManager extends NotifyManager {
     );
   }
 
+  void _addNewFriend(Map<String, dynamic> message) {
+    _friendListProvider.addFriend(FriendItem(
+      avatar: message['data']['avatar'],
+      name: message['data']['name'],
+      room: message['data']['roomId'],
+    ));
+  }
+
+  Map<String, dynamic> _removeRedundantField(Map<String, dynamic> message) {
+    return message.remove(message['data']['avatar'])
+      ..remove(message['data']['name'])
+      ..remove(message['data']['roomId'])
+      ..remove(message['data']['isFriend'])
+      ..remove(message['data']['token']);
+  }
+
   /// [_confirmCallback] method returns a callback method that conducts
   /// the request of [OrderConfirmationRequest] with a given [status].
   ///
   /// * [status] is String type variable that determines if a paired
   /// order is valid.
   VoidCallback _confirmCallback(String status) => () async {
-        Navigator.pop(_context);
-
         _roleProvider.isMatched = (status == 'success');
+
+        Navigator.pop(_context, _roleProvider.isMatched);
 
         final response = await _api.sendHttpRequest(
           OrderConfirmationRequest(
