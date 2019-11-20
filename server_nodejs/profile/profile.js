@@ -93,4 +93,21 @@ router.post('/profileCarNum', auth.auth, jsonParser,function (req, res) {
     });
 });
 
+//Birthday
+router.post('/profileBirthday', auth.auth, jsonParser,function (req, res) {
+    var uid = auth.uid;
+    var birthday = req.body.birthday;
+    const sql = `UPDATE user SET birthday = '${birthday}' WHERE uid = '${uid}' `
+    db.query(sql, function (err, result) {
+        if (err) {
+            res.send({"status": "fail"});
+            console.log(err);
+        }
+        else {
+            console.log(result);
+            res.send({"status": "success"});
+        }
+    });
+});
+
 module.exports = router;

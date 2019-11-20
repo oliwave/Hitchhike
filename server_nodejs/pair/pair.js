@@ -157,8 +157,9 @@ router.post('/orderConfirmation', auth.auth, jsonParser, function (req, res) {
                             },
                             "token": [registrationDriverToken, registrationPassengerToken]
                         };
-                        passengerList.filter( passengerList => passengerList.uid !== uid );
-                        pairMapDone.filter( pairMapDone => pairMapDone.passenger != uid );
+                        passengerList = passengerList.filter( passengerList => passengerList.uid !== uid );
+
+                        // pairMapDone.filter( pairMapDone => pairMapDone.passenger != uid );
                         admin.messaging().send(message);
                     }
                 });
@@ -178,4 +179,20 @@ const getData = async url => {
         console.log(error);
     }
 };
+
+
+// if user is wait for pair now
+router.post('userState', auth.auth, function (req, res) {
+    var uid = auth.uid;
+    if (pairMapDone[uid] == uid) {
+        res.send({ "state": true });
+    }
+    for (let i = 0; i < passengerList.length; i++) {
+        if (passengerList[i].passenger == uid) {
+            res.send({ "state": true });
+        };
+    };
+    res.send({ "state": false });
+});
+
 module.exports = router;
