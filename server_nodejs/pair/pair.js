@@ -141,9 +141,11 @@ router.post('/orderConfirmation', auth.auth, jsonParser, function (req, res) {
                                 "type": "paired",
                                 // TODO : 需要後端傳回該配對的人是否為朋友
                                 "isFriend": false,
+                                "avatar": "testAvatar",
                                 "roomId": "testRoom",
-                                "carNum": carNum,
                                 "carDescripition": "notInDB",
+                                //
+                                "carNum": carNum,
                                 "duration": passengerList[0].time,
                                 "startName": passengerList[0].originName,
                                 "endName": passengerList[0].destinationName,
