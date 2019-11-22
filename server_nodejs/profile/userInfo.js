@@ -53,5 +53,38 @@ router.post('/fcmToken', auth.auth, function (req, res) {
         }
     });
 });
+////////////////////////////////////////////////////////
+// get user device
+router.post('getDevice', auth.auth, function (req, res) {
+    var uid = auth.uid;
+    const sql = `SELECT device from user where uid=${uid}`
+    db.query(sql, function (err, result) {
+        if (err) {
+            res.send({"status": "fail"});
+            console.log(err);
+        }
+        else {
+            console.log(result);
+            res.send({"device": result[0].device});
+        }
+    });
+});
+
+// set user device
+router.post('setDevice', auth.auth, function (req, res) {
+    var uid = auth.uid;
+    var device = req.body.device;
+    const sql = `UPDATE user SET device = '${device}' WHERE uid = '${uid}' `
+    db.query(sql, function (err, result) {
+        if (err) {
+            res.send({"status": "fail"});
+            console.log(err);
+        }
+        else {
+            console.log(result);
+            res.send({"status": "success"});
+        }
+    });
+});
 
 module.exports = router;

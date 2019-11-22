@@ -30,7 +30,7 @@ router.post('/signUp', jsonParser,function (req, res) {
 //verify ncnu and send emails
 router.post('/verify', jsonParser,function (req, res) {
     var uid = req.body.uid;
-    email = "s" + uid +"@mail1.ncnu.edu.tw";
+    email =  uid + "@ncnu.edu.tw";
     const sql = `select * from user where uid = '${uid}'`;
     db.query(sql, function (err, result) {
         if (err) { 
