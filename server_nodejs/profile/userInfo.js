@@ -38,7 +38,7 @@ router.post('/userInfo', auth.auth, function (req, res) {
 });
 
 // fcm token get, store to database
-router.post('/fcm', auth.auth, function (req, res) {
+router.post('/fcmToken', auth.auth, function (req, res) {
     var uid = auth.uid;
     var fcmToken = req.body.fcmToken;
     const sql = `UPDATE user SET token = '${fcmToken}' WHERE uid = '${uid}' `
