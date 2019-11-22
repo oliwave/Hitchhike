@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../notify_manager.dart';
 import '../../resources/repository.dart';
 import '../../resources/restful/request_method.dart' show FcmTokenRequest;
+import '../../provider/provider_collection.dart' show AuthProvider;
 
 class FcmTokenManager extends NotifyManager {
   FcmTokenManager(VoidCallback notifyListeners) : super(notifyListeners);
@@ -10,6 +11,8 @@ class FcmTokenManager extends NotifyManager {
   final _prefs = Repository.getSimpleStorage;
   final _api = Repository.getApi;
   final _fcm = Repository.getCloudMessageHandler;
+
+  final AuthProvider _auth = AuthProvider();
 
   bool _hasSentFcmToken = false;
 
@@ -48,7 +51,7 @@ class FcmTokenManager extends NotifyManager {
     final response = await _api.sendHttpRequest(
       FcmTokenRequest(
         fcmToken: _fcmToken,
-        jwtToken: '',
+        jwtToken: _auth.jwt,
       ),
     );
 

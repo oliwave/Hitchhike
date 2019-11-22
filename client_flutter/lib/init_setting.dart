@@ -31,6 +31,7 @@ class InitSetting {
     
     await _bitmap.initializeBitmap(context);
     await DirectoryAccess.initDirectory();
+    ///TODO : cannot call following code without internet. 
     await _locationProvider.initializePosition();
     await _db.init();
     await _favoriteRoutesProvider.initRoutesList();

@@ -178,4 +178,5 @@ const getData = async url => {
         console.log(error);
     }
 };
+
 module.exports = router;

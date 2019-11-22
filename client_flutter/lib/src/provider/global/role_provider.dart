@@ -28,9 +28,16 @@ class RoleProvider with ChangeNotifier {
   double driverLng;
   List<String> routeLatitude;
   List<String> routeLongitude;
-  DateTime endTimeOfTrip;
+  // DateTime endTimeOfTrip;
+  int _endTimeOfTrip; // millionSecond
 
   bool _isFirst = true;
+
+  DateTime get endTimeOfTrip =>
+      DateTime.fromMillisecondsSinceEpoch(_endTimeOfTrip);
+
+  set endTimeOfTrip(DateTime endTimeOfTrip) =>
+      _endTimeOfTrip = endTimeOfTrip.millisecondsSinceEpoch;
 
   set isMatched(bool isMatched) {
     _isMatched = isMatched;
@@ -44,8 +51,7 @@ class RoleProvider with ChangeNotifier {
     if (_isFirst) {
       _prefs = Repository.getSimpleStorage;
       isMatched = _prefs.getBool(TargetSourceString.isMatched);
-      endTimeOfTrip = DateTime.fromMillisecondsSinceEpoch(
-          _prefs.getInt(TargetSourceString.endTimeOfTrip));
+      _endTimeOfTrip = _prefs.getInt(TargetSourceString.endTimeOfTrip);
       hasRevokedDriverPosition =
           _prefs.getBool(TargetSourceString.hasRevokedDriverPosition);
       role = _prefs.getString(TargetSourceString.role);
@@ -70,8 +76,7 @@ class RoleProvider with ChangeNotifier {
       _prefs.setDouble(TargetSourceString.driverLng, driverLng);
       _prefs.setStringList(TargetSourceString.routeLatitude, routeLatitude);
       _prefs.setStringList(TargetSourceString.routeLongitude, routeLongitude);
-      _prefs.setInt(TargetSourceString.endTimeOfTrip,
-          endTimeOfTrip.millisecondsSinceEpoch);
+      _prefs.setInt(TargetSourceString.endTimeOfTrip, _endTimeOfTrip);
     } else {
       _prefs.setString(TargetSourceString.role, null);
       _prefs.setBool(TargetSourceString.isMatched, false);
