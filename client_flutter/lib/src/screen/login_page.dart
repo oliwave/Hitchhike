@@ -234,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
                               targetRoute,
-                              (Route<dynamic> route) => true,
+                              (Route<dynamic> route) => false,
                             );
                           },
                           padding: EdgeInsets.all(10),
