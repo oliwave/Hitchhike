@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../notify_manager.dart';
 import '../../provider/provider_collection.dart'
-    show RoleProvider, LocationProvider, FriendListProvider;
+    show RoleProvider, LocationProvider, FriendListProvider, AuthProvider;
 import '../../resources/restful/request_method.dart'
     show OrderConfirmationRequest;
 import '../../util/util_collection.dart' show SizeConfig;
@@ -19,6 +19,7 @@ class FcmActionManager extends NotifyManager {
   final RoleProvider _roleProvider = RoleProvider();
   final LocationProvider _locationProvider = LocationProvider();
   final FriendListProvider _friendListProvider = FriendListProvider();
+  final AuthProvider _auth = AuthProvider();
   final _api = Repository.getApi;
   final _fs = Repository.getJsonFileHandler;
 
@@ -166,7 +167,7 @@ class FcmActionManager extends NotifyManager {
         final response = await _api.sendHttpRequest(
           OrderConfirmationRequest(
             status: status,
-            jwtToken: '',
+            jwtToken: _auth.jwt,
           ),
         );
       };

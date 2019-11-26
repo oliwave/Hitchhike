@@ -7,7 +7,12 @@ import '../../model/order_info.dart';
 
 import '../notify_manager.dart';
 import '../../provider/provider_collection.dart'
-    show RoleProvider, BulletinProvider, CloudMessageProvider, HomepageProvider;
+    show
+        RoleProvider,
+        BulletinProvider,
+        CloudMessageProvider,
+        HomepageProvider,
+        AuthProvider;
 import '../../widgets/customized_alert_dialog.dart';
 
 /// [OrderManager] handle the major process of sending order and relative tasks.
@@ -36,7 +41,11 @@ class OrderManager extends NotifyManager {
       context,
       listen: false,
     );
-    final _fcmProvider = Provider.of<CloudMessageProvider>(
+    final fcmProvider = Provider.of<CloudMessageProvider>(
+      context,
+      listen: false,
+    );
+    final authProvider = Provider.of<AuthProvider>(
       context,
       listen: false,
     );
@@ -64,10 +73,14 @@ class OrderManager extends NotifyManager {
 
         if (result) {
           // The fcm token must be sent to server before sending an order.
-          if (!_fcmProvider.fcmTokenManager.hasSentFcmToken)
-            await _fcmProvider.fcmTokenManager.initSendFcmToken();
+          if (!fcmProvider.fcmTokenManager.hasSentFcmToken)
+            await fcmProvider.fcmTokenManager.initSendFcmToken();
 
-          _orderRequest(roleProvider.role, bulletinProvider);
+          _orderRequest(
+            roleProvider.role,
+            bulletinProvider,
+            authProvider.jwt,
+          );
         }
       } else {
         bulletinProvider.showBulletin(text: '還沒設定路線喔！');
@@ -76,16 +89,19 @@ class OrderManager extends NotifyManager {
   }
 
   Future<void> _orderRequest(
-      String role, BulletinProvider bulletinProvider) async {
+    String role,
+    BulletinProvider bulletinProvider,
+    String jwt,
+  ) async {
     final response = await _api.sendHttpRequest(
       role == '司機'
           ? DriverRouteRequest(
               orderInfo: orderInfo,
-              jwtToken: '',
+              jwtToken: jwt,
             )
           : PassengerRouteRequest(
               orderInfo: orderInfo,
-              jwtToken: '',
+              jwtToken: jwt,
             ),
     );
 

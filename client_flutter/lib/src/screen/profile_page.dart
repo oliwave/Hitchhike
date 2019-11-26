@@ -35,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
     userProfile['name'] = profileProvider.getName();
     userProfile['gender'] = profileProvider.getGender();
     userProfile['birthday'] = profileProvider.getBirthday();
-    userProfile['email'] = profileProvider.getEmail() + '@mail1.ncnu.edu.tw';
+    userProfile['email'] = profileProvider.getUserId() + '@mail1.ncnu.edu.tw';
     userProfile['department'] = profileProvider.getDepartment();
     userProfile['carNum'] = profileProvider.getCarNum();
 

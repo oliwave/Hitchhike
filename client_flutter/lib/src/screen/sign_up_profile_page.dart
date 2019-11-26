@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'sign_up_profile_verify_page.dart';
 import 'package:client_flutter/src/provider/provider_collection.dart';
+import '../screen/page_collection.dart';
 
 class SignUpProfilePage extends StatefulWidget {
   static const String routeName = '/sign_up_profile_page';
@@ -73,6 +74,18 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
           ),
         ),
         title: Text("$title"),
+        leading: IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            String targetRoute;
+            targetRoute = LoginPage.routeName;
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              targetRoute,
+              (Route<dynamic> route) => true,
+            );
+          },
+        ),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -155,9 +168,9 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
       decoration: InputDecoration(
         icon: Icon(Icons.email),
         labelText: '帳號',
-        hintText: '請輸入學號',
-        // suffixText: '@ncnu.edu.tw',
-        suffixStyle: TextStyle(color: Colors.black),
+        hintText: '信箱帳號',
+        suffixText: '@ncnu.edu.tw',
+        suffixStyle: TextStyle(color: Colors.grey),
         errorText: accountExisted ? 'Email address has already existed.' : null,
         suffixIcon: GestureDetector(
           onTap: () {
@@ -173,7 +186,7 @@ class _SignUpProfilePageState extends State<SignUpProfilePage> {
         LengthLimitingTextInputFormatter(25), //長度不能超過25
       ],
       onChanged: (term) {
-        if (term.length == 9) {
+        if (term.length >= 0 || term.length <= 20) {
           _nextBtnClickListen(term);
         } else {
           isNextBtnEnable = false;

@@ -48,13 +48,8 @@ class SimpleStorage {
     return await _prefs.setBool(target, value);
   }
 
-
-
   int getInt(String target) {
-    int value = _prefs.getInt(target);
-    
-
-    return value;
+    return _prefs.getInt(target) ?? -1;
   }
 
   Future<bool> setInt(String target, int value) async {
