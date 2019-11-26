@@ -1,15 +1,17 @@
-var db = require('../db.js');
 var express = require('express');
-const auth = require('../auth.js');
 var bodyParser = require('body-parser');
 
+var db = require('../db.js');
+const auth = require('../auth.js');
+
 var app = express();
+var jsonParser = bodyParser.json();
 
 const router = new express.Router();
 
-router.post('/userInfo', auth.auth, function (req, res) {
+router.post('/userInfo', auth.auth, jsonParser, function (req, res) {
     var uid = auth.uid;
-    const sql = `SELECT * from user where uid=${uid}`
+    const sql = `SELECT * from user where uid='${uid}'`
     db.query(sql, function (err, result) {
         if (err) {
             res.send({ "status": "fail" });
@@ -38,51 +40,52 @@ router.post('/userInfo', auth.auth, function (req, res) {
 });
 
 // fcm token get, store to database
-router.post('/fcmToken', auth.auth, function (req, res) {
+router.post('/fcmToken', auth.auth, jsonParser, function (req, res) {
     var uid = auth.uid;
     var fcmToken = req.body.fcmToken;
     const sql = `UPDATE user SET token = '${fcmToken}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send({"status": "fail"});
+            res.send({ "status": "fail" });
             console.log(err);
         }
         else {
             console.log(result);
-            res.send({"status": "success"});
+            res.send({ "status": "success" });
         }
     });
 });
+
 ////////////////////////////////////////////////////////
 // get user device
-router.post('getDevice', auth.auth, function (req, res) {
+router.get('/getDevice', auth.auth, jsonParser, function (req, res) {
     var uid = auth.uid;
-    const sql = `SELECT device from user where uid=${uid}`
+    const sql = `SELECT device from user where uid='${uid}'`
     db.query(sql, function (err, result) {
         if (err) {
-            res.send({"status": "fail"});
             console.log(err);
+            res.send({ "status": "fail" });
         }
         else {
-            console.log(result);
-            res.send({"device": result[0].device});
+            console.log(`The result is ${result[0].device}`);
+            res.send({ "device": result[0].device });
         }
     });
 });
 
 // set user device
-router.post('setDevice', auth.auth, function (req, res) {
+router.post('/setDevice', auth.auth, jsonParser, function (req, res) {
     var uid = auth.uid;
     var device = req.body.device;
     const sql = `UPDATE user SET device = '${device}' WHERE uid = '${uid}' `
     db.query(sql, function (err, result) {
         if (err) {
-            res.send({"status": "fail"});
             console.log(err);
+            res.send({ "status": "fail" });
         }
         else {
             console.log(result);
-            res.send({"status": "success"});
+            res.send({ "status": "success" });
         }
     });
 });
