@@ -58,6 +58,11 @@ class OrderManager extends NotifyManager {
         return;
       }
 
+      if (roleProvider.hasSentTravel) {
+        bulletinProvider.showBulletin(text: '您的行程已送出了！請等待吧～');
+        return;
+      }
+
       if (hasCompleteOrderInfo()) {
         final result = await customizedAlertDialog(
           context: _homepageProvider.bottomSheetContext,
@@ -77,10 +82,11 @@ class OrderManager extends NotifyManager {
             await fcmProvider.fcmTokenManager.initSendFcmToken();
 
           _orderRequest(
-            roleProvider.role,
+            roleProvider,
             bulletinProvider,
             authProvider.jwt,
           );
+          print(authProvider.jwt);
         }
       } else {
         bulletinProvider.showBulletin(text: '還沒設定路線喔！');
@@ -89,12 +95,12 @@ class OrderManager extends NotifyManager {
   }
 
   Future<void> _orderRequest(
-    String role,
+    RoleProvider roleProivder,
     BulletinProvider bulletinProvider,
     String jwt,
   ) async {
     final response = await _api.sendHttpRequest(
-      role == '司機'
+      roleProivder.role == '司機'
           ? DriverRouteRequest(
               orderInfo: orderInfo,
               jwtToken: jwt,
@@ -111,6 +117,12 @@ class OrderManager extends NotifyManager {
         textColor: Colors.red[400],
         iconColor: Colors.red[400],
       );
+    } else {
+      bulletinProvider.showBulletin(
+        text: '您的行程已成功送出!尋找附近的${roleProivder.role}...',
+      );
+
+      roleProivder.hasSentTravel = true;
     }
   }
 
