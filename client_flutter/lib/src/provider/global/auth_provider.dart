@@ -131,7 +131,7 @@ class AuthProvider with ChangeNotifier {
     final response = await _api.sendHttpRequest(GetUserStateRequest(
       userID: uid,
     ));
-    if (response['state'] == 'paired') {
+    if (response['state'] == 'ture') {
       return true;
     } else {
       return false;

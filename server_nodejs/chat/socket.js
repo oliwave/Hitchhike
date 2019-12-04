@@ -39,10 +39,10 @@ router.socketConnection = function(){
                 } else {
                     // other用來記錄對方uID
                     var other;
-                    if (uid == result[0].user1Id) {
-                        other = result[0].user2Id;
+                    if (uid == result[0].uid1) {
+                        other = result[0].uid2;
                     } else {
-                        other = result[0].user1Id;
+                        other = result[0].uid1;
                     };
     
                     setMessages(uid, roomId, content);
@@ -90,7 +90,7 @@ function getUnreadMessages(uid, socketId) {
 // unread 0 read 1
 function setMessages(uid, roomId, content) {
     sql = `INSERT INTO message SET text=${content}, status = 0 where uid=${uid} and roomId=${roomId}`
-    `INSERT INTO message(userId, roomId, time, text, status) VALUES (${uid}, ${roomId}, '0', ${content},'0')`
+    `INSERT INTO message(uid, roomId, time, text, status) VALUES (${uid}, ${roomId}, '0', ${content},'0')`
     db.query(sql, (err, result) => {
         if (err) {
             console.log(err);

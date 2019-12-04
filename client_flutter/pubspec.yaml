@@ -106,6 +106,8 @@ flutter:
     - assets/icons/bullhorn/2.0x/
     - assets/icons/profile/
     - assets/icons/profile/2.0x/
+    - assets/icons/appname/
+    - assets/icons/appname/2.0x/
     - assets/icons/user/
     - assets/icons/user/2.0x/
 

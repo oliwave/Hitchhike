@@ -54,17 +54,7 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
           child: ListView(
             children: <Widget>[
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  text: '\nhitchhick\n',
-                  style: TextStyle(
-                    letterSpacing: 1,
-                    fontSize: 40,
-                    color: Colors.teal[400],
-                  ),
-                ),
-              ),
+              appName(),
               Form(
                 key: _formKey, //設置globalKey，用於後面獲取FormState
                 // autovalidate: true, //開啟自動驗證
@@ -238,7 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
                               targetRoute,
-                              (Route<dynamic> route) => true,
+                              (Route<dynamic> route) => false,
                             );
                           },
                           padding: EdgeInsets.all(10),
@@ -273,6 +263,23 @@ class _LoginPageState extends State<LoginPage> {
     showContinueToLoginDialog(
       context: context,
       child: const ContinueToLoginDialog(),
+    );
+  }
+
+  Widget appName() {
+    return Stack(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.topLeft,
+          child: Image.asset(
+            "assets/icons/appname/pickup.png",
+            fit: BoxFit.contain,
+            color: Colors.teal,
+            height: 190.0,
+            width: 350.0,
+          ),
+        ),
+      ],
     );
   }
 }
