@@ -4,6 +4,8 @@ import 'package:flutter/Material.dart';
 
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 
+import '../../provider/provider_collection.dart' show AuthProvider;
+
 import '../../resources/repository.dart';
 
 class SocketHandler {
@@ -16,6 +18,7 @@ class SocketHandler {
   static final _socketHandler = SocketHandler._();
 
   final SocketIOManager _manager = SocketIOManager();
+  final AuthProvider _auth = AuthProvider();
   SocketIO _socket;
   bool _isConnected = false;
 
@@ -38,23 +41,33 @@ class SocketHandler {
       _newMessageController.stream;
 
   Future<void> connectSocketServer() async {
-    if (!_isConnected) {
-      _socket = await _manager.createInstance('https://socket.hitchhike.ml');
+    if (!_isConnected && _auth.jwt != 'logout') {
+      // await disconnetSocket();
+
+      print('Connect to socket serve. JWT is valid.');
+      _socket = await _manager.createInstance(
+        'https://socket.hitchhike.ml',
+        query: {'token': _auth.jwt},
+      );
+
       _socket.connect();
+
       _isConnected = true;
       _subscribeEvents();
-
-      // return _socket;
+    } else {
+      print('Don\'t connect to socket serve. JWT is logout');
     }
-    // else {
-    // return null;
-    // }
   }
 
   Future<void> disconnetSocket() async {
     if (_isConnected) {
       _isConnected = false;
-      await _manager.clearInstance(_socket);
+
+      try {
+        await _manager.clearInstance(_socket);
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
