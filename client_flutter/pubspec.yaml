@@ -106,6 +106,9 @@ flutter:
     - assets/icons/bullhorn/2.0x/
     - assets/icons/profile/
     - assets/icons/profile/2.0x/
+    - assets/icons/user/
+    - assets/icons/user/2.0x/
+
   
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -11,16 +11,18 @@ class MarkerBitmap {
   BuildContext _context;
 
   static const Map<String, String> _raw = {
-    motor: 'assets/icons/car/car_white.png',
-    car: 'assets/icons/motor/motor_white.png',
+    car: 'assets/icons/car/car_black.png',
+    // motor: 'assets/icons/motor/motor_white.png',
     compass: 'assets/icons/compass/compass.png',
+    user: 'assets/icons/user/user.png'
   };
 
   Map<String, BitmapDescriptor> bitmaps = {};
 
-  static const String motor = 'motor';
+  // static const String motor = 'motor';
   static const String car = 'car';
   static const String compass = 'compass';
+  static const String user = 'user';
 
   Future<void> initializeBitmap(BuildContext context) async {
     if (bitmaps.isNotEmpty) return;
