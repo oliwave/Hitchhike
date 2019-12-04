@@ -19,7 +19,7 @@ class ConnectivityProvider with ChangeNotifier {
   final _socketHandler = Repository.getSocketHandler;
   final _fcmProvider = CloudMessageProvider();
 
-  bool networkStatus;
+  bool networkStatus = false;
 
   bool checkNetworkStatus() {
     if (!networkStatus) {

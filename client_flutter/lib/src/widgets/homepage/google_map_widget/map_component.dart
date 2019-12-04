@@ -63,6 +63,7 @@ class MapComponent {
 
     final polyline = Polyline(
       polylineId: polylineId,
+      width: 2,
       points: points
           .map((position) => LatLng(position.latitude, position.longitude))
           .toList(),
