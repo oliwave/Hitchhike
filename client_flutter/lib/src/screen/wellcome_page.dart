@@ -5,7 +5,8 @@ import './page_collection.dart' show Homepage, FavoriteRoutesPage, LoginPage;
 import '../util/util_collection.dart' show SizeConfig;
 
 import '../../init_setting.dart';
-import '../provider/provider_collection.dart' show AuthProvider, ProfileProvider;
+import '../provider/provider_collection.dart'
+    show AuthProvider, ProfileProvider;
 
 class WellcomePage extends StatelessWidget {
   static const String routeName = '/wellcome_page';
@@ -21,16 +22,16 @@ class WellcomePage extends StatelessWidget {
     init.runInitSetting(context).then((_) async {
       print('Finished initial setup!\n');
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final profileProivder = Provider.of<ProfileProvider>(context, listen: false);
-      String uid = profileProivder.getUserId();
       String targetRoute;
-      String currentDevice = await authProvider.getDeviceInfo();
+      print('jwt token is ${authProvider.jwt}');
       if (authProvider.jwt == 'logout') {
+        print('logout');
         targetRoute = LoginPage.routeName;
       } else {
-        if(await authProvider.identifyDevice(uid, currentDevice) == 'true'){
+        print('login');
+        if (await authProvider.identifyDevice(authProvider.jwt) == 'true') {
           targetRoute = Homepage.routeName;
-        }else{
+        } else {
           targetRoute = LoginPage.routeName;
           // 清除裝置所有資訊
         }
