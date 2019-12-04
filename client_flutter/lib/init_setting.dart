@@ -8,7 +8,11 @@ import './src/resources/file/directory_access.dart';
 import './src/widgets/homepage/google_map_widget/marker_bitmap.dart';
 import './src/resources/repository.dart';
 import './src/provider/provider_collection.dart'
-    show LocationProvider, FavoriteRoutesProvider, ConnectivityProvider, AuthProvider;
+    show
+        LocationProvider,
+        FavoriteRoutesProvider,
+        ConnectivityProvider,
+        AuthProvider;
 
 final init = InitSetting();
 
@@ -25,17 +29,25 @@ class InitSetting {
 
   Future<void> runInitSetting(BuildContext context) async {
     await _setLocationPermission();
-    await _prefs.init();
+
+    await Future.wait([
+      _prefs.init(),
+      DirectoryAccess.initDirectory(),
+    ]);
+
+    await Future.wait([
+      _authProvider.init(),
+      _db.init(),
+    ]);
 
     _connectivityProvider.networkConnection();
-    
-    await _bitmap.initializeBitmap(context);
-    await DirectoryAccess.initDirectory();
-    ///TODO : cannot call following code without internet. 
-    await _locationProvider.initializePosition();
-    await _db.init();
-    await _favoriteRoutesProvider.initRoutesList();
-    await _authProvider.init();
+
+    ///TODO : cannot call following code without internet.
+    await Future.wait([
+      _bitmap.initializeBitmap(context),
+      _locationProvider.initializePosition(),
+      _favoriteRoutesProvider.initRoutesList(),
+    ]);
   }
 
   Future<void> _setLocationPermission() async {
