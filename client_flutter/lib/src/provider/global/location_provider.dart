@@ -47,8 +47,8 @@ class LocationProvider extends ChangeNotifier {
   // Completer<GoogleMapController> get futureMapController =>
   //     _futureMapController;
 
-  /// A very basis method called whenever clients need to get
-  /// a up-to-date position.
+  /// A very basic method called whenever clients need to get
+  /// an up-to-date position.
   Future<Position> get currentPosition async =>
       await _geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
@@ -83,7 +83,11 @@ class LocationProvider extends ChangeNotifier {
   Future<void> _initializeMapGadget() async {
     if (_roleProvider.isMatched) {
       // The current time is before the endTimeOfTrip
-      if (_roleProvider.endTimeOfTrip.isBefore(DateTime.now())) {
+      if (_roleProvider.endTimeOfTrip.isAfter(DateTime.now())) {
+
+        print('_roleProvider.endTimeOfTrip is ${_roleProvider.endTimeOfTrip}');
+        print('now is ${DateTime.now()}');
+
         // Read data from json file.
         final pairedData = await _fs.readFile(
           fileName: FileName.pairedData,
@@ -97,7 +101,7 @@ class LocationProvider extends ChangeNotifier {
         );
       } else {
         // The current time is after the endTimeOfTrip
-        _roleProvider.isMatched = false;
+        _roleProvider.clearCache();
       }
     }
 
