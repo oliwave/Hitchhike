@@ -5,7 +5,7 @@ import '../notify_manager.dart';
 import '../../provider/provider_collection.dart'
     show RoleProvider, LocationProvider, FriendListProvider, AuthProvider;
 import '../../resources/restful/request_method.dart'
-    show OrderConfirmationRequest;
+    show OrderConfirmationRequest, FetchPairedDataRequest;
 import '../../util/util_collection.dart' show SizeConfig;
 import '../../resources/repository.dart';
 import '../../widgets/customized_alert_dialog.dart';
@@ -25,7 +25,9 @@ class FcmActionManager extends NotifyManager {
 
   /// It's a primary method of consuming fcm event.
   Future<void> messageConsumer(
-      Map<String, dynamic> message, BuildContext context) async {
+    Map<String, dynamic> message,
+    BuildContext context,
+  ) async {
     _context = context;
 
     /**
@@ -34,12 +36,13 @@ class FcmActionManager extends NotifyManager {
     // Data Message
     if (message.containsKey('data')) {
       final String type = message['data']['type'];
-      final roundTripTime =
-          Duration(seconds: int.parse(message['data']['totalTime']));
 
       /// TODO : Filter the following messages when user is in paired mode.
       if (type == FcmEventType.orderConfirmation) {
-        final result = await customizedAlertDialog(
+        final costTime =
+            Duration(seconds: int.parse(message['data']['costTime']));
+
+        customizedAlertDialog(
           context: context,
           barrierDismissible: false,
           title: const Text('乘客資訊'),
@@ -69,7 +72,7 @@ class FcmActionManager extends NotifyManager {
                     ],
                   ),
                 ),
-                Text('離乘客起點尚需 ${roundTripTime.inMinutes} 分鐘'),
+                Text('總路程需要多花 ${costTime.inMinutes} 分鐘'),
               ],
             ),
           ),
@@ -79,47 +82,22 @@ class FcmActionManager extends NotifyManager {
           cancelCallback: _confirmCallback('fail'),
         );
 
-        // Store the end time of the trip
-        if (result) {
-          _roleProvider.endTimeOfTrip = DateTime.now().add(
-            Duration(
-              minutes: roundTripTime.inMinutes + 1,
-            ),
-          );
-        }
-
         return;
       } else if (type == FcmEventType.paired) {
         // Assign fcm pairedData to field.
-        Map<String, dynamic> pairedData = message['data'];
+        // Map<String, dynamic> pairedData = message['data'];
 
-        customizedAlertDialog(
+        final String driverId = message['data']['driverId'];
+
+        await customizedAlertDialog(
           context: context,
           title: const Text('暨大搭便車'),
           content: Text('已經完成配對囉～'),
           confirmButtonName: '了解',
-          confirmCallback: () => Navigator.pop(_context),
-          barrierDismissible: true,
+          confirmCallback: _fetchPairedData(driverId),
         );
 
-        ///TODO : the fcm api should reconsider.
-        if (!message['data']['isFriend']) {
-          _addNewFriend(message);
-        }
-
-        // Remove redundent field.
-        pairedData = _removeRedundantField(message);
-
-        // Assign the reference of pairedData to pairedDataManager in
-        // LocationProvider.
-        _locationProvider.pairedDataManager
-            .initPairingRoute(pairedData['data']);
-
-        // Write pairedData to json file without waiting it.
-        _fs.writeToFile(
-          fileName: FileName.pairedData,
-          data: pairedData,
-        );
+        print('Still sync');
 
         return;
       }
@@ -138,20 +116,37 @@ class FcmActionManager extends NotifyManager {
     );
   }
 
+  void _setEndTimeOfTrip(int duration, int pairedTime) {
+    final travelingTime = Duration(seconds: duration);
+
+    final startTime = DateTime.fromMillisecondsSinceEpoch(pairedTime);
+
+    print('The start time is $startTime');
+
+    // _roleProvider.endTimeOfTrip = startTime.add(travelingTime); // PRODUCTION
+    _roleProvider.endTimeOfTrip =
+        DateTime.now().add(Duration(seconds: 1)); // TEST
+  }
+
   void _addNewFriend(Map<String, dynamic> message) {
+    print(
+        'The type of avatar is ${message['avatar']['data'].runtimeType}. And ${message['avatar']['data']}');
+
     _friendListProvider.addFriend(FriendItem(
-      avatar: message['data']['avatar'],
-      name: message['data']['name'],
-      room: message['data']['roomId'],
+      // avatar: message['avatar'],
+      avatar: 'TEST',
+      name: message['name'],
+      room: message['roomId'],
     ));
   }
 
-  Map<String, dynamic> _removeRedundantField(Map<String, dynamic> message) {
-    return message.remove(message['data']['avatar'])
-      ..remove(message['data']['name'])
-      ..remove(message['data']['roomId'])
-      ..remove(message['data']['isFriend'])
-      ..remove(message['data']['token']);
+  void _removeRedundantField(Map<String, dynamic> message) {
+    message.remove('avatar')
+      ..remove('type')
+      ..remove('roomId')
+      ..remove('isFriend')
+      ..remove('duration')
+      ..remove('pairedTime');
   }
 
   /// [_confirmCallback] method returns a callback method that conducts
@@ -159,16 +154,75 @@ class FcmActionManager extends NotifyManager {
   ///
   /// * [status] is String type variable that determines if a paired
   /// order is valid.
-  VoidCallback _confirmCallback(String status) => () async {
-        _roleProvider.isMatched = (status == 'success');
+  VoidCallback _confirmCallback(String status) => () {
+        Navigator.pop(_context);
 
-        Navigator.pop(_context, _roleProvider.isMatched);
+        print('Order Confirmation request> jwt is ${_auth.jwt}');
 
-        final response = await _api.sendHttpRequest(
+        _api.sendHttpRequest(
           OrderConfirmationRequest(
             status: status,
             jwtToken: _auth.jwt,
           ),
+        );
+      };
+
+  VoidCallback _fetchPairedData(String driverId) => () async {
+        Navigator.pop(
+          _context,
+        );
+
+        Map<String, dynamic> pairedData = await _api.sendHttpRequest(
+          FetchPairedDataRequest(
+            jwtToken: _auth.jwt,
+            driverId: driverId,
+          ),
+        );
+
+        print(pairedData['type']);
+        print(pairedData['isFriend']);
+        print(pairedData['roomId']);
+        print(pairedData['avatar']);
+        print(pairedData['carDescripition']);
+        print(pairedData['carNum']);
+        print(pairedData['duration']);
+        print(pairedData['pairedTime']);
+        print(pairedData['startName']);
+        print(pairedData['endName']);
+        print(pairedData['northeastLat']);
+        print(pairedData['northeastLng']);
+        print(pairedData['southwestLat']);
+        print(pairedData['southwestLng']);
+        print(pairedData['legs']);
+
+        ///TODO : the fcm api should reconsider.
+        if (pairedData['isFriend']) _addNewFriend(pairedData);
+
+        // It's dedicated to chattingFloatingActionButton
+        _roleProvider.newTravelRoom = pairedData['roomId'];
+
+        _setEndTimeOfTrip(pairedData['duration'], pairedData['pairedTime']);
+
+        // Remove redundent field.
+        // _removeRedundantField(pairedData);
+
+        pairedData.remove('avatar');
+        pairedData.remove('type');
+        pairedData.remove('roomId');
+        pairedData.remove('isFriend');
+        pairedData.remove('duration');
+        pairedData.remove('pairedTime');
+
+        _roleProvider.isMatched = true;
+
+        // Assign the reference of pairedData to pairedDataManager in
+        // LocationProvider.
+        _locationProvider.pairedDataManager.initPairingRoute(pairedData);
+
+        // Write pairedData to json file without waiting it.
+        _fs.writeToFile(
+          fileName: FileName.pairedData,
+          data: pairedData,
         );
       };
 }

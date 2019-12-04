@@ -25,7 +25,7 @@ class PairedDataManager extends NotifyManager {
   LatLng get southwest => _southwest;
 
   Future initPairingRoute(
-    Map<String, dynamic> pairedData, [
+    Map<dynamic, dynamic> pairedData, [
     double initialDriverLat,
     double initialDriverLng,
   ]) async {
@@ -33,24 +33,27 @@ class PairedDataManager extends NotifyManager {
     _locationProvider.mapComponent.createMarker(
       id: Character.passengerStart,
       position: Position(
-        latitude: pairedData['legs'][1]['startLat'],
-        longitude: pairedData['legs'][1]['startLng'],
+        latitude: pairedData['legs'][1]['start_location']['lat'],
+        longitude: pairedData['legs'][1]['start_location']['lng'],
       ),
-      windowTitle: pairedData['passengerStartName'],
+      windowTitle: pairedData['startName'],
     );
 
     // Provider waypoint marker for driver and passenger to inspect.
     _locationProvider.mapComponent.createMarker(
       id: Character.passengerEnd,
       position: Position(
-        latitude: pairedData['legs'][2]['startLat'],
-        longitude: pairedData['legs'][2]['startLng'],
+        latitude: pairedData['legs'][2]['start_location']['lat'],
+        longitude: pairedData['legs'][2]['start_location']['lng'],
       ),
-      windowTitle: pairedData['passengerEndName'],
+      windowTitle: pairedData['endName'],
     );
 
     _northeast = LatLng(pairedData['northeastLat'], pairedData['northeastLng']);
     _southwest = LatLng(pairedData['southwestLat'], pairedData['southwestLng']);
+
+    print('_northeast is $_northeast');
+    print('_southwest is $_southwest');
 
     // To record all the cooridates of this route.
     List<Position> polyline = [];
@@ -58,8 +61,8 @@ class PairedDataManager extends NotifyManager {
     // 1. Store the start location in first leg to polyline.
     polyline.add(
       Position(
-        latitude: pairedData['legs'][0]['startLat'],
-        longitude: pairedData['legs'][0]['startLng'],
+        latitude: pairedData['legs'][0]['start_location']['lat'],
+        longitude: pairedData['legs'][0]['start_location']['lng'],
       ),
     );
 
@@ -69,10 +72,10 @@ class PairedDataManager extends NotifyManager {
         _locationProvider.mapComponent.createMarker(
           id: Character.otherSide,
           position: Position(
-            latitude: pairedData['legs'][1]['startLat'],
-            longitude: pairedData['legs'][1]['startLng'],
+            latitude: pairedData['legs'][1]['start_location']['lat'],
+            longitude: pairedData['legs'][1]['start_location']['lng'],
           ),
-          iconName: MarkerBitmap.motor,
+          iconName: MarkerBitmap.user,
         );
       }
 
@@ -84,8 +87,8 @@ class PairedDataManager extends NotifyManager {
         for (var step in leg['steps'])
           polyline.add(
             Position(
-              latitude: step['endLat'],
-              longitude: step['endLng'],
+              latitude: step['end_location']['lat'],
+              longitude: step['end_location']['lng'],
             ),
           );
     } else {
@@ -94,8 +97,10 @@ class PairedDataManager extends NotifyManager {
         _locationProvider.mapComponent.createMarker(
           id: Character.otherSide,
           position: Position(
-            latitude: initialDriverLat ?? pairedData['legs'][0]['startLat'],
-            longitude: initialDriverLat ?? pairedData['legs'][0]['startLng'],
+            latitude: initialDriverLat ??
+                pairedData['legs'][0]['start_location']['lat'],
+            longitude: initialDriverLat ??
+                pairedData['legs'][0]['start_location']['lng'],
           ),
           iconName: MarkerBitmap.car,
         );
@@ -110,8 +115,8 @@ class PairedDataManager extends NotifyManager {
         for (final step in pairedData['legs'][i]['steps'])
           polyline.add(
             Position(
-              latitude: step['endLat'],
-              longitude: step['endLng'],
+              latitude: step['end_location']['lat'],
+              longitude: step['end_location']['lng'],
             ),
           );
       }
@@ -125,6 +130,10 @@ class PairedDataManager extends NotifyManager {
       id: Character.route,
       points: polyline,
     );
+
+    for (final position in polyline) {
+      print('lat ${position.latitude} lng ${position.longitude}');
+    }
 
     await _locationProvider.locationUpdateManager.renderPairingRoute();
   }
