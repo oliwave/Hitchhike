@@ -24,7 +24,9 @@ class DatabaseHandler {
         nameStart TEXT,
         nameEnd TEXT,
         addressStart TEXT,
-        addressEnd TEXT
+        addressEnd TEXT,
+        startID TEXT,
+        endID TEXT
       )
     """,
     friends: """

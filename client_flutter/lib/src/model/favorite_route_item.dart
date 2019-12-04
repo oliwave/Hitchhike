@@ -10,6 +10,8 @@ class FavoriteRouteItem {
     @required this.nameEnd,
     @required this.addressStart,
     @required this.addressEnd,
+    @required this.startID,
+    @required this.endID,
   })  : id = '$nameStart,$nameEnd',
         isDefaultRoute = false,
         isExpanded = false;
@@ -23,7 +25,9 @@ class FavoriteRouteItem {
         nameStart = order.nameStart,
         nameEnd = order.nameEnd,
         addressStart = order.addressStart,
-        addressEnd = order.addressEnd;
+        addressEnd = order.addressEnd,
+        startID = order.startID,
+        endID = order.endID;
 
   FavoriteRouteItem.fromDB(Map<String, dynamic> parsedJson)
       : id = parsedJson['id'],
@@ -34,7 +38,9 @@ class FavoriteRouteItem {
         nameStart = parsedJson['nameStart'],
         nameEnd = parsedJson['nameEnd'],
         addressStart = parsedJson['addressStart'],
-        addressEnd = parsedJson['addressEnd'];
+        addressEnd = parsedJson['addressEnd'],
+        startID = parsedJson['startID'],
+        endID = parsedJson['endID'];
 
   Map<String, dynamic> toMapForDb() {
     return <String, dynamic>{
@@ -46,6 +52,8 @@ class FavoriteRouteItem {
       'nameEnd': nameEnd,
       'addressStart': addressStart,
       'addressEnd': addressEnd,
+      'startID': startID,
+      'endID': endID,
     };
   }
 
@@ -68,4 +76,6 @@ class FavoriteRouteItem {
   String nameEnd;
   String addressStart;
   String addressEnd;
+  String startID;
+  String endID;
 }
