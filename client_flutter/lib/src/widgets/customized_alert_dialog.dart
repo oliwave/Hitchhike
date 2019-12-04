@@ -10,7 +10,8 @@ Future<dynamic> customizedAlertDialog({
   VoidCallback cancelCallback,
   bool barrierDismissible = true,
 }) {
-  if (cancelButtonName != null && cancelCallback != null) {
+  if ((cancelButtonName != null && cancelCallback != null) ||
+      (cancelButtonName == null && cancelCallback == null)) {
     return showDialog(
       context: context,
       barrierDismissible: barrierDismissible,
