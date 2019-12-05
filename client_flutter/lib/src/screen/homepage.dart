@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/provider_collection.dart'
-    show HomepageProvider, MenuProvider;
+    show CloudMessageProvider, HomepageProvider, MenuProvider;
 import '../widgets/homepage/location_app_bar.dart';
 import '../widgets/homepage/map_view.dart';
 import '../widgets/homepage/position_floating_action_button.dart';
@@ -27,6 +27,12 @@ class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('Refreshing Homepage ...');
+
+    Provider.of<CloudMessageProvider>(
+      context,
+      listen: false,
+    ).context = context;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       // key: provider.scaffoldKey,

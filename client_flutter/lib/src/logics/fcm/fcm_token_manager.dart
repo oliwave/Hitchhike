@@ -29,23 +29,17 @@ class FcmTokenManager extends NotifyManager {
       // Fetch Fcm token from Google api or local storage.
       _fcmToken = await _fcm.firebaseMessaging.getToken();
 
-      print('fcmToken is $_fcmToken');
+      print('hasSentFcmToken : $hasSentFcmToken');
 
-      _sendFcmToken();
+      if (_auth.jwt != 'logout') _sendFcmToken();
     } else {
       return print('hasSentFcmToken has been initialized!');
     }
   }
 
   Future<void> _sendFcmToken() async {
-    print(
-        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhas'
-        'FcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
-        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
-        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
-        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
-        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken'
-        'hasFcmTokenhasFcmTokenhasFcmTokenhasFcmToken is $hasSentFcmToken');
+    print('current jwt token : ${_auth.jwt}');
+    print('fcmToken is $_fcmToken');
 
     // Send fcm token to the server if hasSentFcmToken is false.
     final response = await _api.sendHttpRequest(
@@ -55,12 +49,7 @@ class FcmTokenManager extends NotifyManager {
       ),
     );
 
-    print(
-        'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
-        'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
-        'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
-        'fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response fcm response '
-        'fcm response : ${response['statusCode']}');
+    print('fcm response : ${response['statusCode']}');
 
     // Record the runtime _hasSentFcmToken.
     _hasSentFcmToken = response['statusCode'] == 200;

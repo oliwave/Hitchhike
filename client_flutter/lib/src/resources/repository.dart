@@ -43,8 +43,10 @@ class TargetSourceString {
   TargetSourceString._();
 
   static const String isMatched = 'isMatched';
+  static const String newTravelRoom = 'newTravelRoom';
   static const String hasRevokedDriverPosition = 'hasRevokedDriverPosition';
   static const String hasSentFcmToken = 'hasSentFcmToken';
+  static const String hasSentTravel = 'hasSentTravel';
   static const String endTimeOfTrip = 'endTimeOfTrip';
   static const String role = 'role';
   static const String jwt = 'jwt';

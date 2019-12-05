@@ -15,4 +15,6 @@ class OrderInfo {
   String nameEnd;
   String addressStart;
   String addressEnd;
+  String startID;
+  String endID;
 }

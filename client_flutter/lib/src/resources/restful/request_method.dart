@@ -324,7 +324,7 @@ class PassengerRouteRequest extends BasePost {
   @override
   Future<Response> request() async {
     final response = await _client.post(
-      '$_rootUrl/passengerRoute',
+      '$_rootUrl/passenger_route',
       body: json.encode(body),
       headers: getHeaders(),
     );
@@ -345,7 +345,11 @@ class OrderConfirmationRequest extends RequestMethod {
 
   @override
   Future<Response> request() async {
-    final response = await _client.get('$_rootUrl/orderConfirmation/$status');
+    final response = await _client.get(
+      '$_rootUrl/orderConfirmation/$status',
+      headers: getHeaders(),
+    );
+
     return response;
   }
 }
@@ -371,7 +375,30 @@ class DriverRouteRequest extends BasePost {
   @override
   Future<Response> request() async {
     final response = await _client.post(
-      '$_rootUrl/driverRoute',
+      '$_rootUrl/driver_route',
+      body: json.encode(body),
+      headers: getHeaders(),
+    );
+
+    return response;
+  }
+}
+
+class FetchPairedDataRequest extends BasePost {
+  FetchPairedDataRequest({
+    @required String driverId,
+    @required String jwtToken,
+  }) : super(
+          body: {
+            'uid': driverId,
+          },
+          jwtToken: jwtToken,
+        );
+
+  @override
+  Future<Response> request() async {
+    final response = await _client.post(
+      '$_rootUrl/fetchPairedData',
       body: json.encode(body),
       headers: getHeaders(),
     );
@@ -409,7 +436,7 @@ class FcmTokenRequest extends BasePost {
   @override
   Future<Response> request() {
     final response = _client.post(
-      '$_rootUrl/fcm',
+      '$_rootUrl/fcmToken',
       body: json.encode(body),
       headers: getHeaders(),
     );
@@ -438,26 +465,24 @@ class GetUserInfoRequest extends BasePost {
   }
 }
 
-class GetUserDeviceRequest extends BasePost {
+class GetUserDeviceRequest extends RequestMethod {
   GetUserDeviceRequest({
-    @required String userID,
+    @required String jwtToken,
   }) : super(
-          body: {
-            'uid': userID,
-          },
+          jwtToken: jwtToken,
         );
 
   @override
   Future<Response> request() {
-    final response = _client.post(
+    final response = _client.get(
       '$_rootUrl/getDevice',
-      body: json.encode(body),
       headers: getHeaders(),
     );
 
     return response;
   }
 }
+
 class SetUserDeviceRequest extends BasePost {
   SetUserDeviceRequest({
     @required String currentDevice,
@@ -480,6 +505,7 @@ class SetUserDeviceRequest extends BasePost {
     return response;
   }
 }
+
 class GetUserStateRequest extends BasePost {
   GetUserStateRequest({
     @required String userID,

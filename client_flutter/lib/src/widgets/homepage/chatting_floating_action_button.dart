@@ -39,7 +39,7 @@ class ChatingFloatingActionButton extends StatelessWidget {
                 color: Colors.black54,
               ),
               onPressed: () {
-                chatProvider.initializeCacheData('testRoom');
+                chatProvider.initializeCacheData(roleProvider.newTravelRoom);
 
                 return Navigator.pushNamed(
                   context,

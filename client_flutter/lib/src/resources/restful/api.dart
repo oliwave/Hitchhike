@@ -31,7 +31,7 @@ class Api {
     final response = await action.request();
 
     print('the response body is ' + response.body + ' ${action.runtimeType}');
-    print('statusCode' + '${response.statusCode}');
+    print('statusCode ' + '${response.statusCode}');
 
     Map<String, dynamic> parsedJson = {};
     if (response.statusCode == 200) {

@@ -122,23 +122,22 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(60),
                           ),
                           onPressed: () async {
+                            // TODO: uncomment this when in production mode.
+                            // if (!(_formKey.currentState as FormState)
+                            //     .validate()) return;
+
                             final authenticated =
                                 await authProvider.invokeLogin(
                               _idController.text,
                               _pwdController.text,
                             );
-                            // 登入成功
-                            if (authenticated &&
-                                (_formKey.currentState as FormState)
-                                    .validate()) {
-                              debugPrint('登入成功');
-                              print(authProvider.jwt);
 
-                              identifyDevice =
-                                  await authProvider.identifyDevice(
-                                _idController.text,
-                                authProvider.currentDevice,
-                              );
+                            // 登入成功
+                            if (authenticated) {
+                              debugPrint('登入成功');
+
+                              identifyDevice = await authProvider
+                                  .identifyDevice(authProvider.jwt);
 
                               if (identifyDevice == 'true') {
                                 // 使用者在後端紀錄的裝置和現在的裝置相同
@@ -165,11 +164,6 @@ class _LoginPageState extends State<LoginPage> {
                                 } else {
                                   // 否 (尚未有使用者使用這台裝置)
                                   debugPrint('尚未有使用者使用這台裝置');
-                                  final authProvider =
-                                      Provider.of<AuthProvider>(
-                                    context,
-                                    listen: false,
-                                  );
 
                                   // 使用者在後端紀錄的裝置是否為空值 null (userDevice 是否為 null)
                                   if (identifyDevice == null) {
@@ -178,11 +172,11 @@ class _LoginPageState extends State<LoginPage> {
                                     // 向後端請求把登入使用者的 userDevice 設為 currentDevice
                                     authProvider.invokeModifyDevice(
                                       authProvider.currentDevice,
-                                      authProvider.currentUid,
+                                      authProvider.jwt,
                                     );
 
                                     // 向後端請求取回該名使用者的資訊並寫入該裝置
-                                    await authProvider
+                                    authProvider
                                         .invokeStoreUserInfo(authProvider.jwt);
 
                                     // 將 jwt token 存到 secureStorage
@@ -198,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                                   } else {
                                     // 否 => b. 使用者使用過且想要登入其他裝置
                                     debugPrint('使用者使用過且想要登入其他裝置');
-                                    
+
                                     // 告知當前登入的使用者若想要登入此裝置會需要… (同步您的個人資料和紀錄到當前裝置、清除原先裝置裡的資訊)
                                     _continueToLoginAlert();
                                   }

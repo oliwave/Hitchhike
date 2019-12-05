@@ -18,7 +18,7 @@ class ChattingPage extends StatelessWidget {
       listen: false,
     ).context = context;
 
-    final chatProvider = Provider.of<ChattingProvider>(context, listen: false,);
+    final chatProvider = Provider.of<ChattingProvider>(context, listen: false);
 
     return WillPopScope(
       child: Scaffold(

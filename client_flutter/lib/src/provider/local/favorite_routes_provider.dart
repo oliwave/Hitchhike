@@ -179,6 +179,7 @@ class FavoriteRoutesProvider with ChangeNotifier {
     final tempAdStart = targetRoute.addressStart;
     final tempGeoStart = targetRoute.geoStart;
     final tempNameStart = targetRoute.nameStart;
+    final tempStartID = targetRoute.startID;
 
     targetRoute
       ..geoStart = _routesMaps[routeId].geoEnd
@@ -186,7 +187,9 @@ class FavoriteRoutesProvider with ChangeNotifier {
       ..nameStart = _routesMaps[routeId].nameEnd
       ..nameEnd = tempNameStart
       ..addressStart = _routesMaps[routeId].addressEnd
-      ..addressEnd = tempAdStart;
+      ..addressEnd = tempAdStart
+      ..startID = _routesMaps[routeId].endID
+      ..endID = tempStartID;
 
     _handler.db.update(
       DatabaseHandler.favoriteRoutes,
@@ -248,6 +251,8 @@ class FavoriteRoutesProvider with ChangeNotifier {
       ..nameEnd = defaultRoute?.nameEnd
       ..nameStart = defaultRoute?.nameStart
       ..geoEnd = defaultRoute?.geoEnd
-      ..geoStart = defaultRoute?.geoStart;
+      ..geoStart = defaultRoute?.geoStart
+      ..startID = defaultRoute?.startID
+      ..endID = defaultRoute?.endID;
   }
 }

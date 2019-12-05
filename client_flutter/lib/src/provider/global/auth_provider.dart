@@ -19,6 +19,7 @@ class AuthProvider with ChangeNotifier {
   static final _secure = Repository.getSecureStorage;
   static final _prefs = Repository.getSimpleStorage;
   static final _api = Repository.getApi;
+  static final _socket = Repository.getSocketHandler;
 
   // get hash verification code
   Future<String> invokeVerifyCode(String uid) async {
@@ -68,10 +69,13 @@ class AuthProvider with ChangeNotifier {
 
   // 使用者在後端紀錄的裝置和現在的裝置是否相同
   // 若使用者在後端紀錄的裝置為空值 return null
-  Future<String> identifyDevice(String uid, String currentDevice) async {
+  Future<String> identifyDevice(
+    String jwtToken,
+  ) async {
     final response = await _api.sendHttpRequest(GetUserDeviceRequest(
-      userID: uid,
+      jwtToken: jwt,
     ));
+
     if (response['device'] == null) {
       return null;
     } else if (currentDevice == response['device']) {
@@ -150,13 +154,14 @@ class AuthProvider with ChangeNotifier {
       // _secure.storeSecret(TargetSourceString.jwt, response['jwt']);
 
       jwt = response['jwt'];
+
       currentUid = id;
-      currentDevice = await getDeviceInfo();
       debugPrint('currentUid: $currentUid');
-      debugPrint('currentDevice: $currentDevice');
 
       _prefs.setString(
           TargetSourceString.lastLoginTime, DateTime.now().toString());
+
+      if (!_socket.isConnected) _socket.connectSocketServer();
 
       return true;
     } else {
@@ -187,6 +192,9 @@ class AuthProvider with ChangeNotifier {
     print('The value of jwt token is $jwt');
     final lastLoginTime = _prefs.getString(TargetSourceString.lastLoginTime);
 
+    debugPrint('currentDevice: $currentDevice');
+    currentDevice = await getDeviceInfo();
+
     // The app is launched for the first time.
     if (jwt == null) return jwt = 'logout';
 
@@ -202,18 +210,16 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future getDeviceInfo() async {
+  Future<String> getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
       return androidDeviceInfo.androidId; // unique ID on Android
-    } else if (Platform.isIOS) {
+    } else {
       IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
       return iosDeviceInfo.identifierForVendor; // unique ID on iOS
     }
   }
 
-  void clearAllData(){
-
-  }
+  void clearAllData() {}
 }

@@ -56,14 +56,16 @@ class UserExistDialog extends StatelessWidget {
 
   judgeDevice(context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    String identifyDevice = await authProvider.identifyDevice(
-        authProvider.currentUid, authProvider.currentDevice);
+
+    String identifyDevice = await authProvider.identifyDevice(authProvider.jwt);
+
     // 使用者在後端紀錄的裝置是否為空值 null (userDevice 是否為 null)
     if (identifyDevice == null) {
       // 是 => a. 使用者第一次使用我們的應用程式或已無裝置
       debugPrint('使用者第一次使用我們的應用程式或已無裝置');
       // 向後端請求把登入使用者的 userDevice 設為 currentDevice
-      authProvider.invokeModifyDevice(authProvider.currentDevice, authProvider.currentUid);
+      authProvider.invokeModifyDevice(
+          authProvider.currentDevice, authProvider.currentUid);
       // 向後端請求取回該名使用者的資訊並寫入該裝置
       await authProvider.invokeStoreUserInfo(authProvider.jwt);
 

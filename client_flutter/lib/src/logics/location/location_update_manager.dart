@@ -99,7 +99,7 @@ class LocationUpdateManager extends NotifyManager {
     // final controller = await _locationProvider.futureMapController.future;
     final controller = _locationProvider.mapController;
 
-    controller.animateCamera(
+    await controller.animateCamera(
       CameraUpdate.newLatLngBounds(
         LatLngBounds(
           northeast: northeast,

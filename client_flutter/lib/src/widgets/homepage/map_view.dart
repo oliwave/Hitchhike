@@ -11,10 +11,10 @@ class MapView extends StatelessWidget {
   Widget build(BuildContext context) {
 
     // MapView will rerender every time but homepage won't.
-    Provider.of<CloudMessageProvider>(
-      context,
-      listen: false,
-    ).context = context;
+    // Provider.of<CloudMessageProvider>(
+    //   context,
+    //   listen: false,
+    // ).context = context;
 
     print('Refreshing MapView ...');
 
