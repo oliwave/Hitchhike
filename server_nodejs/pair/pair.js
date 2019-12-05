@@ -1,12 +1,14 @@
-var db = require('../db.js');
-var express = require('express');
-const auth = require('../auth.js');
-var bodyParser = require('body-parser');
-var axios = require('axios');
-var admin = require('../fcm/fcm.js');
+const axios = require('axios');
+const express = require('express');
+const bodyParser = require('body-parser');
+const crypto = require('crypto')
 
-var app = express();
-var jsonParser = bodyParser.json();
+const db = require('../db.js');
+const auth = require('../auth.js');
+const admin = require('../fcm/fcm.js');
+
+const app = express();
+const jsonParser = bodyParser.json();
 
 const router = new express.Router();
 
@@ -41,7 +43,7 @@ router.post('/passenger_route', auth.auth, jsonParser, function (req, res) {
 
 //driver
 router.post('/driver_route', auth.auth, jsonParser, async function (req, res) {
-    
+
     var uid = auth.uid;
     var originX_D = req.body.originX;
     var originY_D = req.body.originY;
@@ -51,7 +53,7 @@ router.post('/driver_route', auth.auth, jsonParser, async function (req, res) {
     let promiseDirectionList = []
     let driverOriginalTime = 0
     let driverUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${originY_D}%2C${originX_D}&destination=${destinationY_D}%2C${destinationX_D}&language=zh-TW&key=AIzaSyAGGrLwvvLN3W92yY3zrDcP8P9BPXieqyY`
-    
+
     promiseDirectionList.push(getData(driverUrl))
 
     console.log(`New driver ${uid}`)
@@ -168,28 +170,30 @@ router.get('/orderConfirmation/:status', auth.auth, jsonParser, async function (
             "tokens": [driver.token, passenger.token]
         };
 
-        let messageID = await admin.messaging().sendMulticast(message);
+        admin.messaging().sendMulticast(message);
 
-        console.log('The message id is ', messageID)
         console.log('Order confirmation Fcm message has been sent!')
 
+        let data = await createRoom(uid, pairMapDone[uid].passenger.uid)
+
+        console.log('Driver photot is ', driver.photo)
+
         pairMapDone[uid].info = {
-            "type": "paired",
-            // TODO : 需要後端傳回該配對的人是否為朋友
-            "isFriend": 'false',
-            "avatar": driver.photo,
-            "roomId": "testRoom",
-            "carDescripition": driver.car_descripition,
-            //
-            "carNum": driver.car_num,
-            "duration": pairMapDone[uid].passenger.time,
-            "startName": pairMapDone[uid].passenger.originName,
-            "endName": pairMapDone[uid].passenger.destinationName,
-            "northeastLat": pairMapDone[uid].route.bounds.northeast.lat,
-            "northeastLng": pairMapDone[uid].route.bounds.northeast.lng,
-            "southwestLat": pairMapDone[uid].route.bounds.southwest.lat,
-            "southwestLng": pairMapDone[uid].route.bounds.southwest.lng,
-            "legs": pairMapDone[uid].route.legs
+            'type': 'paired',
+            'isFriend': data.isFriend,
+            'roomId': data.room,
+            'avatar': driver.photo,
+            'carDescripition': driver.car_descripition,
+            'carNum': driver.car_num,
+            'duration': pairMapDone[uid].passenger.time,
+            'pairedTime': Date.now(),
+            'startName': pairMapDone[uid].passenger.originName,
+            'endName': pairMapDone[uid].passenger.destinationName,
+            'northeastLat': pairMapDone[uid].route.bounds.northeast.lat,
+            'northeastLng': pairMapDone[uid].route.bounds.northeast.lng,
+            'southwestLat': pairMapDone[uid].route.bounds.southwest.lat,
+            'southwestLng': pairMapDone[uid].route.bounds.southwest.lng,
+            'legs': pairMapDone[uid].route.legs
         }
 
         delete pairMapDone[uid].route
@@ -220,6 +224,43 @@ const getUserFromUID = (uid) => {
     })
 }
 
+// This helper method will know if they are friend or not.
+const createRoom = async (driverId, passengerId) => {
+    let room = await new Promise((resolve, reject) => {
+        let sql = `select roomId from room where (uid1='${driverId}' or uid2='${driverId}')
+        and (uid1='${passengerId}' or uid2='${passengerId}')`
+
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.log(err)
+            } else {
+                // Driver and passenger are friend or not.
+                if (result.length > 0) {
+                    resolve(result[0].roomId)
+                } else {
+                    resolve(null)
+                }
+            }
+        })
+    })
+
+    let isFriend = room != null
+
+    if (!isFriend) {
+        room = crypto.createHash('sha256', 'ncnuIM').update(driverId + passengerId).digest('hex')
+
+        sql = `INSERT INTO room(roomId, uid1, uid2) VALUES 
+                    ('${room}', '${driverId}', '${passengerId}')`
+
+        // Create a room for them.
+        db.query(sql, (err, result) => {
+            if (err) console.log(err)
+        })
+    }
+
+    return {room, isFriend}
+}
+
 // google map api request
 const getData = async url => {
     try {
@@ -231,6 +272,7 @@ const getData = async url => {
         console.log(error);
     }
 };
+
 
 // if user is wait for pair now
 router.post('/userState', auth.auth, function (req, res) {
